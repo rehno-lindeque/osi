@@ -88,6 +88,15 @@ namespace LinGLKernel
 #endif
           break;
 
+        case ButtonPress:
+          // Set the input focus back to the window whenever it recieves a button press
+          XSetInputFocus(event.xany.display, event.xany.window, RevertToParent, CurrentTime);
+          break;
+
+#ifdef _DEBUG //  TEMPORARY
+          cout << "Button Press" << endl;
+#endif
+
         default:
 
         /*KeyPress

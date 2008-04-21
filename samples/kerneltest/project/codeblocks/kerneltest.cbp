@@ -42,7 +42,6 @@
 				<Option object_output="/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<Option host_application="kerneltestd" />
 				<Compiler>
 					<Add option="-O2" />
@@ -88,6 +87,8 @@
 				<search_path add="../../../../api" />
 			</code_completion>
 			<envvars />
+			<lib_finder />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

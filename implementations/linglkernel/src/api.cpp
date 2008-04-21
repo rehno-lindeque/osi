@@ -278,9 +278,9 @@ OSobject OSI_API_CALL LinGLKernel::Kernel::createWindowGLX1_3(::Display* display
   glXMakeCurrent(display, glxWindow, glxContext);
 
   // Select XWindows events to handle
-  XSelectInput(display, window, KeyPressMask);
+  //XSelectInput(display, window, attr.event_mask);
 
-  /*XSelectInput(display, window,
+    /*XSelectInput(display, window,
       KeyPressMask
     | KeyReleaseMask
     | ButtonPressMask
@@ -316,6 +316,13 @@ OSobject OSI_API_CALL LinGLKernel::Kernel::createWindowGLX1_3(::Display* display
 //XKeyPressedEvent
 //XReconfigureWindow
 
+  // Map the window to the display
+  // (Temporary: is this really necessary & why?)
+  XMapWindow(display, window);
+
+  // Set the window to focussed so that it can capture keyboard input
+  XSetInputFocus(display, window, RevertToParent, CurrentTime);
+
   //// Free temporary variables
   XFree(configs);
   XFree(visualInfo);
@@ -332,9 +339,6 @@ OSobject OSI_API_CALL LinGLKernel::Kernel::createWindowGLX1_3(::Display* display
   displayObject.y2 = height;
 
   displayObjects.push_back(&displayObject);
-
-  // Temporary: is this really necessary & why?
-  XMapWindow(display, window);
 
   //todo: busy here... (create a LinGLKernel::Display)
   return (OSobject)&displayObject;

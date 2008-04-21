@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="debug" />
-	<File name="../../../../api/osi/kernel/ext/linglkernel.h" open="1" top="0" tabpos="9">
-		<Cursor position="261" topLine="0" />
+	<File name="../../../../api/osi/kernel/ext/linglkernel.h" open="0" top="0" tabpos="9">
+		<Cursor position="549" topLine="0" />
 	</File>
 	<File name="../../../../api/osi/kernel/intkernel.hpp" open="0" top="0" tabpos="11">
 		<Cursor position="0" topLine="12" />
@@ -11,15 +11,15 @@
 		<Cursor position="579" topLine="0" />
 	</File>
 	<File name="../../../../api/osi/kernel/kernel.hpp" open="0" top="0" tabpos="11">
-		<Cursor position="1895" topLine="20" />
+		<Cursor position="976" topLine="10" />
 	</File>
 	<File name="../../../../api/osi/os.h" open="0" top="0" tabpos="0">
-		<Cursor position="936" topLine="0" />
+		<Cursor position="1294" topLine="13" />
 	</File>
-	<File name="../../../base/src/base/math/hvector3.h" open="1" top="0" tabpos="11">
+	<File name="../../../base/src/base/math/hvector3.h" open="1" top="0" tabpos="10">
 		<Cursor position="1808" topLine="12" />
 	</File>
-	<File name="../../../base/src/base/math/vector3.h" open="1" top="0" tabpos="12">
+	<File name="../../../base/src/base/math/vector3.h" open="1" top="0" tabpos="11">
 		<Cursor position="3049" topLine="68" />
 	</File>
 	<File name="../../../basekernel/project/scons/SConscript" open="1" top="0" tabpos="1">
@@ -41,21 +41,21 @@
 		<Cursor position="351" topLine="0" />
 	</File>
 	<File name="../../src/api.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="8749" topLine="555" />
+		<Cursor position="10081" topLine="289" />
 	</File>
 	<File name="../../src/api.h" open="1" top="0" tabpos="6">
 		<Cursor position="1127" topLine="0" />
 	</File>
-	<File name="../../src/display.h" open="1" top="1" tabpos="10">
-		<Cursor position="1380" topLine="31" />
+	<File name="../../src/display.h" open="1" top="1" tabpos="9">
+		<Cursor position="3025" topLine="63" />
 	</File>
-	<File name="../../src/displaychain.h" open="1" top="0" tabpos="16">
+	<File name="../../src/displaychain.h" open="1" top="0" tabpos="14">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../src/frame.h" open="1" top="0" tabpos="15">
+	<File name="../../src/frame.h" open="1" top="0" tabpos="13">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../../src/windowproc.cpp" open="1" top="0" tabpos="14">
+	<File name="../../src/windowproc.cpp" open="1" top="0" tabpos="12">
 		<Cursor position="357" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

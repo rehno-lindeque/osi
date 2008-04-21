@@ -46,8 +46,10 @@ public:
     kernel = kernelInit();
 
     // Open window
-    OSobject mainDisplay = kernel->beginDisplay(0, "Main", true, 200, 150);
+    mainDisplay = kernel->beginDisplay(0, "Main", true, 200, 150);
     kernel->endDisplay();
+    if(mainDisplay == 0)
+      return;
 
     displayChain = kernel->beginDisplayChain();
 
@@ -73,6 +75,9 @@ public:
 
   virtual bool main()
   {
+    if(mainDisplay == 0)
+      return false;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(-1.5f, 0.0f, -6.0f);
@@ -98,7 +103,7 @@ public:
     kernel->shutdown();
   }
 
-  KernelTest() {}
+  KernelTest() : kernel(0), mainDisplay(0), displayChain(0) {}
 }application;
 
 int main()
