@@ -1,0 +1,18 @@
+#ifdef __GLGE_GEOMETRYPOOL_H__
+#ifndef __GLGE_GEOMETRYPOOL_HXX__
+#define __GLGE_GEOMETRYPOOL_HXX__
+//////////////////////////////////////////////////////////////////////////////
+//
+//    GEOMETRYPOOL.HXX
+//
+//    Copyright © 2006, Rehno Lindeque. All rights reserved.
+//
+//////////////////////////////////////////////////////////////////////////////
+
+namespace GLGE
+{
+
+}
+
+#endif
+#endif

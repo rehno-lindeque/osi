@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="debug" />
+	<File name="../../../../api/osi/os.h" open="0" top="0" tabpos="0">
+		<Cursor position="3733" topLine="88" />
+	</File>
+	<File name="../../../../api/osi/os.hpp" open="0" top="0" tabpos="0">
+		<Cursor position="1147" topLine="0" />
+	</File>
+	<File name="../../../../api/osix/parser/parser.hpp" open="0" top="0" tabpos="3">
+		<Cursor position="1361" topLine="37" />
+	</File>
+	<File name="../../../../api/osix/parser/parserdbg.hpp" open="0" top="0" tabpos="0">
+		<Cursor position="973" topLine="0" />
+	</File>
+	<File name="../../../../implementations/base/project/scons/SConscript" open="0" top="0" tabpos="2">
+		<Cursor position="986" topLine="0" />
+	</File>
+	<File name="../scons/SConscript" open="0" top="0" tabpos="4">
+		<Cursor position="133" topLine="0" />
+	</File>
+	<File name="../scons/SConstargetscript" open="0" top="0" tabpos="5">
+		<Cursor position="133" topLine="0" />
+	</File>
+	<File name="../scons/SConstruct" open="0" top="0" tabpos="6">
+		<Cursor position="133" topLine="0" />
+	</File>
+	<File name="../../src/main.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="10513" topLine="335" />
+	</File>
+</CodeBlocks_layout_file>

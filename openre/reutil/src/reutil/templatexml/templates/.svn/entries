@@ -1,0 +1,40 @@
+8
+
+dir
+21
+svn://127.0.0.1/openre/reutil/src/reutil/templatexml/templates
+svn://127.0.0.1
+
+
+
+2006-09-02T21:57:12.578125Z
+19
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8a7dd409-92b2-814b-ad6a-2df2f29e05fa
+
+colladatemplate.h
+file
+
+
+
+
+2006-09-02T09:49:44.796875Z
+b0202cf3a4bd0bc0546a5bb3e63697f8
+2006-09-02T21:57:12.578125Z
+19
+Administrator
+

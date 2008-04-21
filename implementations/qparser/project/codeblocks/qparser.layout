@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="C debug" />
+	<File name="../../../../api/osi/os.h" open="0" top="0" tabpos="13">
+		<Cursor position="3911" topLine="88" />
+	</File>
+	<File name="../../../../api/osi/os.hpp" open="0" top="0" tabpos="19">
+		<Cursor position="1093" topLine="0" />
+	</File>
+	<File name="../../../../api/osix/parser/parser.h" open="0" top="0" tabpos="23">
+		<Cursor position="2177" topLine="68" />
+	</File>
+	<File name="../../../../api/osix/parser/parser.hpp" open="0" top="0" tabpos="11">
+		<Cursor position="3770" topLine="77" />
+	</File>
+	<File name="../../../../api/osix/parser/parserdbg.h" open="0" top="0" tabpos="10">
+		<Cursor position="668" topLine="0" />
+	</File>
+	<File name="../../../../api/osix/parser/parserdbg.hpp" open="0" top="0" tabpos="17">
+		<Cursor position="855" topLine="0" />
+	</File>
+	<File name="../../../base/src/base/common/types.h" open="0" top="0" tabpos="0">
+		<Cursor position="1564" topLine="21" />
+	</File>
+	<File name="../../../baseparser/src/baseparser/baseparser.h" open="0" top="0" tabpos="13">
+		<Cursor position="678" topLine="0" />
+	</File>
+	<File name="../../../baseparser/src/baseparser/baseparser.hxx" open="1" top="0" tabpos="3">
+		<Cursor position="1371" topLine="0" />
+	</File>
+	<File name="../../../baseparser/src/baseparser/capi.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="2561" topLine="34" />
+	</File>
+	<File name="../scons/SConscript" open="0" top="0" tabpos="10">
+		<Cursor position="1039" topLine="0" />
+	</File>
+	<File name="../scons/SConstargetscript" open="0" top="0" tabpos="8">
+		<Cursor position="595" topLine="0" />
+	</File>
+	<File name="../scons/SConstruct" open="0" top="0" tabpos="13">
+		<Cursor position="2482" topLine="54" />
+	</File>
+	<File name="../../src/api.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="687" topLine="0" />
+	</File>
+	<File name="../../src/api.h" open="1" top="0" tabpos="7">
+		<Cursor position="2582" topLine="50" />
+	</File>
+	<File name="../../src/api.inl" open="1" top="0" tabpos="8">
+		<Cursor position="6094" topLine="93" />
+	</File>
+	<File name="../../src/grammar.h" open="1" top="0" tabpos="17">
+		<Cursor position="10274" topLine="315" />
+	</File>
+	<File name="../../src/grammar.inl" open="0" top="0" tabpos="14">
+		<Cursor position="198" topLine="0" />
+	</File>
+	<File name="../../src/grammarll1.h" open="1" top="0" tabpos="1">
+		<Cursor position="1121" topLine="0" />
+	</File>
+	<File name="../../src/grammarll1.inl" open="0" top="0" tabpos="2">
+		<Cursor position="2262" topLine="0" />
+	</File>
+	<File name="../../src/grammarlr0.h" open="1" top="0" tabpos="4">
+		<Cursor position="2352" topLine="38" />
+	</File>
+	<File name="../../src/grammarlr0.inl" open="1" top="0" tabpos="5">
+		<Cursor position="2816" topLine="92" />
+	</File>
+	<File name="../../src/grammarlr1.h" open="1" top="0" tabpos="9">
+		<Cursor position="5097" topLine="106" />
+	</File>
+</CodeBlocks_layout_file>

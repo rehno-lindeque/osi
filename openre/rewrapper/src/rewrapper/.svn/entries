@@ -1,0 +1,79 @@
+8
+
+dir
+21
+svn://127.0.0.1/openre/rewrapper/src/rewrapper
+svn://127.0.0.1
+
+
+
+2006-08-19T21:56:29.343750Z
+13
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8a7dd409-92b2-814b-ad6a-2df2f29e05fa
+
+rewindow.cpp
+file
+38
+
+
+
+2006-12-26T21:25:59.550543Z
+01f26d7e0935040d2090226b06cf3c2d
+2006-12-27T22:34:42.468750Z
+38
+Administrator
+
+openreapplication.h
+file
+38
+
+
+
+2006-12-26T21:32:23.644293Z
+93f14f983a35f9cbfc74fdc0c6fb94e2
+2006-12-27T22:34:42.468750Z
+38
+Administrator
+
+rewindow.h
+file
+38
+
+
+
+2006-12-26T21:25:40.769293Z
+98489772d60957d5fe678ec8309567f5
+2006-12-27T22:34:42.468750Z
+38
+Administrator
+
+common
+dir
+
+openreapplication.cpp
+file
+38
+
+
+
+2006-12-27T15:31:54.171875Z
+3a0cf9433bb0b7b5f937cd2425a6977e
+2006-12-27T22:34:42.468750Z
+38
+Administrator
+

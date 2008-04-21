@@ -1,0 +1,22 @@
+8
+
+dir
+23
+svn://127.0.0.1/implementations/glge
+svn://127.0.0.1
+
+
+
+2006-09-02T23:07:04.453125Z
+23
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+project
+dir
+
+src
+dir
+

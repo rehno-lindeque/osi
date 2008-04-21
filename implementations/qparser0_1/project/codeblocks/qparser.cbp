@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="QParser" />
+		<Option makefile="SConstruct" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="QParser;Base/;Base/math/;Base/common/;OSI/;OSIX/;QParser/;BaseParser/;" />
+		<MakeCommands>
+			<Build command="scons -C ../scons" />
+			<CompileFile command="scons -C ../scons $file" />
+			<Clean command="scons -C ../scons -c" />
+			<DistClean command="scons -C ../scons -c" />
+		</MakeCommands>
+		<Build>
+			<Target title="release">
+				<Option output="../../lib/libqparser.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="scons -C ../scons" />
+					<CompileFile command="scons -C ../scons $file" />
+					<Clean command="scons -C ../scons -c" />
+					<DistClean command="scons -C ../scons -c" />
+				</MakeCommands>
+			</Target>
+			<Target title="debug">
+				<Option output="../../lib/libqparserd.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="scons -C ../scons debug=1" />
+					<CompileFile command="scons -C ../scons debug=1 $file" />
+					<Clean command="scons -C ../scons -c debug=1" />
+					<DistClean command="scons -C ../scons -c debug=1" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../../../../api/osi/os.h">
+			<Option virtualFolder="OSI/" />
+		</Unit>
+		<Unit filename="../../../../api/osi/os.hpp">
+			<Option virtualFolder="OSI/" />
+		</Unit>
+		<Unit filename="../../../../api/osix/parser/parser.hpp">
+			<Option virtualFolder="OSIX/" />
+		</Unit>
+		<Unit filename="../../../../api/osix/parser/parserdbg.hpp">
+			<Option virtualFolder="OSIX/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/common/functions.h">
+			<Option virtualFolder="Base/common/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/common/object.h">
+			<Option virtualFolder="Base/common/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/common/structures.h">
+			<Option virtualFolder="Base/common/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/common/types.h">
+			<Option virtualFolder="Base/common/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/axisalignedboundingbox.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/axisalignedboundingbox.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/hcoord3.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/hcoord3.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/hpoint3.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/hpoint3.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/hvector3.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/hvector3.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/math.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/matrix3.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/matrix3.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/matrix4.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/matrix4.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/quaternion.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/quaternion.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/unitquaternion.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/unitquaternion.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/vector2.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/vector2.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/vector3.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/vector3.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/vector4.h">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../base/src/base/math/vector4.hxx">
+			<Option virtualFolder="Base/math/" />
+		</Unit>
+		<Unit filename="../../../baseparser/src/baseparser/baseparser.h">
+			<Option virtualFolder="BaseParser/" />
+		</Unit>
+		<Unit filename="../../../baseparser/src/baseparser/baseparser.hxx">
+			<Option virtualFolder="BaseParser/" />
+		</Unit>
+		<Unit filename="../../src/api.cpp">
+			<Option virtualFolder="QParser/" />
+		</Unit>
+		<Unit filename="../../src/api.h">
+			<Option virtualFolder="QParser/" />
+		</Unit>
+		<Unit filename="../../src/api.hxx">
+			<Option virtualFolder="QParser/" />
+		</Unit>
+		<Unit filename="../../src/grammar.h">
+			<Option virtualFolder="QParser/" />
+		</Unit>
+		<Unit filename="../../src/grammar.hxx">
+			<Option virtualFolder="QParser/" />
+		</Unit>
+		<Extensions>
+			<code_completion>
+				<search_path add="../../../../api" />
+				<search_path add="../../../base/src" />
+				<search_path add="../../../baseparser/src" />
+			</code_completion>
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

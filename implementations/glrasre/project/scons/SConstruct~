@@ -1,0 +1,108 @@
+##############################################################################
+#
+#     GLRASRE
+#
+#     Copyright (c) 2006 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+import os
+import sys
+
+user_build_dir  = '../../lib'
+user_target     = 'glrasre'
+user_scons_dirs = ['.', '../../../basere/project/scons', '../../../base/project/scons']
+user_lib_dirs   = []
+user_libs       = []
+user_include_dirs = ['../../../../api',                 # OSI Headers
+                     '../../../basere/src',             # OpenRE Libraries
+                     '../../../base/src'
+                    ]
+user_definitions = [#'MSVC_BUILD',
+                    #'OS_64BIT' (TODO)
+                   ]
+user_debugflag = '-g' # '-ggdb'
+
+#########################################################
+
+#Default('all')
+#Alias(user_target, 'all')
+
+# Initialize environment
+env = Environment()
+
+# Initialize startup paths
+launch_dir = GetLaunchDir()
+script_dir = os.getcwd()
+
+# Process build arguments
+verbose = 0
+if '-Q' not in sys.argv:
+  verbose = 1
+
+if ARGUMENTS.get('debug', 0):
+  env.Append(CCFLAGS = user_debugflag)
+  target = user_target + 'd'
+else:
+  target = user_target
+
+# Process system parameters
+if sys.platform=='win32':
+  env.Tool('mingw')
+
+# Construct build variables
+include_dirs = []
+for dir in user_include_dirs:
+  include_dirs.append(os.path.abspath(os.path.join(script_dir, dir)))
+
+lib_dirs = []
+for dir in user_lib_dirs:
+  lib_dirs.append(os.path.abspath(dir))
+Export('lib_dirs')
+
+libs = []
+for lib in user_libs:
+  libs.append(lib)
+Export('libs')
+
+definitions = user_definitions
+
+objects = []
+
+
+
+#########################################################
+# Execute modules scripts
+Export('env')
+Export('verbose')
+Export('objects')
+Export('include_dirs')
+Export('definitions')
+
+if verbose:
+  print '-----------------------------------'
+  print 'Platform: %s' % env['PLATFORM']       # sys.platform
+  print 'Compiler: %s' % env['CXX']
+  print 'Include dirs: %s' % include_dirs
+  print 'Definitions: %s' % definitions
+
+for dir in user_scons_dirs:
+  SConscript('%s/SConscript' % dir)
+
+# Execute target script
+Export('target')
+
+SConscript('SConstargetscript', build_dir=user_build_dir, duplicate=0)
+
+if verbose:
+  print '-----------------------------------'
+
+#########################################################
+
+# Scons development help
+#help(Environment)
+#print env
+#print env.__dict__
+#exit();
+
+#########################################################

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="" />
+	<File name="../../../basere/src/basere/basere.cpp" open="1" top="0" tabpos="18">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="../../../basere/src/basere/opengl/rendertarget.h" open="1" top="0" tabpos="27">
+		<Cursor position="1047" topLine="18" />
+	</File>
+	<File name="../scons/SConscript" open="1" top="0" tabpos="1">
+		<Cursor position="2303" topLine="67" />
+	</File>
+	<File name="../scons/SConstruct" open="1" top="0" tabpos="24">
+		<Cursor position="2542" topLine="26" />
+	</File>
+	<File name="../../src/api.cpp" open="1" top="0" tabpos="23">
+		<Cursor position="938" topLine="9" />
+	</File>
+	<File name="../../src/api.h" open="1" top="0" tabpos="25">
+		<Cursor position="743" topLine="3" />
+	</File>
+	<File name="../../src/elements.h" open="1" top="0" tabpos="26">
+		<Cursor position="799" topLine="4" />
+	</File>
+	<File name="../../src/geometry.h" open="1" top="0" tabpos="30">
+		<Cursor position="1164" topLine="18" />
+	</File>
+</CodeBlocks_layout_file>

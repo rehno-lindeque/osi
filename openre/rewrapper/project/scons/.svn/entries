@@ -1,0 +1,28 @@
+8
+
+dir
+21
+svn://127.0.0.1/openre/rewrapper/project/scons
+svn://127.0.0.1
+
+
+
+2006-07-09T21:26:38.000000Z
+11
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+SConscript
+file
+
+
+
+
+2006-07-09T19:06:27.578125Z
+391ff591b28285dea21c78f65e2692b8
+2006-07-09T21:26:38.000000Z
+11
+Administrator
+

@@ -1,0 +1,28 @@
+8
+
+dir
+12
+svn://127.0.0.1/samples/ReColladaDisplay/src
+svn://127.0.0.1
+
+
+
+2006-07-15T00:33:25.730192Z
+12
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+main.cpp
+file
+16
+
+
+
+2006-08-27T12:37:51.625000Z
+214b79284f87257db2b4bb79385946d1
+2006-08-28T18:00:16.039269Z
+16
+Administrator
+

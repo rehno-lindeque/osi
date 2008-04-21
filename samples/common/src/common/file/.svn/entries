@@ -1,0 +1,40 @@
+8
+
+dir
+11
+svn://127.0.0.1/samples/common/src/common/file
+svn://127.0.0.1
+
+
+
+2006-07-09T21:26:38.000000Z
+11
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+file.cpp
+file
+36
+
+
+
+2006-12-26T21:13:39.331793Z
+9ce47ea2a70307ffb55f146e673739f3
+2006-12-27T22:26:29.703125Z
+36
+Administrator
+
+file.h
+file
+36
+
+
+
+2006-12-26T21:13:39.300543Z
+fa3e2297aecb0957ca248a3cf3c68f23
+2006-12-27T22:26:29.703125Z
+36
+Administrator
+

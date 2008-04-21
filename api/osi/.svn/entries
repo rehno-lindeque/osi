@@ -1,0 +1,49 @@
+8
+
+dir
+9
+svn://127.0.0.1/api/osi
+svn://127.0.0.1
+
+
+
+2006-07-09T14:55:26.984375Z
+9
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8a7dd409-92b2-814b-ad6a-2df2f29e05fa
+
+pe
+dir
+
+re
+dir
+
+os.h
+file
+44
+
+
+
+2007-01-28T21:50:45.266731Z
+ae038dd16fe244d11cdb9475a49fb878
+2007-01-28T21:57:14.600304Z
+44
+Administrator
+
+ge
+dir
+

@@ -1,0 +1,18 @@
+#ifndef __OSIEXT_GLGUI_H__
+#define __OSIEXT_GLGUI_H__
+//////////////////////////////////////////////////////////////////////////////
+//
+//    GLGUI.H
+//
+//    Author:      Rehno Lindeque
+//
+//    Description: GLGUI extensions
+//
+//    Version: 0.1 (informal prototype)
+//
+//    Copyright © 2007, Rehno Lindeque. All rights reserved.
+//
+//////////////////////////////////////////////////////////////////////////////
+
+#endif
+

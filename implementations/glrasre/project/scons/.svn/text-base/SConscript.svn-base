@@ -1,0 +1,96 @@
+##############################################################################
+#
+#     GLRASRE
+#
+#     Copyright (c) 2006 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+import glob
+import os
+
+user_build_dir = '../../build/mingw'
+user_src_dir = '../../src'
+user_scriptname = 'GLRasRE'
+
+#########################################################
+
+Import('verbose')
+Import('env')
+Import('objects')
+Import('tool')
+Import('include_dirs')
+Import('definitions')
+
+def remove_prefix(str, prefix):
+  str_len = len(str)
+  prefix_len = len(prefix)
+  return str[prefix_len+1:str_len]
+
+#########################################################
+
+if verbose:
+  print '-----------------------------------'
+  print 'Build Script: %s' % user_scriptname
+
+abs_build_dir = os.path.abspath(user_build_dir)
+abs_src_dir = os.path.abspath(user_src_dir)
+scriptdir = os.getcwd()
+
+if verbose:
+  print 'Main Script Dir: %s' % scriptdir
+  print 'Main Build Dir: %s' % abs_build_dir
+  print 'Main Source Dir: %s' % abs_src_dir
+
+BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
+
+#########################################################
+
+def expand_dirs(relative_dir, base_dir_list):
+  if len(base_dir_list) == 0:
+    return base_dir_list
+
+  sub_dirs = []
+
+  for dir in base_dir_list:
+    abs_dir = os.path.abspath(os.path.join(relative_dir,dir))
+
+    sub_dir_list = [item for item in os.listdir(abs_dir)
+                   if os.path.isdir(os.path.join(abs_dir,item))
+                     and item != '.svn']
+    for sub_dir in sub_dir_list:
+      sub_dirs.append(os.path.join(dir,sub_dir))
+
+  sub_dirs = expand_dirs(relative_dir, sub_dirs)
+
+  base_dirs = base_dir_list
+  for dir in sub_dirs:
+    base_dirs.append(dir)
+
+  return base_dirs
+  
+src_dirlist = ['.']
+src_dirlist = expand_dirs(user_src_dir, src_dirlist)
+
+
+if verbose:
+  print '\nSource Dirs: %s' % src_dirlist
+
+#########################################################
+
+if verbose:
+  print 'Objects: [',
+
+for dir in src_dirlist:
+  for file in glob.glob(os.path.join(user_src_dir, os.path.join(dir, '*.cpp'))):
+    file_buildpath = os.path.join(user_build_dir, remove_prefix(file, user_src_dir))
+    object = env.Object(target  = file_buildpath,
+                        CPPPATH = include_dirs,
+                        CPPDEFINES = definitions)
+    objects.append(object[0])
+    if verbose:
+      print ' %s ' % object[0],
+    
+if verbose:
+  print ']'
+

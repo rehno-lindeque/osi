@@ -1,0 +1,29 @@
+8
+
+dir
+23
+svn://127.0.0.1/openge/doc
+svn://127.0.0.1
+
+
+
+2006-09-02T23:07:04.453125Z
+23
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+specifications.doc
+file
+26
+
+
+
+2006-09-09T19:30:44.406000Z
+f75a37b6ec01cde1d4e76196faaf13c1
+2006-11-12T01:58:12.015625Z
+26
+Administrator
+has-props
+

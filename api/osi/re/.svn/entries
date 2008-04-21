@@ -1,0 +1,55 @@
+8
+
+dir
+9
+svn://127.0.0.1/api/osi/re
+svn://127.0.0.1
+
+
+
+2006-07-09T14:55:26.984375Z
+9
+Administrator
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+8a7dd409-92b2-814b-ad6a-2df2f29e05fa
+
+ext
+dir
+
+redbg.h
+file
+44
+
+
+
+2007-01-28T21:56:01.068113Z
+b5817677d5b2a1d274d5eb20466f7285
+2007-01-28T21:57:14.600304Z
+44
+Administrator
+
+re.h
+file
+44
+
+
+
+2007-01-28T21:51:41.580312Z
+b493eea9f71d356e342dbc6fab2b5c83
+2007-01-28T21:57:14.600304Z
+44
+Administrator
+

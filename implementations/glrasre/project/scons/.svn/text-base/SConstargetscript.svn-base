@@ -1,0 +1,21 @@
+##############################################################################
+#
+#     GLRASRE
+#
+#     Copyright (c) 2006 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+Import('env')
+Import('target')
+Import('objects')
+Import('lib_dirs')
+Import('libs')
+
+env.StaticLibrary(target         = target,
+                  source         = objects, 
+                  LIBPATH        = lib_dirs,
+                  #LIBLINKPREFIX = '',
+                  #LIBPREFIX     = '',
+                  LIBS           = libs)
+
