@@ -1,22 +1,0 @@
-8
-
-dir
-12
-svn://127.0.0.1/samples/ReColladaDisplay
-svn://127.0.0.1
-
-
-
-2006-07-15T00:33:25.730192Z
-12
-Administrator
-has-props
-
-svn:special svn:externals svn:needs-lock
-
-project
-dir
-
-src
-dir
-

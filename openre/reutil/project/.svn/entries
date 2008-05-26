@@ -1,19 +1,0 @@
-8
-
-dir
-21
-svn://127.0.0.1/openre/reutil/project
-svn://127.0.0.1
-
-
-
-2006-07-15T00:33:25.730192Z
-12
-Administrator
-
-
-svn:special svn:externals svn:needs-lock
-
-scons
-dir
-

@@ -1,58 +1,0 @@
-8
-
-dir
-11
-svn://127.0.0.1/samples/common/src/common
-svn://127.0.0.1
-
-
-
-2006-07-09T21:26:38.000000Z
-11
-Administrator
-
-
-svn:special svn:externals svn:needs-lock
-
-file
-dir
-
-log
-dir
-
-thread
-dir
-
-common
-dir
-
-math
-dir
-
-types.h
-file
-36
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-time
-dir
-

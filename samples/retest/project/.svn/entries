@@ -1,22 +1,0 @@
-8
-
-dir
-11
-svn://127.0.0.1/samples/ReTest/project
-svn://127.0.0.1
-
-
-
-2006-07-09T21:26:38.000000Z
-11
-Administrator
-
-
-svn:special svn:externals svn:needs-lock
-
-msvc7
-dir
-
-scons
-dir
-
