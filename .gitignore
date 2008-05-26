@@ -1,0 +1,9 @@
+# Ignore any build directories
+build
+
+# Ignore any lib directories
+lib
+
+# Ignore any bin directories
+bin
+
