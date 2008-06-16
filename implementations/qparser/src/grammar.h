@@ -90,12 +90,13 @@ using std::cout;
 using std::clog;
 using std::cerr;
 using std::endl;
+using STDEXT_NAMESPACE::hash;
 using STDEXT_NAMESPACE::hash_map;
 using STDEXT_NAMESPACE::hash_set;
 using STDEXT_NAMESPACE::stdio_filebuf;
 
 // Boost
-#define BOOST_MULTI_INDEX_DISABLE_SERIALIZATION // Disable serialization: It's not necessary and it's not always available
+/*#define BOOST_MULTI_INDEX_DISABLE_SERIALIZATION // Disable serialization: It's not necessary and it's not always available
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
@@ -113,7 +114,7 @@ using boost::multi_index::identity;
 using boost::multi_index::member;
 using boost::multi_index::const_mem_fun;
 using boost::multi_index::tag;
-using boost::hash;
+using boost::hash;*/
 
 namespace QParser
 {
@@ -305,7 +306,7 @@ namespace QParser
       INLINE TokenName(std::string name, OSid id) : name(name), id(id) {}
     };
 
-    typedef multi_index_container
+    /*typedef multi_index_container
     <
       TokenName,
       indexed_by
@@ -313,24 +314,27 @@ namespace QParser
         hashed_unique< tag<std::string>, member<TokenName, std::string, &TokenName::name> >,
         ordered_unique< tag<OSid>, member<TokenName, OSid, &TokenName::id> >
       >
-    > TokenNameSet;
+    > TokenNameSet2;
 
-    TokenNameSet  tokenNames[3];
-    TokenNameSet& rawTokenNames;
-    TokenNameSet& nilTokenNames;
-    TokenNameSet& lexTokenNames;
+    TokenNameSet2  tokenNames[3];
+    TokenNameSet2& rawTokenNames;
+    TokenNameSet2& nilTokenNames;
+    TokenNameSet2& lexTokenNames;*/
 
-    TokenNameSet allTokenNames;
+    typedef hash_map<const string, OSid, hash<const string> > TokenNameSet;
+            
+    TokenNameSet allTerminalNames;
 
     // Token construction set (used to retain order during token insertion)
-    typedef multi_index_container
+    /*typedef multi_index_container
     <
       Token,
       //indexed_by< hashed_unique< member<Token, char*, &Token::value> > >
       indexed_by< sequenced<> >
     > TokenConstructionSet;
-
-    TokenConstructionSet constructionTokens; // tokens array used during construction (Indexed by token value)
+    
+    //todo: vector<Token>
+    TokenConstructionSet constructionTokens; // tokens array used during construction (Indexed by token value)*/
 
     //// Productions
     struct Production

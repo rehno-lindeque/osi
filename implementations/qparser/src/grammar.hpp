@@ -17,9 +17,9 @@ namespace QParser
   Grammar::Grammar() : nextTerminal(ID_FIRST_TERMINAL),
                        nextNonterminal(0),
                        //global(false),
-                       rawTokenNames(tokenNames[RAW_TOKEN]),
-                       nilTokenNames(tokenNames[NIL_TOKEN]),
-                       lexTokenNames(tokenNames[LEX_TOKEN]),
+                       //rawTokenNames(tokenNames[RAW_TOKEN]),
+                       //nilTokenNames(tokenNames[NIL_TOKEN]),
+                       //lexTokenNames(tokenNames[LEX_TOKEN]),
                        activeSubTokenType((SubTokenType)0),
                        activeProduction(null),
                        startSymbol(-1),
@@ -54,15 +54,30 @@ namespace QParser
     for(uint c = 0; c < valueLength; ++c)
       tokenCharacters[bufferLength + c] = value[c];
 
-    // Determine token id
-    const OSid id = getNextTerminalId();
-
-    // Add a temporary token to the temporary construction set
-    constructionTokens.push_back(Token(id, bufferLength, valueLength));
-
     // Add token name to the names indexing table
-    activeTokenNames.insert(TokenName(tokenName, id));
-    allTokenNames.insert(TokenName(tokenName, id));
+    OSid id = -1;
+    {
+      // (Try to find an existing token with this name)
+      TokenNameSet::iterator i = allTerminalNames.find(tokenName);
+      if(i == allTerminalNames.end())
+      {
+        // Create a token id for this terminal
+        id = getNextTerminalId();
+        allTerminalNames[id] = tokenName;
+        terminalIds[tokenName] = id;
+        
+        // Add to the active token index (lex: nil / raw / word)
+        activeTokenNames.insert(TokenName(tokenName, id));
+        
+        // Add a temporary token to the temporary construction set    
+        constructionTokens.push_back(Token(id, bufferLength, valueLength));
+      }
+      else
+      {
+        // Get existing production id
+        id = i->second;
+      }
+    }
 
     return id;
   }
@@ -867,7 +882,7 @@ namespace QParser
 
   OSid Grammar::getTokenId(const_cstring tokenName) const
   {
-    // todo: NB!! This seriously need to be fixed to use either STL or boost, but not both...
+    // todo: NB!! This seriously needs to be fixed to use either STL or boost, but not both...
     //try
     {
       // Try to find a terminal token with this name
@@ -886,12 +901,10 @@ namespace QParser
         {
           // Forward declaration of nonterminal token
           // Note: This id is checked at the end of the construction to determine whether it was really declared
-          //OSid id = declareProduction(tokenName);
-          //productionToken(id);
+
           return OSid(-1);
         }
 
-        //productionToken(i->second);
         return i->second;
       }
     }

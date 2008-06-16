@@ -2,7 +2,7 @@
 //
 //    API.CPP
 //
-//    Copyright © 2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2008, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */
@@ -30,7 +30,7 @@
 // Xorg
 //#include <X11/extensions/xf86vmode.h>
 
-// STL headers
+// STL
 #include <vector>
 
 /*                              COMPILER MACROS                             */

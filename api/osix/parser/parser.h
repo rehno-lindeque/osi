@@ -106,6 +106,10 @@ OSobject OSI_API_C_CALL parseFile(const OSchar* fileName);
 OSobject OSI_API_C_CALL parseString(const OSchar* stringBuffer);
 OSid OSI_API_C_CALL getParseTokens(OSobject parseResult);
 
+//OSid OSI_API_C_CALL beginParseTokens(OSobject parseResult);
+//OSid OSI_API_C_CALL endParseTokens(OSobject parseResult);
+//void getNextToken(OSid *tokenIterator);
+
 /* precedence */
 void OSI_API_C_CALL tokenNamePrecedence(const OSchar* token1Name, const OSchar* token2Name);
 void OSI_API_C_CALL tokenPrecedence(OSid token1, OSid token2);

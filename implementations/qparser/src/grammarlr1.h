@@ -57,11 +57,11 @@ namespace QParser
         LRACTION_GOTO                 = 1,
         LRACTION_REDUCE               = 2,
         LRACTION_ACCEPT               = 3,
-        LRACTION_ERROR                = 4
+        LRACTION_ERROR                = 4,
 
-	LRACTION_FLAG_SILENT          = 32,
-	LRACTION_FLAG_IDREF           = 64,
-	LRACTION_FLAG_IDDECL          = 128,
+        LRACTION_FLAG_SILENT          = 32,
+        LRACTION_FLAG_IDREF           = 64,
+        LRACTION_FLAG_IDDECL          = 128,
       } action;
       //uint8 action;
       //char param1;

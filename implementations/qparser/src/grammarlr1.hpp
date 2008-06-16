@@ -157,7 +157,7 @@ namespace QParser
 
 #ifdef _DEBUG //TEMPORARY
               errorStream << "\treduce(" << stateIndex.first << ", " << getTokenName(productions[parseElement.param].second) << ")";
-              if((parseElement.action & BinaryIndexElement::LRACTION_REDUCE_SILENT) == BinaryIndexElement::LRACTION_REDUCE_SILENT)
+              if (parseElement.action & BinaryIndexElement::LRACTION_FLAG_SILENT)
                 errorStream << " *silent*" << endl;
               //errorStream << endl;
 #endif
@@ -168,7 +168,7 @@ namespace QParser
               //OLDER: matches.push_back(ParseMatch(0, production.symbolsLength, token));
               //OLD: matches.insert(matches.begin() + cMatch, ParseMatch(0, production.symbolsLength, token));
 
-              if((parseElement.action & BinaryIndexElement::LRACTION_REDUCE_SILENT) != BinaryIndexElement::LRACTION_REDUCE_SILENT)
+              if(!(parseElement.action & BinaryIndexElement::LRACTION_FLAG_SILENT))
               {
                 matches.insert(matches.begin() + cMatch, ParseMatch(0, production.symbolsLength, token));
 
@@ -592,8 +592,8 @@ namespace QParser
             //if(production.symbolsLength == 1 && !isTerminal(production.symbols[0].id))
              element.action = isSilent(production)? BinaryIndexElement::LRACTION_REDUCE_SILENT : BinaryIndexElement::LRACTION_REDUCE;
           }*/
-          if(isSilient(production))
-            element.action |= LRACTION_SILENT;
+          if(isSilent(production))
+            element.action = static_cast<BinaryIndexElement::Action>(element.action | BinaryIndexElement::LRACTION_FLAG_SILENT);
 
           element.param = item.productionIndex;
           element.largerIndex = 0;
