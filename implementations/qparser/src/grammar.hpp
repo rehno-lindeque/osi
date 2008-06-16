@@ -16,17 +16,15 @@ namespace QParser
 
   Grammar::Grammar() : nextTerminal(ID_FIRST_TERMINAL),
                        nextNonterminal(0),
-                       //global(false),
-                       //rawTokenNames(tokenNames[RAW_TOKEN]),
-                       //nilTokenNames(tokenNames[NIL_TOKEN]),
-                       //lexTokenNames(tokenNames[LEX_TOKEN]),
                        activeSubTokenType((SubTokenType)0),
                        activeProduction(null),
                        startSymbol(-1),
                        errorStream(new stdio_filebuf<char>(stdout, std::ios::out)),
                        warnStream(new stdio_filebuf<char>(stdout, std::ios::out)),
                        infoStream(new stdio_filebuf<char>(stdout, std::ios::out))
-  { memset(tokenRootIndices, 0, sizeof(tokenRootIndices)); }
+  { 
+    memset(tokenRootIndices, 0, sizeof(tokenRootIndices)); 
+  }
 
   Grammar::~Grammar()
   {
@@ -42,9 +40,8 @@ namespace QParser
   OSid Grammar::stringToken(const_cstring tokenName, const_cstring value)
   {
     // Initialize variables
-    const uint    valueLength      = (uint)strlen(value) + 1;
     const uint    bufferLength     = (uint)tokenCharacters.size();
-    TokenNameSet& activeTokenNames = tokenNames[activeTokenType];
+    const uint    valueLength      = (uint)strlen(value) + 1;
 
     // Preconditions
     OSI_ASSERT(valueLength > 0);
@@ -54,39 +51,14 @@ namespace QParser
     for(uint c = 0; c < valueLength; ++c)
       tokenCharacters[bufferLength + c] = value[c];
 
-    // Add token name to the names indexing table
-    OSid id = -1;
-    {
-      // (Try to find an existing token with this name)
-      TokenNameSet::iterator i = allTerminalNames.find(tokenName);
-      if(i == allTerminalNames.end())
-      {
-        // Create a token id for this terminal
-        id = getNextTerminalId();
-        allTerminalNames[id] = tokenName;
-        terminalIds[tokenName] = id;
-        
-        // Add to the active token index (lex: nil / raw / word)
-        activeTokenNames.insert(TokenName(tokenName, id));
-        
-        // Add a temporary token to the temporary construction set    
-        constructionTokens.push_back(Token(id, bufferLength, valueLength));
-      }
-      else
-      {
-        // Get existing production id
-        id = i->second;
-      }
-    }
-
-    return id;
+    // Create the terminal token and add it to all the relevant indexes
+    return constructTerminal(tokenName, bufferLength, valueLength);
   }
 
   OSid Grammar::charToken(const_cstring tokenName, char value)
   {
     // Initialize variables
     const uint    bufferLength     = (uint)tokenCharacters.size();
-    TokenNameSet& activeTokenNames = tokenNames[activeTokenType];
 
     // Preconditions
     OSI_ASSERT(value != '\0');
@@ -95,26 +67,9 @@ namespace QParser
     tokenCharacters.resize(bufferLength + 2);
     tokenCharacters[bufferLength] = value;
     tokenCharacters[bufferLength + 1] = '\0';
-
-    // Determine token id
-
-    //note: Changed this so token ids are sequenced rather than
-    //      hashed. Tokens and statements share the same id space, hence a token
-    //      can't have the same id as a statement. Another lookup table had to
-    //      be created for token \ statement names, but this is fine since
-    //      it isn't performance critical.
-
-    //const OSid id = (OSid)hash<const string>()(tokenName);
-    const OSid id = getNextTerminalId();
-
-    // Add a temporary token to the temporary construction set
-    constructionTokens.push_back(Token(id, bufferLength, 2));
-
-    // Add token name to the names indexing table
-    activeTokenNames.insert(TokenName(tokenName, id));
-    allTokenNames.insert(TokenName(tokenName, id));
-
-    return id;
+    
+    // Create the terminal token and add it to all the relevant indexes
+    return constructTerminal(tokenName, bufferLength, 2);
   }
 
   OSid Grammar::boundedToken(const_cstring tokenName, const_cstring leftBoundingValue, const_cstring rightBoundingValue, OSIX::PARSER_BOUNDED_LINETYPE lineType)
@@ -122,7 +77,6 @@ namespace QParser
     const uint    leftValueLength  = (uint)strlen(leftBoundingValue)  + 1;
     const uint    rightValueLength = (uint)strlen(rightBoundingValue) + 1;
     const uint    bufferLength     = (uint)tokenCharacters.size();
-    TokenNameSet& activeTokenNames = tokenNames[activeTokenType];
 
     // Preconditions
     OSI_ASSERT(leftValueLength > 0);
@@ -138,25 +92,15 @@ namespace QParser
     for(uint c = 0; c < rightValueLength; ++c)
       tokenCharacters[bufferLength + 1 + leftValueLength + c] = rightBoundingValue[c];
 
-    // Determine token id
-    //const OSid id = (OSid)hash<const string>()(tokenName);
-    const OSid id = getNextTerminalId();
-
-    // Add a temporary token to the temporary construction set
-    constructionTokens.push_back(Token(id, bufferLength, 1 + leftValueLength + rightValueLength));
-
-    // Add to token ids (temporarily until the Token is moved to nilTokens, rawTokens or lexTokens)
-    activeTokenNames.insert(TokenName(tokenName, id));
-    allTokenNames.insert(TokenName(tokenName, id));
-
-    return id;
+    // Create the terminal token and add it to all the relevant indexes
+    return constructTerminal(tokenName, bufferLength, 1 + leftValueLength + rightValueLength);
   }
 
   void Grammar::constructTokens()
   {
     uint&             nTokens                      = Grammar::nTokens[activeTokenType + activeSubTokenType];
     Token*&           activeTokens                 = tokens[activeTokenType + activeSubTokenType];
-    TokenNameSet&     activeTokenNames             = tokenNames[activeTokenType];
+    //TokenNameSet&     activeTokenNames             = tokenNames[activeTokenType];
     TokenRootIndex(&  activeTokenRootIndices)[256] = tokenRootIndices[activeTokenType + activeSubTokenType];
 
     //// Consolidate tokens (Copy tokens to a fixed array & construct a root character index)
@@ -220,30 +164,13 @@ namespace QParser
   // Productions
   OSid Grammar::beginProduction(const_cstring productionName)
   {
-    OSid id;
-
-    // Try to find an existing production producing this
-    {
-      hash_map< const string, OSid, hash<const string> >::iterator i = productionIds.find(productionName);
-      if(i == productionIds.end()) //todo: correct? probably for hashmaps yes...
-      {
-        // Create a new production id for this production
-        id = getNextNonterminalId();
-        productionNames[id] = productionName;
-        productionIds[productionName] = id;
-      }
-      else
-      {
-        // Get existing production id
-        id = i->second;
-      }
-    }
+    // Construct a nonterminal token for this production (if none exists)
+    OSid id = constructNonterminal(productionName);    
 
     // Get a production set
     ProductionSet *productionSet = null;
     {
       map<OSid, ProductionSet*>::iterator i = productionSets.find(id);
-      //OLD: if(i == productionSets.end())
       if(i == productionSets.end() || i->first != id)
       {
         productionSet = new ProductionSet();
@@ -340,14 +267,6 @@ namespace QParser
   OSid Grammar::productionIdentifierRef(const_cstring typeName)
   {
     hash_set<const char*>::iterator i = identifierTypes.find(typeName);
-    /*OLD: if(i == identifierTypes.end())
-      return -1;*/
-    /*OLD:
-    OSid typeHash;
-    if(i != identifierTypes.end())
-      typeHash = i->second;
-    else
-      typeHash = identifierTypes.insert(typeName).second;*/
     OSid typeHash = identifierTypes.hash_funct()(typeName);
     activeProductionSymbols.push_back(Production::Symbol(ID_IDENTIFIER_REF, typeHash));
     return typeHash;
@@ -355,16 +274,16 @@ namespace QParser
 
   OSid Grammar::declareProduction(const_cstring productionName)
   {
-    OSid id;
+    OSid id = -1;
 
-    // Try to find existing an production producing this
-    hash_map< const string, OSid, hash<const string> >::iterator i = productionIds.find(productionName);
-    if(i == productionIds.end()) // todo: correct?
+    // Try to find existing an production producing this token name
+    TokenIds::const_iterator i = nonterminalIds.find(productionName);
+    if(i == nonterminalIds.end())
     {
       // Create a new production id for this production
       id = getNextNonterminalId();
-      productionNames[id] = productionName;
-      productionIds[productionName] = id;
+      nonterminalNames[id] = productionName;
+      nonterminalIds[productionName] = id;
     }
     else
     {
@@ -423,6 +342,53 @@ namespace QParser
   {
     OSid id = nextNonterminal;
     nextNonterminal += 2;
+    return id;
+  }
+  
+  OSid Grammar::constructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength)
+  {
+    OSid id = -1;
+    
+    // Try to find an existing terminal token with this name
+    TokenIds::const_iterator i = terminalIds.find(tokenName);
+    if(i == terminalIds.end())
+    {
+      // Create a token id for this terminal
+      id = getNextTerminalId();
+      terminalNames[id] = tokenName;
+      terminalIds[tokenName] = id;
+
+      // Add a temporary token to the temporary construction set    
+      constructionTokens.push_back(Token(id, bufferLength, valueLength));
+    }
+    else
+    {
+      // Get existing terminal id
+      id = i->second;
+    }
+
+    return id;
+  }
+  
+  OSid Grammar::constructNonterminal(const_cstring tokenName)
+  {
+    OSid id = -1;
+    
+    // Try to find an existing nonterminal token with this name
+    TokenIds::const_iterator i = nonterminalIds.find(tokenName);
+    if(i == nonterminalIds.end())
+    {
+      // Create a new token id for this nonterminal
+      id = getNextNonterminalId();
+      nonterminalNames[id] = tokenName;
+      nonterminalIds[tokenName] = id;
+    }
+    else
+    {
+      // Get existing production id
+      id = i->second;
+    }
+    
     return id;
   }
 
@@ -623,7 +589,6 @@ namespace QParser
 
     // Lookup token root character
     const TokenRootIndex& tokenRootIndex = tokenRootIndices[rootCharacter];
-    //const TokenRootIndex& tokenRootIndex = lexSymbolRootIndices[rootCharacter];
 
     // Parse possible characters
     for(uint cToken = 0; cToken < tokenRootIndex.length; ++cToken)
@@ -830,19 +795,19 @@ namespace QParser
         }
       }
 
+      // todo: review this - is this a valid try-catch statement? (i.e. does map throw an exception?)
       try
       {
-        const TokenNameSet::index<OSid>::type& IdIndex    = allTokenNames.get<OSid>();
-        const TokenNameSet::index<OSid>::type::iterator i = IdIndex.find(tokenId);
-        return i->name;
+        return terminalNames.find(tokenId)->second;
       }
       catch(...) { return tokenUnknownTerminal; }
     }
     else
     {
+      // todo: review this - is this a valid try-catch statement? (i.e. does map throw an exception?)
       try
       {
-        return productionNames.find(tokenId)->second;
+        return nonterminalNames.find(tokenId)->second;
       }
       catch(...) { return tokenUnknownNonterminal; }
     }
@@ -852,9 +817,10 @@ namespace QParser
   {
     static const string productionNotFound("[Production Not Found]");
 
+    // todo: Review this - is this a valid try-catch block?
     try
     {
-      return productionNames.find(productionId)->second;
+      return nonterminalNames.find(productionId)->second;
     }
     catch(...)
     {
@@ -865,7 +831,6 @@ namespace QParser
   const Grammar::ProductionSet* Grammar::getProductionSet(OSid nonterminal) const
   {
     map<OSid, ProductionSet*>::const_iterator i = productionSets.find(nonterminal);
-    //OLD: if(i == productionSets.end())
     if(i == productionSets.end() || i->first != nonterminal)
       return null;
     return i->second;
@@ -874,7 +839,6 @@ namespace QParser
   Grammar::ProductionSet* Grammar::getProductionSet(OSid nonterminal)
   {
     map<OSid, ProductionSet*>::iterator i = productionSets.find(nonterminal);
-    //OLD: if(i == productionSets.end())
     if(i == productionSets.end() || i->first != nonterminal)
       return null;
     return i->second;
@@ -882,44 +846,17 @@ namespace QParser
 
   OSid Grammar::getTokenId(const_cstring tokenName) const
   {
-    // todo: NB!! This seriously needs to be fixed to use either STL or boost, but not both...
-    //try
-    {
-      // Try to find a terminal token with this name
-      const TokenNameSet::index<std::string>::type& stringIndex = allTokenNames.get<std::string>();
-      const TokenNameSet::index<std::string>::type::iterator i  = stringIndex.find(tokenName);
-      if(i != stringIndex.end())
-      {
-        //productionToken(i->id);
-        return i->id;
-      }
-      else
-      {
-        // Try to find a nonterminal token with this name
-        hash_map< const string, OSid, hash<const string> >::const_iterator i = productionIds.find(tokenName);
-        if(i == productionIds.end()) // todo: is this correct???
-        {
-          // Forward declaration of nonterminal token
-          // Note: This id is checked at the end of the construction to determine whether it was really declared
-
-          return OSid(-1);
-        }
-
-        return i->second;
-      }
-    }
-    /*catch(...)
-    {
-      // Try to find a nonterminal token with this name
-      hash_map< string, OSid, hash<string> >::iterator i = productionIds.find(tokenName);
-      if(i == productionIds.end() || i->first != (string)tokenName) // todo: is this correct???
-      {
-        return (OSid)-1;
-      }
-
-      productionToken(i->second);
+    // Try to find a terminal token with this name
+    TokenIds::const_iterator i = terminalIds.find(tokenName);
+    if(i != terminalIds.end())
       return i->second;
-    }*/
+
+    // Try to find a nonterminal token with this name
+    i = nonterminalIds.find(tokenName);
+    if(i != nonterminalIds.end())
+      return i->second;
+    
+    return OSid(-1);  // no matching token id found
   }
 
 #ifdef _DEBUG

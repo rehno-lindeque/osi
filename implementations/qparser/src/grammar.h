@@ -95,27 +95,6 @@ using STDEXT_NAMESPACE::hash_map;
 using STDEXT_NAMESPACE::hash_set;
 using STDEXT_NAMESPACE::stdio_filebuf;
 
-// Boost
-/*#define BOOST_MULTI_INDEX_DISABLE_SERIALIZATION // Disable serialization: It's not necessary and it's not always available
-
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/multi_index/mem_fun.hpp>
-
-using boost::multi_index::multi_index_container;
-using boost::multi_index::indexed_by;
-using boost::multi_index::hashed_unique;
-using boost::multi_index::ordered_unique;
-using boost::multi_index::sequenced;
-using boost::multi_index::identity;
-using boost::multi_index::member;
-using boost::multi_index::const_mem_fun;
-using boost::multi_index::tag;
-using boost::hash;*/
-
 namespace QParser
 {
   struct ParseMatch : public OSIX::ParseMatch
@@ -171,10 +150,6 @@ namespace QParser
     INLINE OSid beginProduction(const_cstring productionName);
     INLINE void endProduction();
 
-    //INLINE void productionNonterminal(OSid nonterminal);
-    //INLINE void productionTerminal(OSid terminal);
-    //INLINE void productionBeginScope();
-    //INLINE void productionEndScope();
     INLINE void productionToken(OSid token);
     INLINE OSid productionToken(const_cstring tokenName);
     INLINE OSid productionIdentifierDecl(const_cstring typeName);
@@ -241,15 +216,18 @@ namespace QParser
 
     ////// Grammar construction
     //// General
+    // todo: The different hash_map implementations are inconsistent. Try to find some standard way for defining one.
+    //typedef hash_map<const string, OSid, hash<const string> > TokenIds; // Token name -> id
+    typedef hash_map<const_cstring, OSid, hash<const_cstring> > TokenIds; // Token name -> id
+    typedef map<OSid, string> TokenNames;                                 // Token id -> name
+    
     OSid nextTerminal;      // Terminal ids are always odd     (lexical tokens)
     OSid nextNonterminal;   // Nonterminal ids are always even (production tokens)
-
-    //bool global;
 
     //// Identifiers
     hash_set<const char*> identifierTypes;
 
-    //// Lexical Tokens
+    //// Lexical tokens (terminals)
     // Token value sets (parse data)
     struct Token
     {
@@ -297,46 +275,13 @@ namespace QParser
       };
     };
 
-    // Token Name (todo: perhaps change this to ElementName and use set for all tokens + statements)
-    struct TokenName
-    {
-      std::string name;
-      OSid id;
+    TokenNames terminalNames;
+    TokenIds terminalIds;
 
-      INLINE TokenName(std::string name, OSid id) : name(name), id(id) {}
-    };
+    typedef vector<Token> TokenConstructionSet;
+    TokenConstructionSet constructionTokens; // tokens array used during construction (Indexed by token value)
 
-    /*typedef multi_index_container
-    <
-      TokenName,
-      indexed_by
-      <
-        hashed_unique< tag<std::string>, member<TokenName, std::string, &TokenName::name> >,
-        ordered_unique< tag<OSid>, member<TokenName, OSid, &TokenName::id> >
-      >
-    > TokenNameSet2;
-
-    TokenNameSet2  tokenNames[3];
-    TokenNameSet2& rawTokenNames;
-    TokenNameSet2& nilTokenNames;
-    TokenNameSet2& lexTokenNames;*/
-
-    typedef hash_map<const string, OSid, hash<const string> > TokenNameSet;
-            
-    TokenNameSet allTerminalNames;
-
-    // Token construction set (used to retain order during token insertion)
-    /*typedef multi_index_container
-    <
-      Token,
-      //indexed_by< hashed_unique< member<Token, char*, &Token::value> > >
-      indexed_by< sequenced<> >
-    > TokenConstructionSet;
-    
-    //todo: vector<Token>
-    TokenConstructionSet constructionTokens; // tokens array used during construction (Indexed by token value)*/
-
-    //// Productions
+    //// Productions (non-terminals)
     struct Production
     {
       // Symbols
@@ -376,6 +321,8 @@ namespace QParser
 
     Production*                activeProduction;
     vector<Production::Symbol> activeProductionSymbols;
+    TokenNames nonterminalNames;
+    TokenIds nonterminalIds;
 
     multimap<OSid, OSid> precedenceMap;
     set<OSid> silentTerminals;
@@ -396,9 +343,7 @@ namespace QParser
     INLINE bool matchWordToken(const Token& token, const_cstring inputPosition) const;
 
     //// Grammar construction operations
-    map<OSid, ProductionSet*>               productionSets;
-    map<OSid, string>                       productionNames;
-    hash_map<const string, OSid, hash<const string> > productionIds;
+    map<OSid, ProductionSet*>               productionSets; // todo: rename to something like ProductionUnions / ProductionGroups
     vector< pair<Production, OSid> >        productions;
 
     // Construct an LL(1) linear binary indexed parse table
@@ -409,6 +354,12 @@ namespace QParser
 
     // Get the next available (even numbered) nonterminal id
     INLINE OSid getNextNonterminalId();
+    
+    // Construct a terminal token (and add it to the list of tokens being processed)
+    INLINE OSid constructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength);
+    
+    // Construct a non-terminal token
+    INLINE OSid constructNonterminal(const_cstring tokenName);
 
     // Test whether id is a token id (i.e. not a production)
     INLINE bool isTerminal(OSid id) const;
