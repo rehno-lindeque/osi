@@ -17,8 +17,8 @@ user_scons_dirs   = ['.',                                               # Parser
 
 user_lib_dirs     = ['../../../../implementations/qparser/lib',         # OpenParser
                      '../../../../openparser/parsergrammarloader/lib']  # OpenParser grammar loader library
-user_libs         = ['qparsercd',                                       # OpenParser (C debug)
-                     'parsergrammarloadercd']                           # OpenParser grammar loader (C debug)
+user_libs         = ['qparserd',                                        # OpenParser (debug)
+                     'parsergrammarloaderd']                            # OpenParser grammar loader (debug)
 user_posix_libs   = []
 user_win32_libs   = []
 

@@ -9,6 +9,9 @@
 /*
     DESCRIPTION:
       OpenParser unit test
+ 
+    TODO:
+      This needs a C port for testing the C interface
 */
 /*                                  INCLUDES                                */
 
@@ -20,10 +23,13 @@
 #include <base/common/types.h>
 
 /* OpenParser */
-#include <osix/parser/parser.h>
-#include <osi/os.hpp>
-#include <osix/parser/parserdbg.hpp>
-#include <parsergrammarloader.h>
+#if defined(__cplusplus)
+# include <parsergrammarloader.hpp>
+# include <osix/parser/parserdbg.hpp>
+#else
+# include <osix/parser/parser.h>
+# include <parsergrammarloader.h>
+#endif
 
 /*                              COMPILER MACROS                             */
 #pragma warning(push)
@@ -33,8 +39,7 @@
 class ParserTest
 {
 protected:
-  //OSIX::Parser* parser;
-  //void* parser;
+  OSIX::Parser* parser;
   OSIX::ParserDbg* parserDbg;
 
   void constructLR1Grammar()
@@ -107,7 +112,8 @@ protected:
       "  S\' { S }"
       "}";
 
-    parserConstructGrammar(grammarStr, sizeof(grammarStr));
+    using namespace Parser;
+    GrammarLoader::constructGrammar(*parser, grammarStr, sizeof(grammarStr), null, 0);
   }
 
 public:
@@ -115,16 +121,21 @@ public:
   virtual void init()
   {
     // Create parser
+#if defined(__cplusplus)    
+    parser = OSIX::parserInit();
+    parserDbg = (OSIX::ParserDbg*) parser->debugInit();
+#else
     parserInit();
-    //parser = OSIX::parserInit();
     parserDbg = (OSIX::ParserDbg*) debugInit();
+#endif
+    
 
     //parser->setOutputStream(stdout);
 
     // Construct grammar
     constructLR1Grammar();
 
-#ifdef _DEBUG
+#if defined(__cplusplus) && defined(_DEBUG)
     parserDbg->debugOutputTokens();
     parserDbg->debugOutputProductions();
     parserDbg->debugOutputGrammar();
@@ -132,11 +143,16 @@ public:
 
     //const char* parseString = "x = ? *x";
     const char* parseStr = "x = *x";
+#if defined(__cplusplus)
+    OSobject parseResult = parser->parseString(parseStr);
+#else
     OSobject parseResult = parseString(parseStr);
-
+#endif
+    
+#if defined(__cplusplus)
     parserDbg->debugOutputParseResult(parseResult);
-
     //parser->delObject(parseResult);
+#endif
   }
 
   virtual bool main()
