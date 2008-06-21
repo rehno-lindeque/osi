@@ -132,7 +132,7 @@ namespace QParser
 
           // Copy construction token into active tokens array
           // todo: this is rather ugly and inefficient... we should rewrite this using some indexing library
-          TokenRootIndex& tokenRootIndex = activeTokenRootIndices[rootCharacter];
+          TokenRootIndex& tokenRootIndex = activeTokenRootIndices[uint(rootCharacter)];
           if(tokenRootIndex.length == 0)
           {
             tokenRootIndex.offset = cToken;
@@ -187,7 +187,7 @@ namespace QParser
     }
 
     // Set as the active production
-    activeProduction = new Production;
+    //old: activeProduction = new Production;
 
     // Add production to set
     //old: productionIds[id] = activeProduction;
@@ -323,7 +323,7 @@ namespace QParser
     {
       if(!getProductionSet(nonterminal))
       {
-        cout << "Error: Token \'" << getTokenName(nonterminal) << "\' was not declared." << endl;
+        cout << "Error: Token "<< nonterminal << "\'" << getTokenName(nonterminal) << "\' was not declared." << endl;
         success = false;
       }
     }
@@ -642,7 +642,7 @@ namespace QParser
     {
       // Test whether remaining characters can contain token boundary strings
       //BUG: if(cInput >= int(inputLength) - (token.valueLength - 3))
-      if(cInput > int(inputLength) - (token.valueLength - 3))
+      if((int) cInput > int(inputLength) - (token.valueLength - 3))
         return false; // no match
 
       // Test whether end of the first boundary string has been reached
@@ -795,21 +795,19 @@ namespace QParser
         }
       }
 
-      // todo: review this - is this a valid try-catch statement? (i.e. does map throw an exception?)
-      try
-      {
-        return terminalNames.find(tokenId)->second;
-      }
-      catch(...) { return tokenUnknownTerminal; }
+      TokenNames::const_iterator i = terminalNames.find(tokenId);
+      if(i != terminalNames.end() && i->first == tokenId)
+        return i->second;
+      
+      return tokenUnknownTerminal;
     }
     else
     {
-      // todo: review this - is this a valid try-catch statement? (i.e. does map throw an exception?)
-      try
-      {
-        return nonterminalNames.find(tokenId)->second;
-      }
-      catch(...) { return tokenUnknownNonterminal; }
+      TokenNames::const_iterator i = nonterminalNames.find(tokenId);
+      if(i != nonterminalNames.end() && i->first == tokenId)  
+        return i->second;
+      
+      return tokenUnknownNonterminal;
     }
   }
 
@@ -862,23 +860,27 @@ namespace QParser
 #ifdef _DEBUG
   void Grammar::debugOutputTokens() const
   {
-    const const_cstring tokenTypeHeadings[] = { "Raw Tokens", "Nil Tokens", "Lex Tokens" };
+    //todo: const const_cstring tokenTypeHeadings[] = { "Raw Tokens", "Nil Tokens", "Lex Tokens" };
 
     cout << endl
          << "Tokens" << endl
          << "------" << endl;
 
+    /* OLD: This should be replaced
     for(uint cTokenType = 0; cTokenType < 3; ++cTokenType)
     {
       // Output token type heading
       cout << endl << tokenTypeHeadings[cTokenType] << ':' << endl;
 
       // Output tokens
-      const TokenNameSet& tokenNames = Grammar::tokenNames[cTokenType];
+      const TokenNames& tokenNames = Grammar::[cTokenType];
 
-      for(TokenNameSet::iterator i = tokenNames.begin(); i != tokenNames.end(); ++i)
+      for(TokenNames::iterator i = tokenNames.begin(); i != tokenNames.end(); ++i)
         cout << ' ' << i->name << endl;
-    }
+    }*/
+    
+    for(TokenNames::const_iterator i = terminalNames.begin(); i != terminalNames.end(); ++i)
+        cout << ' ' << i->second << endl;
   }
 
   void Grammar::debugOutputProduction(const Production& production) const

@@ -788,7 +788,7 @@ namespace QParser
 
       // Resort elements using binary ordering
       vector<BinaryIndexElement> elementsSortedBinary;
-      uint index;
+      //OLD: uint index;
 
       struct SortBin
       { SortBin(vector<BinaryIndexElement>& elements, map<OSid, BinaryIndexElement>::iterator iBegin, map<OSid, BinaryIndexElement>::iterator iEnd, int size)

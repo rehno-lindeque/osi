@@ -216,10 +216,13 @@ namespace QParser
 
     ////// Grammar construction
     //// General
+    struct StlStringHash
+    { INLINE size_t operator()(const string& arg) const { return hash<const char*>()(arg.c_str()); }  };
+    
     // todo: The different hash_map implementations are inconsistent. Try to find some standard way for defining one.
-    //typedef hash_map<const string, OSid, hash<const string> > TokenIds; // Token name -> id
-    typedef hash_map<const_cstring, OSid, hash<const_cstring> > TokenIds; // Token name -> id
-    typedef map<OSid, string> TokenNames;                                 // Token id -> name
+    typedef hash_map<const string, OSid, StlStringHash> TokenIds; // Token name -> id
+    //typedef hash_map<const_cstring, OSid, hash<const_cstring> > TokenIds; // Token name -> id
+    typedef map<OSid, string> TokenNames;                            // Token id -> name
     
     OSid nextTerminal;      // Terminal ids are always odd     (lexical tokens)
     OSid nextNonterminal;   // Nonterminal ids are always even (production tokens)
