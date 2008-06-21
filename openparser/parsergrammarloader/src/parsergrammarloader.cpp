@@ -15,9 +15,7 @@
 /*                                 INCLUDES                                 */
 #if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
 # include "parsergrammarloader.hpp"
-using namespace OSIX;
-using namespace ::Parser;
-using namespace GrammarLoader;
+  using namespace OSIX;
 #else
 # include "parsergrammarloader.h"
 #endif
@@ -681,6 +679,8 @@ bool parsePrecedence()
 }
 
 #if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+namespace Parser {
+namespace GrammarLoader {
 void constructGrammar(OSIX::Parser &parser, const OSchar* buffer, OSuint bufferSize, OSid* ids, OSuint idsBufferSize)
 {
   ::buffer = buffer;
@@ -705,6 +705,7 @@ void constructGrammar(OSIX::Parser &parser, const OSchar* buffer, OSuint bufferS
   }
   parser.endGrammar();
 }
+}}
 #else
 void parserConstructGrammar(const OSchar* buffer, OSuint bufferSize, OSid* ids, OSuint idsBufferSize)
 {

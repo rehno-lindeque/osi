@@ -51,8 +51,6 @@ else:
   else:
     definitions.append('OSI_CPP_STATIC_BUILD')
 
-target = target + 'c'
-
 if ARGUMENTS.get('debug', 0):
   env.Append(CCFLAGS = user_debugflag)
   target = target + 'd'
