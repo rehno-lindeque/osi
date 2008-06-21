@@ -39,17 +39,17 @@ verbose = 0
 if '-Q' not in sys.argv:
   verbose = 1
 
-#if ARGUMENTS.get('targetlang', 0) == 'c':
-#  target = target + 'c'
-#  if ARGUMENTS.get('build', 0) == 'dynamic':
-#    definitions.append('OSI_C_DYNAMIC_BUILD')
-#  else:
-#    definitions.append('OSI_C_STATIC_BUILD')
-#else:
-#  if ARGUMENTS.get('build', 0) == 'dynamic':
-#    definitions.append('OSI_CPP_DYNAMIC_BUILD')
-#  else:
-#    definitions.append('OSI_CPP_STATIC_BUILD')
+if ARGUMENTS.get('targetlang', 0) == 'c':
+  target = target + 'c'
+  if ARGUMENTS.get('build', 0) == 'dynamic':
+    definitions.append('OSI_C_DYNAMIC_BUILD')
+  else:
+    definitions.append('OSI_C_STATIC_BUILD')
+else:
+  if ARGUMENTS.get('build', 0) == 'dynamic':
+    definitions.append('OSI_CPP_DYNAMIC_BUILD')
+  else:
+    definitions.append('OSI_CPP_STATIC_BUILD')
 
 target = target + 'c'
 

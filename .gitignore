@@ -7,13 +7,17 @@
 ##############################################################################
 
 # Ignore any build directories
-build
+build/
 
 # Ignore any lib directories
-lib
+lib/
 
 # Ignore any bin directories
-bin
+bin/
+
+# Ignore build files
+*.a               # static library files
+*.o               # object files
 
 # Ignore temporary files
 *~
