@@ -129,13 +129,12 @@ namespace QParser
 #ifdef _DEBUG //TEMPORARY
               errorStream << cTable << '\t' << getTokenName(token);
 #endif
-
               // Replace token with production id being reduced to
               token = productions[parseElement.param].second;
-
+              
               // We do an accept action only if the stack is empty. If not the start symbol is recursive which
               // implies that we should reduce until the state index stack is empty.
-              if(parseElement.action == BinaryIndexElement::LRACTION_ACCEPT && stateIndexStack.size() == production.symbolsLength)
+              if((parseElement.action & 7) == BinaryIndexElement::LRACTION_ACCEPT && stateIndexStack.size() == production.symbolsLength)
               {
                 // Insert the root (starting symbol) production match (non-terminal) into the output stream
 #ifdef _DEBUG   //TEMPORARY
@@ -216,7 +215,7 @@ namespace QParser
             break;
         }
 
-        if(parseElement.action == BinaryIndexElement::LRACTION_ACCEPT)
+        if((parseElement.action & 7) == BinaryIndexElement::LRACTION_ACCEPT)
           break;
       }
       else if(token > parseElement.id)

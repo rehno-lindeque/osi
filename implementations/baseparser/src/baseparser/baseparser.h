@@ -77,6 +77,5 @@ namespace BaseParser
 #include "baseparser.hxx"
 
 /*                              COMPILER MACROS                             */
-#pragma warning(pop)
 
 #endif
