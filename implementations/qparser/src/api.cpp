@@ -26,7 +26,7 @@
 #include "api.h"
 
 #ifndef OSI_STATIC_C_BUILD
-#include "api.inl"
+# include "api.inl"
 #endif
 
 /*                                  MACROS                                  */

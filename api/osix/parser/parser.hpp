@@ -93,8 +93,6 @@ namespace OSIX
     OSI_DYNAMIC_METHOD OSid OSI_API_CALL beginProduction(const OSchar* productionName);
     OSI_DYNAMIC_METHOD void OSI_API_CALL endProduction();
 
-    //OSI_DYNAMIC_METHOD void OSI_API_CALL productionProduction(OSid production); // todo: merge production, token, raw to symbol (and do something with identifier to give it "type"?)
-    //OSI_DYNAMIC_METHOD void OSI_API_CALL productionRaw(OSid token);
     OSI_DYNAMIC_METHOD void OSI_API_CALL productionToken(OSid token);
     OSI_DYNAMIC_METHOD OSid OSI_API_CALL productionToken(const OSchar* tokenName);
     OSI_DYNAMIC_METHOD OSid OSI_API_CALL productionIdentifierDecl(const OSchar* typeName);
@@ -109,13 +107,16 @@ namespace OSIX
     /* parse */
     OSI_DYNAMIC_METHOD OSobject OSI_API_CALL parseFile(const OSchar* fileName);
     OSI_DYNAMIC_METHOD OSobject OSI_API_CALL parseString(const OSchar* stringBuffer);
-    OSI_DYNAMIC_METHOD OSid OSI_API_CALL getParseTokens(OSobject parseResult);
+    OSI_DYNAMIC_METHOD OSobject OSI_API_CALL getInputStream(OSobject parseResult);
+    OSI_DYNAMIC_METHOD OSobject OSI_API_CALL getLexStream(OSobject parseResult);
+    OSI_DYNAMIC_METHOD OSobject OSI_API_CALL getParseStream(OSobject parseResult);
 
     /* precedence */
     OSI_DYNAMIC_METHOD void OSI_API_CALL precedence(const OSchar* token1Name, const OSchar* token2Name);
     OSI_DYNAMIC_METHOD void OSI_API_CALL precedence(OSid token1, OSid token2);
 
     /* miscelaneous */
+    OSI_DYNAMIC_METHOD const OSchar* getTokenName(OSid token);
     OSI_DYNAMIC_METHOD void OSI_API_CALL delObject(OSobject object);
 
     /* debug */

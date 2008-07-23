@@ -115,10 +115,12 @@ void OSI_API_C_CALL tokenNamePrecedence(const OSchar* token1Name, const OSchar* 
 void OSI_API_C_CALL tokenPrecedence(OSid token1, OSid token2);
 
 /* miscelaneous */
+const OSchar* OSI_API_C_CALL getTokenName(OSid token);
 void OSI_API_C_CALL delObject(OSobject object);
 
 /* debug */
-void* OSI_API_C_CALL debugInit();
+void* OSI_API_C_CALL debugInit();
+
 void OSI_API_C_CALL parserInit();
 
 #ifdef __cplusplus

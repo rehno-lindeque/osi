@@ -397,6 +397,18 @@ namespace QParser
     return (id & 1) == 1;
   }
 
+  /*bool Grammar::isSilent(const ProductionSet& productionSet) const
+  {
+    for(uint cProduction = 0; cProduction < productionSet.productionsLength; ++cProduction)
+    {
+        const Production& production = productions[productionSet.productionsOffset + cProduction].first;
+        if (production.symbolsLength != 1 || isTerminal(production.symbols[0].id))
+          return false;
+    }
+    
+    return true;
+  }*/
+  
   bool Grammar::isSilent(const Production& production) const
   {
     return production.symbolsLength == 1 && !isTerminal(production.symbols[0].id);
@@ -443,43 +455,49 @@ namespace QParser
     }
 
     //// Parse file data
-    parseResult.inputData   = fileData;
-    parseResult.inputLength = fileStreamLength;
+    parseResult.inputStream.data   = fileData;
+    parseResult.inputStream.length = fileStreamLength;
+    parseResult.inputStream.elementSize = sizeof(char);
 
     // Lexical analysis (Tokenize the character data)
-    lexicalAnalysis(parseResult);
+    parseResult.lexStream.elementSize = sizeof(ParseMatch);
+    lexicalAnalysis(parseResult);    
 
     // Parse
+    parseResult.parseStream.elementSize = sizeof(ParseMatch);
     parse(parseResult);
   }
 
   void Grammar::parseString(const_cstring stringBuffer, ParseResult& parseResult)
   {
     //// Parse file data
-    parseResult.inputData   = stringBuffer;
-    parseResult.inputLength = strlen(stringBuffer);
+    parseResult.inputStream.data       = stringBuffer;
+    parseResult.inputStream.length      = strlen(stringBuffer);
+    parseResult.inputStream.elementSize = sizeof(char);
 
     // Lexical analysis (Tokenize the character data)
+    parseResult.lexStream.elementSize = sizeof(ParseMatch);
     lexicalAnalysis(parseResult);
 
     // Parse
+    parseResult.parseStream.elementSize = sizeof(ParseMatch);
     parse(parseResult);
   }
 
   void Grammar::lexicalAnalysis(ParseResult& parseResult)
   {
     vector<ParseMatch>& tokenMatches         = constructMatches;
-    const_cstring       parsePosition        = parseResult.inputData;
-    const_cstring       lexWordStartPosition = parseResult.inputData;
+    const_cstring       parsePosition        = parseResult.inputStream.data;
+    const_cstring       lexWordStartPosition = parseResult.inputStream.data;
 
-    while(parsePosition < &parseResult.inputData[parseResult.inputLength])
+    while(parsePosition < &parseResult.inputStream.data[parseResult.inputStream.length])
     {
       //bug: const uint remainingLength  = (uint)(&parseResult.inputData[parseResult.inputLength] - parsePosition);
-      const uint remainingLength  = (uint)(&parseResult.inputData[parseResult.inputLength] - parsePosition + 1);
+      const uint remainingLength  = (uint)(&parseResult.inputStream.data[parseResult.inputStream.length] - parsePosition + 1);
 
       // Match raw token, nil token or lex symbol token (symbolic tokens that do not need to be seperated, such as operators)
       ParseMatch tokenSymbolMatch;
-      tokenSymbolMatch.offset = (uint)(parsePosition - parseResult.inputData);
+      tokenSymbolMatch.offset = (uint)(parsePosition - parseResult.inputStream.data);
 
       if(parseSymbolToken(RAW_TOKEN, parsePosition, remainingLength, tokenSymbolMatch))
       {
@@ -487,7 +505,7 @@ namespace QParser
         if(lexWordStartPosition != parsePosition)
         {
           ParseMatch tokenWordMatch;
-          tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputData);
+          tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputStream.data);
           tokenWordMatch.length = (uint8)(parsePosition - lexWordStartPosition);
 
           // Parse word token
@@ -512,7 +530,7 @@ namespace QParser
         if(lexWordStartPosition != parsePosition)
         {
           ParseMatch tokenWordMatch;
-          tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputData);
+          tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputStream.data);
           tokenWordMatch.length = (uint8)(parsePosition - lexWordStartPosition);
 
           // Parse word token
@@ -536,7 +554,7 @@ namespace QParser
         if(lexWordStartPosition != parsePosition)
         {
           ParseMatch tokenWordMatch;
-          tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputData);
+          tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputStream.data);
           tokenWordMatch.length = (uint8)(parsePosition - lexWordStartPosition);
 
           // Parse word token
@@ -566,7 +584,7 @@ namespace QParser
     if(lexWordStartPosition != parsePosition)
     {
       ParseMatch tokenWordMatch;
-      tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputData);
+      tokenWordMatch.offset = (uint16)(lexWordStartPosition - parseResult.inputStream.data);
       tokenWordMatch.length = (uint8)(parsePosition - lexWordStartPosition);
 
       // Parse word token
@@ -576,9 +594,9 @@ namespace QParser
       tokenMatches.push_back(tokenWordMatch);
     }
 
-    parseResult.tokenMatchesLength = (uint)tokenMatches.size();
-    parseResult.tokenMatches = new ParseMatch[parseResult.tokenMatchesLength];
-    memcpy(parseResult.tokenMatches, &tokenMatches[0], sizeof(ParseMatch)*parseResult.tokenMatchesLength);
+    parseResult.lexStream.length = (uint)tokenMatches.size();
+    parseResult.lexStream.data = new ParseMatch[parseResult.lexStream.length];
+    memcpy(parseResult.lexStream.data, &tokenMatches[0], sizeof(ParseMatch)*parseResult.lexStream.length);
   }
 
   bool Grammar::parseSymbolToken(TokenType tokenType, const_cstring inputPosition, uint inputLength, ParseMatch& tokenMatch) const
@@ -810,22 +828,6 @@ namespace QParser
       return tokenUnknownNonterminal;
     }
   }
-
-  const string& Grammar::getProductionName(OSid productionId) const
-  {
-    static const string productionNotFound("[Production Not Found]");
-
-    // todo: Review this - is this a valid try-catch block?
-    try
-    {
-      return nonterminalNames.find(productionId)->second;
-    }
-    catch(...)
-    {
-      return productionNotFound;
-    }
-  }
-
   const Grammar::ProductionSet* Grammar::getProductionSet(OSid nonterminal) const
   {
     map<OSid, ProductionSet*>::const_iterator i = productionSets.find(nonterminal);
@@ -920,12 +922,12 @@ namespace QParser
 
   void Grammar::outputStatementMatch(ParseResult& result, uint& index) const
   {
-    ParseMatch& match = result.matches[index];
+    ParseMatch& match = result.parseStream.data[index];
     if(isTerminal(match.id))
       cout << getTokenName(match.id);
     else
     {
-      cout << getProductionName(match.id) << " { ";
+      cout << getTokenName(match.id) << " { ";
 
       /*OLD:
       for(uint c = match.offset; c < (uint)(match.offset + match.length); ++c)
@@ -953,14 +955,14 @@ namespace QParser
 
     // Output lex tokens
     cout << "Lex tokens:" << endl;
-    for(uint c = 0; c < result.tokenMatchesLength; ++c)
-      cout << getTokenName(result.tokenMatches[c].id) << ' ';
+    for(uint c = 0; c < result.lexStream.length; ++c)
+      cout << getTokenName(result.lexStream.data[c].id) << ' ';
     cout << endl << endl;
 
     // Output global statements
     cout << "Statements:" << endl;
     //for(uint c = 0; c < result.globalMatchesLength; ++c)
-    if(result.matchesLength > 0)
+    if(result.parseStream.length > 0)
     {
       //outputStatementMatch(result, c);
       uint index = 0;
@@ -968,9 +970,9 @@ namespace QParser
       cout << endl << endl;
     }
 
-    for(uint c = 0; c < result.matchesLength; ++c)
+    for(uint c = 0; c < result.parseStream.length; ++c)
     {
-      debugOutputSymbol(result.matches[c].id);
+      debugOutputSymbol(result.parseStream.data[c].id);
       cout << ' ';
     }
     cout << endl;
@@ -979,10 +981,7 @@ namespace QParser
 
   void Grammar::debugOutputSymbol(OSid symbol) const
   {
-    if(isTerminal(symbol))
       cout << getTokenName(symbol);
-    else
-      cout << getProductionName(symbol);
   }
 #endif
 

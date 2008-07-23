@@ -38,7 +38,6 @@
             real values
 
     TODO:
-      + Remove boost dependencies
       + Implement precedence mechanism for shift-reduce collision resolution
       + Add "multi-identifier" merging extension
 */
@@ -172,24 +171,39 @@ namespace QParser
     {
     public:
       // Input data
-      const_cstring inputData;
-      uint        inputLength;
+      struct
+      {
+        uint          length;
+        uint          elementSize;
+        const_cstring data;
+      } inputStream;
 
-      ParseMatch* matches;
-      uint        matchesLength;
-      uint        globalMatchesLength;
+      // Parse matches
+      struct
+      {
+        uint        length;
+        uint        elementSize;
+        ParseMatch* data;
+      } parseStream;
+      uint globalMatchesLength;
 
-      // Token matches
-      ParseMatch* tokenMatches;
-      uint        tokenMatchesLength;
+      // Lexical token matches
+      struct
+      {
+        uint        length;
+        uint        elementSize;
+        ParseMatch* data;
+      } lexStream;
 
-      virtual ~ParseResult() { delete[] matches; delete[] tokenMatches; }
+      virtual ~ParseResult() { delete[] parseStream.data; delete[] lexStream.data; }
     };
 
     virtual void parse(ParseResult& parseResult) = 0;
 
     INLINE void parseFile(const_cstring fileName, ParseResult& parseResult);
     INLINE void parseString(const_cstring stringBuffer, ParseResult& parseResult);
+    
+    INLINE const string& getTokenName(OSid tokenId) const;
 
 #ifdef _DEBUG
     void debugOutputTokens() const;
@@ -294,7 +308,7 @@ namespace QParser
         uint32 param;
 
         FORCE_INLINE Symbol() {}
-        FORCE_INLINE Symbol(OSid id) : id(id) {}
+        FORCE_INLINE Symbol(OSid id) : id(id) , param(0) {}
         FORCE_INLINE Symbol(OSid id, uint32 param) : id(id), param(param) {}
       };
 
@@ -313,13 +327,13 @@ namespace QParser
       // LL(1) attributes
       bool nullable;
       uint8 visitedCount;
-      OSid *firstSet;
-      uint8 firstSetLength;
+      //OSid *firstSet;
+      //uint8 firstSetLength;
       //OSid *followSet;
       //uint8 followSetLength;
-      vector<Production::Symbol> followSet;
+      //vector<Production::Symbol> followSet;
 
-      FORCE_INLINE ProductionSet() : productionsOffset(0), productionsLength(0), nullable(false), visitedCount(0), firstSet(null), firstSetLength(0) /*followSet(null), followSetLength(0)*/ {}
+      FORCE_INLINE ProductionSet() : productionsOffset(0), productionsLength(0), nullable(false), visitedCount(0) /*, firstSet(null), firstSetLength(0) /*followSet(null), followSetLength(0)*/ {}
     };
 
     Production*                activeProduction;
@@ -368,14 +382,13 @@ namespace QParser
     INLINE bool isTerminal(OSid id) const;
 
     // Test whether a production is silent
+    //INLINE bool isSilent(const ProductionSet& productionSet) const;
     INLINE bool isSilent(const Production& production) const;
 
     // Test whether a lexical token is silent
     INLINE bool isSilent(OSid id) const;
 
     //// Accessors
-    INLINE const string& getTokenName(OSid tokenId) const;
-    INLINE const string& getProductionName(OSid productionId) const;
     INLINE const ProductionSet* getProductionSet(OSid nonterminal) const;
     INLINE       ProductionSet* getProductionSet(OSid nonterminal);
     INLINE       OSid getTokenId(const_cstring tokenName) const;

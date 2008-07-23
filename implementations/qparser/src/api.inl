@@ -148,7 +148,6 @@ void OSI_API_CALL OSIX::Parser::productionRaw(OSid token)
 void OSI_API_CALL OSIX::Parser::productionToken(OSid token)
 {
   _this.getActiveObject<QParser::Grammar>()->productionToken(token);
-  //_this.getActiveObject<QParser::Grammar>()->productionTerminal(token);
 }
 
 OSid OSI_API_CALL OSIX::Parser::productionToken(const OSchar* tokenName)
@@ -214,10 +213,22 @@ OSobject OSI_API_CALL OSIX::Parser::parseString(const OSchar* stringBuffer)
   return cast_object(parseResult);
 }
 
-OSid OSI_API_CALL OSIX::Parser::getParseTokens(OSobject parseResult)
+OSobject OSI_API_CALL OSIX::Parser::getInputStream(OSobject parseResult)
 {
-  // todo
-  return 0;
+  QParser::Grammar::ParseResult& resultObject = *reinterpret_cast<QParser::Grammar::ParseResult*>(parseResult);
+  return reinterpret_cast<OSobject>((OSuint32*)&resultObject.inputStream);
+}
+
+OSobject OSI_API_CALL OSIX::Parser::getLexStream(OSobject parseResult)
+{
+  QParser::Grammar::ParseResult& resultObject = *reinterpret_cast<QParser::Grammar::ParseResult*>(parseResult);
+  return reinterpret_cast<OSobject>((OSuint32*)&resultObject.lexStream);
+}
+
+OSobject OSI_API_CALL OSIX::Parser::getParseStream(OSobject parseResult)
+{
+  QParser::Grammar::ParseResult& resultObject = *reinterpret_cast<QParser::Grammar::ParseResult*>(parseResult);
+  return reinterpret_cast<OSobject>((OSuint32*)&resultObject.parseStream);
 }
 
 void OSI_API_CALL OSIX::Parser::precedence(const OSchar* token1Name, const OSchar* token2Name)
@@ -230,6 +241,12 @@ void OSI_API_CALL OSIX::Parser::precedence(OSid token1, OSid token2)
 {
   QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
   grammarObject->precedence(token1, token2);
+}
+
+const OSchar* OSI_API_CALL OSIX::Parser::getTokenName(OSid token)
+{
+  QParser::Grammar* grammarObject = _this.grammar;
+  return grammarObject->getTokenName(token).c_str();
 }
 
 void OSI_API_CALL OSIX::Parser::delObject(OSobject object)
@@ -249,7 +266,7 @@ void* OSI_API_CALL OSIX::Parser::debugInit()
 #ifdef _DEBUG
   void OSI_API_CALL OSIX::ParserDbg::debugOutputTokens()
   {
-    QParser::Grammar* grammarObject = ((QParser::Parser::ParserDbg*)this)->getParser().grammar;
+    QParser::Grammar* grammarObject = static_cast<QParser::Parser::ParserDbg*>(this)->getParser().grammar;
     grammarObject->debugOutputTokens();
   }
 
@@ -275,7 +292,7 @@ void* OSI_API_CALL OSIX::Parser::debugInit()
 
 OSIX::Parser* OSI_API_CALL OSIX::parserInit()
 {
-  return (OSIX::Parser*)new QParser::Parser();
+  return static_cast<OSIX::Parser*>(new QParser::Parser());
 };
 
 #endif

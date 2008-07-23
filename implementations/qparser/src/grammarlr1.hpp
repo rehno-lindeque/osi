@@ -46,7 +46,7 @@ namespace QParser
 
     while(true)
     {
-      token = (cToken < parseResult.tokenMatchesLength)? parseResult.tokenMatches[cToken].id : ID_SPECIAL;
+      token = (cToken < parseResult.lexStream.length)? parseResult.lexStream.data[cToken].id : ID_SPECIAL;
 
     skipTokenInitialization:
 
@@ -232,15 +232,14 @@ namespace QParser
 
     // Copy array to parse result
     parseResult.globalMatchesLength = 1;
-    parseResult.matchesLength = matches.size();
-    parseResult.matches = new ParseMatch[parseResult.matchesLength];
-    //memcpy(parseResult.matches, &matches.front(), parseResult.matchesLength);
+    parseResult.parseStream.length = matches.size();
+    parseResult.parseStream.data = new ParseMatch[parseResult.parseStream.length];
 
     cMatch = 0;
     for(vector<ParseMatch>::iterator i = matches.begin(); i != matches.end(); ++i, ++cMatch)
     {
       i->offset = cMatch + 1;
-      parseResult.matches[cMatch] = *i;
+      parseResult.parseStream.data[cMatch] = *i;
     }
 
     /*OLD:// Recursively reverse the matches and write to the array (to get matches into the correct order)
@@ -567,6 +566,7 @@ namespace QParser
       {
         const Item& item = *iItem;
         const Production& production = productions[item.productionIndex].first;
+        //const ProductionSet& productionSet = *getProductionSet(productions[item.productionIndex].second);
 
         if(item.inputPosition == production.symbolsLength)
         {
@@ -694,6 +694,7 @@ namespace QParser
         element.id = iEdge->first;
         //if(element.id == ID_IDENTIFIER_DECL || element.id == ID_IDENTIFIER_REF) element.id = ID_IDENTIFIER;
         element.action = isTerminal(element.id)? BinaryIndexElement::LRACTION_SHIFT : BinaryIndexElement::LRACTION_GOTO;
+        //element.action |= iEdge->
         element.param = iEdge->second; // param = state index
         element.largerIndex = 0;
 
