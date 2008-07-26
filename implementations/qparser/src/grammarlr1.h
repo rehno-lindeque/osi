@@ -41,9 +41,9 @@ namespace QParser
    virtual void parse(ParseResult& parseResult);
 
   protected:
-
-  #pragma pack(push)
-  #pragma pack(0)
+    
+#pragma pack(push)
+#pragma pack(0)
     struct BinaryIndexElement
     {
       //uint state;

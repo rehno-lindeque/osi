@@ -292,7 +292,7 @@ namespace QParser
 
   void GrammarLR1::getStartItems(OSid nonterminal, vector<Item> &items)
   {
-    OSI_ASSERT(!isTerminal(nonterminal))
+    OSI_ASSERT(!isTerminal(nonterminal));
     ProductionSet* productionSet = getProductionSet(nonterminal);
 
     Item item;
@@ -315,7 +315,7 @@ namespace QParser
 
   void GrammarLR1::getLookaheadStartItems(OSid nonterminal, vector<Item> &items, const Item& parentItem)
   {
-    OSI_ASSERT(!isTerminal(nonterminal))
+    OSI_ASSERT(!isTerminal(nonterminal));
     ProductionSet& productionSet = *getProductionSet(nonterminal);
 
     // Get the lookahead symbols by determining all possible terminals following the current nonterminal
@@ -580,7 +580,7 @@ namespace QParser
           //       (This is not true, we simply need to check the stack when an accept action is reached. If the stack is not empty, we still reduce anyway).
 
           //OLD:
-          element.action = (item.productionId == startSymbol && item.lookaheadSymbol == ID_SPECIAL)? BinaryIndexElement::LRACTION_ACCEPT : BinaryIndexElement::LRACTION_REDUCE;
+          element.action = (item.productionId == startSymbol && item.lookaheadSymbol == static_cast<OSid>(ID_SPECIAL))? BinaryIndexElement::LRACTION_ACCEPT : BinaryIndexElement::LRACTION_REDUCE;
           /*if(item.productionId == startSymbol && item.lookaheadSymbol == ID_SPECIAL)
           {
             element.action = BinaryIndexElement::LRACTION_ACCEPT;
@@ -704,7 +704,7 @@ namespace QParser
         {
           BinaryIndexElement& foundElement = iFoundElement->second;
 
-          switch(foundElement.action)
+          switch(foundElement.action & 7)
           {
             case BinaryIndexElement::LRACTION_SHIFT:
             case BinaryIndexElement::LRACTION_GOTO:
@@ -780,6 +780,10 @@ namespace QParser
 
               break;
             }
+            
+            default:
+              // Post-condition: Check for invalid parse action
+              OSI_ASSERT(false);
           }
         }
         else
@@ -852,10 +856,10 @@ namespace QParser
     {
       if(item.inputPosition == c) cout << '.';
       debugOutputSymbol(production.symbols[c].id);
-      if(c < production.symbolsLength-1 || item.inputPosition == c+1) cout << ' ';
+      if(c < static_cast<uint>(production.symbolsLength-1) || item.inputPosition == c+1) cout << ' ';
     }
     if(item.inputPosition == production.symbolsLength) cout << '.';
-    if(item.lookaheadSymbol != ID_SPECIAL)
+    if(item.lookaheadSymbol != static_cast<OSid>(ID_SPECIAL))
     {
       cout << ", ";
       debugOutputSymbol(item.lookaheadSymbol);
@@ -905,7 +909,7 @@ namespace QParser
     {
       const BinaryIndexElement& element = *i;
       cout << index << '\t' << (int&) element.id << '\t';
-      if(element.id != ID_SPECIAL)
+      if(element.id != static_cast<OSid>(ID_SPECIAL))
         debugOutputSymbol(element.id);
       else
         cout << "";

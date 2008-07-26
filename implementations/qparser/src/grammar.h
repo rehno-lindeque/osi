@@ -333,7 +333,7 @@ namespace QParser
       //uint8 followSetLength;
       //vector<Production::Symbol> followSet;
 
-      FORCE_INLINE ProductionSet() : productionsOffset(0), productionsLength(0), nullable(false), visitedCount(0) /*, firstSet(null), firstSetLength(0) /*followSet(null), followSetLength(0)*/ {}
+      FORCE_INLINE ProductionSet() : productionsOffset(0), productionsLength(0), nullable(false), visitedCount(0) /*, firstSet(null), firstSetLength(0), followSet(null), followSetLength(0)*/ {}
     };
 
     Production*                activeProduction;
@@ -358,6 +358,8 @@ namespace QParser
 
     INLINE void parseWordToken(const_cstring inputPosition, ParseMatch& tokenMatch) const;
     INLINE bool matchWordToken(const Token& token, const_cstring inputPosition) const;
+    
+    INLINE void reshuffleResult(ParseResult& parseResult);
 
     //// Grammar construction operations
     map<OSid, ProductionSet*>               productionSets; // todo: rename to something like ProductionUnions / ProductionGroups
@@ -394,7 +396,8 @@ namespace QParser
     INLINE       OSid getTokenId(const_cstring tokenName) const;
 
     //// Miscelaneous
-    void outputStatementMatch(ParseResult& result, uint& index) const;
+    //void outputStatementMatch(ParseResult& result, uint& index) const;
+    void outputStatementMatch(ParseResult& result, uint index) const;
 
 #ifdef _DEBUG
     INLINE void debugOutputProduction(OSid id, const Production& production) const;

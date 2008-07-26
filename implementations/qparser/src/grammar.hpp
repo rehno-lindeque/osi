@@ -14,14 +14,15 @@ namespace QParser
   const char Grammar::SPECIAL_SINGLELINE_BOUNDING_CHAR = '\0';
   const char Grammar::SPECIAL_MULTILINE_BOUNDING_CHAR = '\1';
 
-  Grammar::Grammar() : nextTerminal(ID_FIRST_TERMINAL),
-                       nextNonterminal(0),
-                       activeSubTokenType((SubTokenType)0),
-                       activeProduction(null),
-                       startSymbol(-1),
+  Grammar::Grammar() : activeTokenType(static_cast<TokenType>(0)),
+                       activeSubTokenType(static_cast<SubTokenType>(0)),                       
                        errorStream(new stdio_filebuf<char>(stdout, std::ios::out)),
                        warnStream(new stdio_filebuf<char>(stdout, std::ios::out)),
-                       infoStream(new stdio_filebuf<char>(stdout, std::ios::out))
+                       infoStream(new stdio_filebuf<char>(stdout, std::ios::out)),                       
+                       nextTerminal(ID_FIRST_TERMINAL),
+                       nextNonterminal(0),
+                       activeProduction(null),
+                       startSymbol(-1)
   { 
     memset(tokenRootIndices, 0, sizeof(tokenRootIndices)); 
   }
@@ -98,6 +99,7 @@ namespace QParser
 
   void Grammar::constructTokens()
   {
+    // TODO: (POSSIBLE BUG) Where is activeTokenType & activeSubTokenType set???
     uint&             nTokens                      = Grammar::nTokens[activeTokenType + activeSubTokenType];
     Token*&           activeTokens                 = tokens[activeTokenType + activeSubTokenType];
     //TokenNameSet&     activeTokenNames             = tokenNames[activeTokenType];
@@ -236,7 +238,7 @@ namespace QParser
 
   void Grammar::productionToken(OSid token)
   {
-    OSI_ASSERT(IsTerminal(token)? token >= ID_FIRST_TERMINAL && token < nextTerminal : token < nextNonTerminal);
+    OSI_ASSERT(isTerminal(token)? token >= ID_CONST_NUM && token < nextTerminal : token < nextNonterminal);
     activeProductionSymbols.push_back(token);
   }
 
@@ -310,7 +312,7 @@ namespace QParser
 
   void Grammar::grammarStartSymbol(OSid nonterminal)
   {
-    OSI_ASSERT(!IsToken(nonterminal));
+    OSI_ASSERT(!isTerminal(nonterminal));
     startSymbol = nonterminal;
   }
 
@@ -466,6 +468,9 @@ namespace QParser
     // Parse
     parseResult.parseStream.elementSize = sizeof(ParseMatch);
     parse(parseResult);
+    
+    // Reshuffle the result so that it is easier to traverse
+    reshuffleResult(parseResult);
   }
 
   void Grammar::parseString(const_cstring stringBuffer, ParseResult& parseResult)
@@ -482,6 +487,9 @@ namespace QParser
     // Parse
     parseResult.parseStream.elementSize = sizeof(ParseMatch);
     parse(parseResult);
+    
+    // Reshuffle the result so that it is easier to traverse
+    reshuffleResult(parseResult);
   }
 
   void Grammar::lexicalAnalysis(ParseResult& parseResult)
@@ -683,10 +691,15 @@ namespace QParser
     {
       while(cInput < inputLength)
       {
-        if(tokenCharacters[token.valueOffset] == SPECIAL_SINGLELINE_BOUNDING_CHAR && inputPosition[cInput] == '\n')
-          break;
+        if(tokenCharacters[token.valueOffset] == SPECIAL_SINGLELINE_BOUNDING_CHAR)
+        {
+          if( inputPosition[cInput] == '\n')
+            break;
+        }
         else // todo: perhaps make multi-line empty boundary illegal???
+        {
           OSI_ASSERT(tokenCharacters[token.valueOffset] == SPECIAL_MULTILINE_BOUNDING_CHAR);
+        }
 
         ++cInput;
       }
@@ -784,6 +797,146 @@ namespace QParser
         return false;
 
     return true;
+  }
+  
+  INLINE void Grammar::reshuffleResult(ParseResult& parseResult)
+  {
+    using std::vector;
+    
+    // Reshuffle the tokens so that we can more easily traverse the parse tree (breadth-first traversal)
+    // ALGORITHM: We put all tokens on the same level next to each other. We shall traverse the current 
+    //            parse tree in a depth-first manner, counting the number of tokens at each level.
+    //            This will allow us to build a table of offsets into the final buffer. From here we 
+    //            can simply copy each element, updating (and keeping track of) each level's current index.
+    //
+    
+    //// Build a table of indices corresponding to parse levels
+    vector<uint> indices;
+    indices.push_back(0);      // The first level's index starts at 0
+    int level = 0;
+    stack<int> lengthCounters; // Length counters will be used at every level to determine when to decrement the current level
+    int lengthCounter = 1;
+    for (uint c = 0; c < parseResult.parseStream.length; ++c)
+    {
+      // Decrement the current level if we reach the end of a production
+      while (lengthCounter == 0)
+      {
+        // Pre-condition: We should never be able to reach this if we're at the top level.
+        //                Otherwise the parseStream is corrupt.
+        OSI_ASSERT(level != 0 && lengthCounters.size() != 0);
+        
+        --level;
+        lengthCounter = lengthCounters.top();
+        lengthCounters.pop();
+        
+        OSI_DEBUG(cout << level << "} ");
+        OSI_DEBUG(cout.flush());
+      }
+      
+      // Increment the next level's index
+      if(indices.size() <= static_cast<size_t>(level+1))
+        indices.push_back(1);
+      else
+        ++indices[level+1];
+      
+      // Decrement the remaining length in this production
+      --lengthCounter;
+      
+      // Get the match we are traversing
+      const ParseMatch& currentMatch = parseResult.parseStream.data[c];
+      
+      OSI_DEBUG(cout << getTokenName(currentMatch.id) << ' ');
+      OSI_DEBUG(cout.flush());
+      
+      // Increment current level if we reach a non-terminal node
+      // (I.e. we've reached the beginning of a production)
+      if(!isTerminal(currentMatch.id) && currentMatch.length > 0)
+      {
+        OSI_DEBUG(cout << "{" << level << ' ');
+        OSI_DEBUG(cout.flush());
+        ++level;
+        lengthCounters.push(lengthCounter);
+        lengthCounter = currentMatch.length;
+      }
+    }
+    
+    OSI_DEBUG(cout << endl << endl);
+    
+    // Clear loop variables (counters etc)
+    // Note: The above algorithm will not traverse up to the top-level at the end because it 
+    //       ends as soon as it runs out of tokens - this is not a bug.
+    while(!lengthCounters.empty())
+      lengthCounters.pop();
+    level = 0;    
+    lengthCounter = 1;
+    
+    // Finally add up the lengths sequentially to find the final offsets for each table
+    uint currentIndex = 0;
+    for(vector<uint>::iterator i = indices.begin(); i != indices.end(); ++i)
+    {
+      *i += currentIndex;
+      currentIndex = *i;
+    }
+    
+    //// Copy each element over to the new buffer using indices+offsets to find the correct position each time
+    ParseMatch shuffleData[parseResult.parseStream.length];
+    vector<uint> offsets;
+    offsets.resize(indices.size(), 0);//TODO: how do we set all elements to 0? IS THIS CORRECT?
+    for (uint c = 0; c < parseResult.parseStream.length; ++c)
+    {
+      // Decrement the current level if we reach the end of a production
+      while (lengthCounter == 0)
+      {
+        // Pre-condition: We should never be able to reach this if we're at the top level.
+        //                Otherwise the parseStream is corrupt.
+        OSI_ASSERT(level != 0 && lengthCounters.size() != 0);
+        
+        --level;
+        lengthCounter = lengthCounters.top();
+        lengthCounters.pop();
+        
+        OSI_DEBUG(cout << level << "} ");
+        OSI_DEBUG(cout.flush());
+      }
+      
+      // Decrement the remaining length in this production
+      --lengthCounter;
+      
+      // Get the match we are traversing
+      ParseMatch& currentMatch = parseResult.parseStream.data[c];
+      
+      OSI_DEBUG(cout << getTokenName(currentMatch.id) << ' ');
+      OSI_DEBUG(cout.flush());
+      
+      // Update the offset of this node since the (future) index of its children is now known
+      if(!isTerminal(currentMatch.id))
+        currentMatch.offset = indices[level+1] + offsets[level+1];
+      
+      // Copy the match data to the shuffle buffer
+      OSI_ASSERT(indices.size() > static_cast<size_t>(level));
+      uint shuffleIndex = indices[level] + offsets[level];
+      shuffleData[shuffleIndex] = currentMatch;
+      
+      // Increment the current level's offset since we've copied a token
+      ++offsets[level];
+      
+      // Increment current level if we reach a non-terminal node
+      // (I.e. we've reached the beginning of a production)
+      if(!isTerminal(currentMatch.id) && currentMatch.length > 0)
+      {
+        OSI_DEBUG(cout << "{" << level << ' ');
+        OSI_DEBUG(cout.flush());
+        
+        ++level;
+        lengthCounters.push(lengthCounter);
+        lengthCounter = currentMatch.length;
+      }
+    }
+    
+    OSI_DEBUG(cout << endl << endl);
+    
+    // Copy the shuffle data back into the parse stream buffer
+    memcpy(parseResult.parseStream.data, shuffleData, parseResult.parseStream.length * parseResult.parseStream.elementSize);
   }
 
   const string& Grammar::getTokenName(OSid tokenId) const
@@ -920,7 +1073,34 @@ namespace QParser
     }
   }
 
-  void Grammar::outputStatementMatch(ParseResult& result, uint& index) const
+//  void Grammar::outputStatementMatch(ParseResult& result, uint& index) const
+//  {
+//    ParseMatch& match = result.parseStream.data[index];
+//    if(isTerminal(match.id))
+//      cout << getTokenName(match.id);
+//    else
+//    {
+//      cout << getTokenName(match.id) << " { ";
+//
+//      /*OLD:
+//      for(uint c = match.offset; c < (uint)(match.offset + match.length); ++c)
+//      {
+//        outputStatementMatch(result, c);
+//        cout << ' ';
+//      }*/
+//
+//      for(uint c = 0; c < (uint)match.length; ++c)
+//      {
+//        ++index;
+//        outputStatementMatch(result, index);
+//        cout << ' ';
+//      }
+//
+//      cout << "} ";
+//    }
+//  }
+
+  void Grammar::outputStatementMatch(ParseResult& result, uint index) const
   {
     ParseMatch& match = result.parseStream.data[index];
     if(isTerminal(match.id))
@@ -929,17 +1109,10 @@ namespace QParser
     {
       cout << getTokenName(match.id) << " { ";
 
-      /*OLD:
-      for(uint c = match.offset; c < (uint)(match.offset + match.length); ++c)
-      {
-        outputStatementMatch(result, c);
-        cout << ' ';
-      }*/
-
       for(uint c = 0; c < (uint)match.length; ++c)
       {
-        ++index;
-        outputStatementMatch(result, index);
+        //ParseMatch& subMatch = result.parseStream.data[match.offset+c];
+        outputStatementMatch(result, match.offset+c);
         cout << ' ';
       }
 
