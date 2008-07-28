@@ -4,7 +4,7 @@
 //
 //    API.H
 //
-//    Copyright © 2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2008, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */

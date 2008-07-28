@@ -249,6 +249,19 @@ const OSchar* OSI_API_CALL OSIX::Parser::getTokenName(OSid token)
   return grammarObject->getTokenName(token).c_str();
 }
 
+OSbool OSI_API_CALL OSIX::Parser::isIdentifier(OSid token)
+{
+  return token == static_cast<OSid>(QParser::Grammar::ID_IDENTIFIER);
+}
+
+void OSI_API_CALL OSIX::Parser::getMatchText(OSobject parseResult, const ParseMatch& match, char* text)
+{
+  QParser::Grammar::ParseResult& resultObject = *reinterpret_cast<QParser::Grammar::ParseResult*>(parseResult);
+  ParseMatch &lexMatch = resultObject.lexStream.data[match.offset];
+  memcpy(text, reinterpret_cast<const OSuint8*>(resultObject.inputStream.data) + lexMatch.offset, lexMatch.length);
+  text[lexMatch.length] = '\0';
+}
+
 void OSI_API_CALL OSIX::Parser::delObject(OSobject object)
 {
   _this.delObject((Base::Object*)object);
@@ -285,7 +298,7 @@ void* OSI_API_CALL OSIX::Parser::debugInit()
 
   void OSIX::ParserDbg::debugOutputParseResult(OSobject parseResult)
   {
-    QParser::Grammar* grammarObject = ((QParser::Parser::ParserDbg*)this)->getParser().grammar;
+    QParser::Grammar* grammarObject = static_cast<QParser::Parser::ParserDbg*>(this)->getParser().grammar;
     grammarObject->debugOutputParseResult(parseResult);
   }
 #endif

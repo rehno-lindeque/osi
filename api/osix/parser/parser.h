@@ -117,6 +117,8 @@ void OSI_API_C_CALL tokenPrecedence(OSid token1, OSid token2);
 /* miscelaneous */
 const OSchar* OSI_API_C_CALL getTokenName(OSid token);
 void OSI_API_C_CALL delObject(OSobject object);
+//todo: bool isIdentifier(OSid token);
+//todo: void getMatchText(OSobject parseResult, const ParseMatch* match, char* text);
 
 /* debug */
 void* OSI_API_C_CALL debugInit();

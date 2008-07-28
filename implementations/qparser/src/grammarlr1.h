@@ -4,7 +4,7 @@
 //
 //    GRAMMARLR1.H
 //
-//    Copyright © 2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2008, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */
@@ -149,6 +149,6 @@ namespace QParser
 }
 
 /*                                   INCLUDES                               */
-#include "grammarlr1.hpp"
+#include "grammarlr1.inl"
 
 #endif
