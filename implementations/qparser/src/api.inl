@@ -254,6 +254,11 @@ OSbool OSI_API_CALL OSIX::Parser::isIdentifier(OSid token)
   return token == static_cast<OSid>(QParser::Grammar::ID_IDENTIFIER);
 }
 
+OSbool OSI_API_CALL OSIX::Parser::isNumeric(OSid token)
+{
+  return token == static_cast<OSid>(QParser::Grammar::ID_CONST_NUM);
+}
+
 void OSI_API_CALL OSIX::Parser::getMatchText(OSobject parseResult, const ParseMatch& match, char* text)
 {
   QParser::Grammar::ParseResult& resultObject = *reinterpret_cast<QParser::Grammar::ParseResult*>(parseResult);

@@ -118,6 +118,7 @@ namespace OSIX
     /* miscelaneous */
     OSI_DYNAMIC_METHOD const OSchar* OSI_API_CALL getTokenName(OSid token);
     OSI_DYNAMIC_METHOD OSbool OSI_API_CALL isIdentifier(OSid token);
+    OSI_DYNAMIC_METHOD OSbool OSI_API_CALL isNumeric(OSid token);
     OSI_DYNAMIC_METHOD void OSI_API_CALL getMatchText(OSobject parseResult, const ParseMatch& match, OSchar* text);
     OSI_DYNAMIC_METHOD void OSI_API_CALL delObject(OSobject object);
     
