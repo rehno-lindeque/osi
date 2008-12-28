@@ -74,6 +74,8 @@
   #include <ext/hash_set>
   #include <ext/stdio_filebuf.h>
 #endif
+//#include <unordered_map>
+//#include <unordered_set>
 
 using std::string;
 using std::vector;
@@ -94,6 +96,9 @@ using STDEXT_NAMESPACE::hash_map;
 using STDEXT_NAMESPACE::hash_set;
 using STDEXT_NAMESPACE::stdio_filebuf;
 
+// CLib
+#include <string.h>
+
 namespace QParser
 {
   struct ParseMatch : public OSIX::ParseMatch
@@ -102,6 +107,26 @@ namespace QParser
     INLINE ParseMatch() {}
   };
 
+  /* But will this work with the new forward declared tokens...?
+  struct TokenId
+  {
+    union
+    {
+      OSid id;
+      /*struct 
+      {
+        OSid counter : sizeof(OSid)*8-1;
+        bool isTerminal : 1;
+      };//* /
+      /*struct 
+      {
+        OSid counter : sizeof(OSid)*8-2;
+        bool isTerminal : 1;
+        bool isForwardDeclaration : 1;
+      };//* /
+    };
+  };*/
+  
 /*                                  CLASSES                                 */
   class Grammar : public Base::Object
   {
@@ -238,8 +263,9 @@ namespace QParser
     //typedef hash_map<const_cstring, OSid, hash<const_cstring> > TokenIds; // Token name -> id
     typedef map<OSid, string> TokenNames;                            // Token id -> name
     
-    OSid nextTerminal;      // Terminal ids are always odd     (lexical tokens)
-    OSid nextNonterminal;   // Nonterminal ids are always even (production tokens)
+    OSid nextTerminal;     // Terminal ids are always odd     (lexical tokens)
+    OSid nextNonterminal;  // Nonterminal ids are always even (production tokens)
+    OSid nextTemporaryId;  // Temporary ids are always > nextNonterminal (they are eventually replaced by normal nonterminals
 
     //// Identifiers
     hash_set<const char*> identifierTypes;
@@ -304,7 +330,11 @@ namespace QParser
       // Symbols
       struct Symbol
       {
-        OSid id;
+        union
+        {
+          bool isTerminal : 1;
+          OSid id;
+        };
         uint32 param;
 
         FORCE_INLINE Symbol() {}
@@ -374,11 +404,17 @@ namespace QParser
     // Get the next available (even numbered) nonterminal id
     INLINE OSid getNextNonterminalId();
     
+    // Get the next available temporary nonterminal id
+    INLINE OSid getTemporaryNonterminalId();
+    
     // Construct a terminal token (and add it to the list of tokens being processed)
     INLINE OSid constructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength);
     
     // Construct a non-terminal token
     INLINE OSid constructNonterminal(const_cstring tokenName);
+    
+    // Replace all tokens 
+    INLINE void replaceAllTokens(OSid oldId, OSid newId);
 
     // Test whether id is a token id (i.e. not a production)
     INLINE bool isTerminal(OSid id) const;

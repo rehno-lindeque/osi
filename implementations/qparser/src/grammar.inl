@@ -21,6 +21,7 @@ namespace QParser
                        infoStream(new stdio_filebuf<char>(stdout, std::ios::out)),                       
                        nextTerminal(ID_FIRST_TERMINAL),
                        nextNonterminal(0),
+                       nextTemporaryId(~1),
                        activeProduction(null),
                        startSymbol(-1)
   { 
@@ -238,7 +239,7 @@ namespace QParser
 
   void Grammar::productionToken(OSid token)
   {
-    OSI_ASSERT(isTerminal(token)? token >= ID_CONST_NUM && token < nextTerminal : token < nextNonterminal);
+    OSI_ASSERT(token > nextTemporaryId || (isTerminal(token)? token >= ID_CONST_NUM && token < nextTerminal : token < nextNonterminal));
     activeProductionSymbols.push_back(token);
   }
 
@@ -247,7 +248,6 @@ namespace QParser
     OSid id = getTokenId(tokenName);
     if(id == OSid(-1))
       id = declareProduction(tokenName);
-
     productionToken(id);
     return id;
   }
@@ -283,8 +283,13 @@ namespace QParser
     if(i == nonterminalIds.end())
     {
       // Create a new production id for this production
-      id = getNextNonterminalId();
-      nonterminalNames[id] = productionName;
+      id = getTemporaryNonterminalId();
+      
+      
+      // OLD: we don't store the production name anymore, because the id is only temporary
+      //nonterminalNames[id] = productionName;
+      
+      
       nonterminalIds[productionName] = id;
     }
     else
@@ -347,6 +352,18 @@ namespace QParser
     return id;
   }
   
+  OSid Grammar::getTemporaryNonterminalId()
+  {
+    OSid id = nextTemporaryId;
+    nextTemporaryId--;
+    
+    // If id is in the range of valid ids, this will not work. 
+    // (Then we've run out of ids to use for forward declarations and we'll need to think of a new strategy...)
+    OSI_ASSERT(nextTemporaryId > nextNonterminal);
+              
+    return id;
+  }
+  
   OSid Grammar::constructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength)
   {
     OSid id = -1;
@@ -387,11 +404,35 @@ namespace QParser
     }
     else
     {
-      // Get existing production id
+      // Get the existing production id
       id = i->second;
+      
+      // If the id was forward declared we need to substitute this id (and all uses there of) with the new correct id
+      if(id > nextNonterminal)
+      {
+        OSid newId = getNextNonterminalId();
+        nonterminalNames[newId] = tokenName;
+        nonterminalIds[tokenName] = newId;        
+        replaceAllTokens(id, newId);        
+        return newId;
+      }
     }
     
     return id;
+  }
+  
+  void Grammar::replaceAllTokens(OSid oldId, OSid newId)
+  {
+    for(vector< pair<Production, OSid> >::iterator i = productions.begin(); i != productions.end(); ++i)
+    {
+      Production& production = i->first;
+      
+      for(uint c = 0; c < production.symbolsLength; ++c)
+      {
+        if(production.symbols[c].id == oldId)
+          production.symbols[c].id = newId;
+      }
+    }
   }
 
   bool Grammar::isTerminal(OSid id) const
@@ -614,7 +655,7 @@ namespace QParser
     const char                   rootCharacter    = *inputPosition;
 
     // Lookup token root character
-    const TokenRootIndex& tokenRootIndex = tokenRootIndices[rootCharacter];
+    const TokenRootIndex& tokenRootIndex = tokenRootIndices[int(rootCharacter)];
 
     // Parse possible characters
     for(uint cToken = 0; cToken < tokenRootIndex.length; ++cToken)
@@ -758,7 +799,7 @@ namespace QParser
     const char                   rootCharacter    = *inputPosition;
 
     // Lookup token root character
-    const TokenRootIndex& tokenRootIndex = tokenRootIndices[rootCharacter];
+    const TokenRootIndex& tokenRootIndex = tokenRootIndices[int(rootCharacter)];
 
     // Parse possible characters
     for(uint cToken = 0; cToken < tokenRootIndex.length; ++cToken)
@@ -961,7 +1002,7 @@ namespace QParser
         case ID_IDENTIFIER_DECL: return tokenIdentifierDecl;
         case ID_IDENTIFIER_REF:  return tokenIdentifierRef;
         default:
-          OSI_ASSERT(false);
+          //OSI_ASSERT(false);
           return tokenUnknownTerminal;
         }
       }
