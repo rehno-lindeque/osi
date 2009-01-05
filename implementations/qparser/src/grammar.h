@@ -106,26 +106,6 @@ namespace QParser
     FORCE_INLINE ParseMatch(uint16 offset, uint16 length, OSid id) { ParseMatch::offset = offset; ParseMatch::length = length; ParseMatch::id = id; }
     INLINE ParseMatch() {}
   };
-
-  /* But will this work with the new forward declared tokens...?
-  struct TokenId
-  {
-    union
-    {
-      OSid id;
-      /*struct 
-      {
-        OSid counter : sizeof(OSid)*8-1;
-        bool isTerminal : 1;
-      };//* /
-      /*struct 
-      {
-        OSid counter : sizeof(OSid)*8-2;
-        bool isTerminal : 1;
-        bool isForwardDeclaration : 1;
-      };//* /
-    };
-  };*/
   
 /*                                  CLASSES                                 */
   class Grammar : public Base::Object

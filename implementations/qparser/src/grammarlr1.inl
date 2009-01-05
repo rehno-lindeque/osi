@@ -38,11 +38,6 @@ namespace QParser
     uint cMatch = 0;      // The current match index (This is sometimes retrieved from the stateIndexStack)
     OSid token;           // The last read token
     vector< pair<uint, uint> > stateIndexStack; // State indexes stack <table index, match index> used with reduce actions
-    //int matchLengthModifier = 0; // Number of skipped (silent) tokens / added tokens (due to skipped nonterminals) during
-                                 // a reduce action.
-                                 // This is used to determine correct match lengths...
-    //int childMatchLength = 0; // match length of the previous reduced production. This is added to the match length modifier iff the
-                              // parent (the current one directly following the child) reduction is silent
 
     while(true)
     {
@@ -55,30 +50,27 @@ namespace QParser
       {
         errorStream << "Unexpected token, at line [???] in program [???]" << endl;
 
-#ifdef _DEBUG // TEMPORARY
+#ifdef _DEBUG
         errorStream << cTable << '\t' << getTokenName(token) << "\terror" << endl;
 #endif
-        //sprintf(
-        //outputError( "Unexpected token, %token, expected one of %[token]", token);
-        // todo: NB! perform error handling here
+        //Error( "Unexpected token, %token, expected one of %[token]", token);
         break;
       }
       else if(token == parseElement.id)
       {
-        // Old: Reduce and goto action must not eat the current input token. (This is because during these actions we are actually
-        //      doing lookahed... Only shift actions must eat input tokens.
-        // ++cToken;
-
+        // Note that the reduce and goto action must not eat the current input token. (This is because during these actions we are actually
+        // doing lookahed... Only shift actions must eat input tokens.
+        
         switch(parseElement.action & 7) // test least significant 4 bits for the action
         {
           case BinaryIndexElement::LRACTION_SHIFT:
             {
-              // Handle identifier declarations / references
+              /* Handle identifier declarations / references
               if(token == ID_IDENTIFIER)
               {
-                //if(parseElement == BinaryIndexElement::LRACTION_SHIFTDECL) declareIdentifier(token, type);
-                //else if(!referenceIdentifier(token, type)) error;
-              }
+                if(parseElement == BinaryIndexElement::LRACTION_SHIFTDECL) declareIdentifier(token, type);
+                else if(!referenceIdentifier(token, type)) error;
+              }//*/
 
               // Eat the token from the lex input stream
               ++cToken;
@@ -86,7 +78,7 @@ namespace QParser
               // Get the current match index (position in the output stream)
               cMatch = matches.size();
 
-#ifdef _DEBUG // TEMPORARY
+#ifdef _DEBUG
               errorStream << cTable << '\t' << getTokenName(token) << "\tshift(" << parseElement.param << ")" << endl;
 #endif
 
@@ -95,16 +87,13 @@ namespace QParser
               cTableStart = cTable = parseElement.param;
 
               // Push the lex token onto the output stream
-              // todo: do we need to check whether token is -1 and skip it here? (can this happen?)
-              
-              //matches.push_back(ParseMatch(cToken-1, 0, token));
               matches.push_back(ParseMatch(cToken-1, (cToken < parseResult.lexStream.length)? parseResult.lexStream.data[cToken-1].length : 0, token));
             }
             break;
 
           case BinaryIndexElement::LRACTION_GOTO:
             {
-#ifdef _DEBUG //TEMPORARY
+#ifdef _DEBUG
               errorStream << cTable << '\t' << getTokenName(token) << "\tgoto(" << parseElement.param << ")" << endl;
 #endif
 
@@ -118,15 +107,16 @@ namespace QParser
           case BinaryIndexElement::LRACTION_ACCEPT:
           case BinaryIndexElement::LRACTION_REDUCE:
             {
+              /* Handle identifier declarations / references
               if(token == ID_IDENTIFIER)
               {
-                //if(parseElement == BinaryIndexElement::LRACTION_REDUCEDECL) declareIdentifier(token, type);
-                //else if(!referenceIdentifier(token, type)) error;
-              }
+                if(parseElement == BinaryIndexElement::LRACTION_REDUCEDECL) declareIdentifier(token, type);
+                else if(!referenceIdentifier(token, type)) error;
+              }//*/
 
               Production& production = productions[parseElement.param].first;
 
-#ifdef _DEBUG //TEMPORARY
+#ifdef _DEBUG 
               errorStream << cTable << '\t' << getTokenName(token);
 #endif
               // Replace token with production id being reduced to
@@ -137,12 +127,10 @@ namespace QParser
               if((parseElement.action & 7) == BinaryIndexElement::LRACTION_ACCEPT && stateIndexStack.size() == production.symbolsLength)
               {
                 // Insert the root (starting symbol) production match (non-terminal) into the output stream
-#ifdef _DEBUG   //TEMPORARY
+#ifdef _DEBUG
                 errorStream << "\taccept(" << getTokenName(productions[parseElement.param].second) << ")" << endl;
 #endif
-                //matches.insert(matches.begin(), ParseMatch(0, production.symbolsLength + matchLengthModifier, productions[parseElement.param].second));
                 matches.insert(matches.begin(), ParseMatch(0, production.symbolsLength, productions[parseElement.param].second));
-                //matchLengthModifier = 0;
                 break;
               }
 
@@ -154,60 +142,23 @@ namespace QParser
               cTableStart = cTable = stateIndex.first;
               cMatch = stateIndex.second;
 
-#ifdef _DEBUG //TEMPORARY
+#ifdef _DEBUG
               errorStream << "\treduce(" << stateIndex.first << ", " << getTokenName(productions[parseElement.param].second) << ")";
               if (parseElement.action & BinaryIndexElement::LRACTION_FLAG_SILENT)
                 errorStream << " *silent*" << endl;
-              //errorStream << endl;
 #endif
 
               // Insert the production match (non-terminal) into the output stream
-              // todo: get the correct length and offset (i.e. should the length actually include
-              // children of nonterminals?) Also what is the offset exactly?
-              //OLDER: matches.push_back(ParseMatch(0, production.symbolsLength, token));
-              //OLD: matches.insert(matches.begin() + cMatch, ParseMatch(0, production.symbolsLength, token));
-
               if(!(parseElement.action & BinaryIndexElement::LRACTION_FLAG_SILENT))
               {
                 matches.insert(matches.begin() + cMatch, ParseMatch(0, production.symbolsLength, token));
 
-#ifdef _DEBUG //TEMPORARY
-                //errorStream << " <match length += " << matchLengthModifier << ">";
+#ifdef _DEBUG
                 errorStream << endl;
 #endif
-
-                /*// Reset the number of skipped tokens for the next iteration
-                childMatchLength = production.symbolsLength + match;
-                matchLengthModifier = 0;*/
-              }
-              else
-              {
-                /*// Add the production's tokens to the match length modifier and subtract the nonterminal token from the modifier
-                OSI_ASSERT(production.symbolsLength == 1);
-                matchLengthModifier += childMatchLength - 1;
-                childMatchLength = 1;
-
-                matchLengthModifier = 0;*/
               }
             }
             goto skipTokenInitialization;
-
-          /*case BinaryIndexElement::LRACTION_ACCEPT:
-            {
-              //Note: We could already insert this match (the root) right in the beginning before-hand as a little optimization,
-              //      but we'd need to set its length here in any case based on the production.
-              //      We're simply doing it here for clarity & consistency.
-
-              // Insert the production match (non-terminal) into the output stream
-              Production& production = productions[parseElement.param].first;
-
-#ifdef _DEBUG //TEMPORARY
-              errorStream << cTable << '\t' << getTokenName(token) << "\taccept(" << getTokenName(productions[parseElement.param].second) << ")" << endl;
-              //errorStream << cTable << '\t' << getTokenName(token) << "\taccept" << endl;
-#endif
-              matches.insert(matches.begin(), ParseMatch(0, production.symbolsLength, productions[parseElement.param].second));
-            }
-            break;*/
 
           default:
             OSI_ASSERT(false); // unknown action in parse table
@@ -241,22 +192,6 @@ namespace QParser
         i->offset = cMatch + 1;
       parseResult.parseStream.data[cMatch] = *i;
     }
-
-    /*OLD:// Recursively reverse the matches and write to the array (to get matches into the correct order)
-
-    uint cMatch = 0;
-    for(vector<ParseMatch>::reverse_iterator i = matches.rbegin(); i != matches.rend();)
-    {
-      parseResult.matches[cMatch] = *i;
-      ++cMatch; ++i;
-
-      for(uint c = 0; c < i->length; )
-      {
-        if(!isTerminal(i->id) && i->length > 0)
-          i->offset = cMatch+1; // assign the next token's index as the offset to the match
-        cMatch = ;
-      }
-    }*/
   }
 
   void GrammarLR1::constructParseTable()
@@ -266,8 +201,6 @@ namespace QParser
       if(nextNonterminal == 0) return; // error: no productions defined
       else startSymbol = nextNonterminal - 2;
     }
-
-    //OSI_ASSERT(startProductionSet);
 
     // Algorithm: The LR parsing algorithm from [modern compiler implementation in Java (ISBN 0-521-82060-X)] has been used
     //            states represents the set of states listed as T which is the set of states seen so far
@@ -508,7 +441,6 @@ namespace QParser
         // Note: we still have to check whether the state already contains the goto item since it could have
         // been added by the closure of another item in the state
         vector<Item>::iterator i;
-        //bug: for(i = targetState.items.begin(); i != targetState.items.end(); ++i) if(*i == item) break;
         for(i = targetState.items.begin(); i != targetState.items.end(); ++i) if(*i == goToItem) break;
         if(i != targetState.items.end()) continue;
 
@@ -527,7 +459,6 @@ namespace QParser
   int GrammarLR1::findItemState(const Item& item)
   {
     map<Item, uint>::iterator i = itemStateIndex.find(item);
-    //if (OLD: i == itemStateIndex.end())
     if(i == itemStateIndex.end() || i->first != item)
       return -1;
     return i->second;
@@ -566,7 +497,6 @@ namespace QParser
       {
         const Item& item = *iItem;
         const Production& production = productions[item.productionIndex].first;
-        //const ProductionSet& productionSet = *getProductionSet(productions[item.productionIndex].second);
 
         if(item.inputPosition == production.symbolsLength)
         {
@@ -575,22 +505,10 @@ namespace QParser
           element.id = item.lookaheadSymbol;
           if(element.id == ID_IDENTIFIER_DECL || element.id == ID_IDENTIFIER_REF) element.id = ID_IDENTIFIER;
 
-          // OLD: (NOT): (item.productionId == startSymbol && item.lookaheadSymbol == ID_SPECIAL) is not sufficient arguments
-          //       to say that the action is an accept action
-          //       (This is not true, we simply need to check the stack when an accept action is reached. If the stack is not empty, we still reduce anyway).
-
-          //OLD:
+          // (We simply need to check the stack when an accept action is reached. If the stack is not empty, we still reduce anyway).
           element.action = (item.productionId == startSymbol && item.lookaheadSymbol == static_cast<OSid>(ID_SPECIAL))? BinaryIndexElement::LRACTION_ACCEPT : BinaryIndexElement::LRACTION_REDUCE;
-          /*if(item.productionId == startSymbol && item.lookaheadSymbol == ID_SPECIAL)
-          {
-            element.action = BinaryIndexElement::LRACTION_ACCEPT;
-          }
-          else
-          {
-            // We don't emit tokens for productions that have only a single non-terminal token since this is redundant for the front-end coder
-            //if(production.symbolsLength == 1 && !isTerminal(production.symbols[0].id))
-             element.action = isSilent(production)? BinaryIndexElement::LRACTION_REDUCE_SILENT : BinaryIndexElement::LRACTION_REDUCE;
-          }*/
+          
+          // Check if the accept/reduce action should be silent
           if(isSilent(production))
             element.action = static_cast<BinaryIndexElement::Action>(element.action | BinaryIndexElement::LRACTION_FLAG_SILENT);
 
@@ -602,9 +520,6 @@ namespace QParser
           if(iFoundElement != elementsSortedLinear.end())
           {
             BinaryIndexElement& foundElement = iFoundElement->second;
-#ifdef _DEBUG
-            OSid foundId = iFoundElement->first;
-#endif
             switch(foundElement.action & 7)
             {
               case BinaryIndexElement::LRACTION_SHIFT:
@@ -690,13 +605,9 @@ namespace QParser
       // Add shift/goto actions to the elements
       for(State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
       {
-        //OLD:  we remap ID_IDENTIFIER_DECL and ID_IDENTIFIER_REF to be inserted into the map at ID_IDENTIFIER position
-        //      (NO LONGER NECESARY FOR SHIFT ACTIONS)
         BinaryIndexElement element;
         element.id = iEdge->first;
-        //if(element.id == ID_IDENTIFIER_DECL || element.id == ID_IDENTIFIER_REF) element.id = ID_IDENTIFIER;
         element.action = isTerminal(element.id)? BinaryIndexElement::LRACTION_SHIFT : BinaryIndexElement::LRACTION_GOTO;
-        //element.action |= iEdge->
         element.param = iEdge->second; // param = state index
         element.largerIndex = 0;
 
@@ -753,7 +664,6 @@ namespace QParser
 
                 cout << "\t\t";
 #ifdef _DEBUG
-                //debugOutputProduction(production);
                 debugOutputItem(item);
 #endif
                 cout << endl;
@@ -794,7 +704,6 @@ namespace QParser
 
       // Resort elements using binary ordering
       vector<BinaryIndexElement> elementsSortedBinary;
-      //OLD: uint index;
 
       struct SortBin
       { SortBin(vector<BinaryIndexElement>& elements, map<OSid, BinaryIndexElement>::iterator iBegin, map<OSid, BinaryIndexElement>::iterator iEnd, int size)
@@ -804,7 +713,6 @@ namespace QParser
           map<OSid, BinaryIndexElement>::iterator iMid = iBegin;
           for(uint c = 0; int(c) < midIndex; ++c) ++iMid;
 
-          //BinaryIndexElement& midElement = elements.push_back((begin+midIndex)->second);
           elements.push_back(iMid->second);
           uint elementIndex = elements.size()-1;                // Store the current element index
 

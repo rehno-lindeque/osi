@@ -100,10 +100,8 @@ namespace QParser
 
   void Grammar::constructTokens()
   {
-    // TODO: (POSSIBLE BUG) Where is activeTokenType & activeSubTokenType set???
     uint&             nTokens                      = Grammar::nTokens[activeTokenType + activeSubTokenType];
     Token*&           activeTokens                 = tokens[activeTokenType + activeSubTokenType];
-    //TokenNameSet&     activeTokenNames             = tokenNames[activeTokenType];
     TokenRootIndex(&  activeTokenRootIndices)[256] = tokenRootIndices[activeTokenType + activeSubTokenType];
 
     //// Consolidate tokens (Copy tokens to a fixed array & construct a root character index)
@@ -121,16 +119,11 @@ namespace QParser
 
       for(cToken = 0, iToken = constructionTokens.begin(); cToken < nTokens; ++cToken, ++iToken)
       {
-        // Copy construction token
-        //activeTokens[cToken] = *iToken;
-
         // Add to token "root character" indexing table (optimization index)
         {
-          //OLD: char rootCharacter = tokenCharacters[activeTokens[cToken].valueOffset];
           char rootCharacter = tokenCharacters[(*iToken).valueOffset];
           if(rootCharacter == SPECIAL_MULTILINE_BOUNDING_CHAR
               || rootCharacter == SPECIAL_SINGLELINE_BOUNDING_CHAR)
-            //OLD:rootCharacter = tokenCharacters[activeTokens[cToken].valueOffset + 1];
             rootCharacter = tokenCharacters[(*iToken).valueOffset + 1];
 
           // Copy construction token into active tokens array
@@ -144,8 +137,6 @@ namespace QParser
           else
           {
             // (move all tokens up by one)
-            //BUG: memcpy(activeTokens + tokenRootIndex.offset + tokenRootIndex.length + 1, activeTokens + tokenRootIndex.offset + tokenRootIndex.length, sizeof(Token[nTokens - (tokenRootIndex.offset + tokenRootIndex.length + 1)]));
-            //BUG: memcpy(activeTokens + tokenRootIndex.offset + tokenRootIndex.length + 1, activeTokens + tokenRootIndex.offset + tokenRootIndex.length, sizeof(Token[nTokens - (cToken + 1)]));
             memmove(&activeTokens[tokenRootIndex.offset + tokenRootIndex.length + 1], &activeTokens[tokenRootIndex.offset + tokenRootIndex.length], sizeof(Token[cToken - (tokenRootIndex.offset + tokenRootIndex.length)]));
             for(uint c = 0; c <= MAX_UINT8; ++c)
               if(activeTokenRootIndices[c].offset > tokenRootIndex.offset)
@@ -189,11 +180,7 @@ namespace QParser
       OSI_ASSERT(productionSet != null);
     }
 
-    // Set as the active production
-    //old: activeProduction = new Production;
-
     // Add production to set
-    //old: productionIds[id] = activeProduction;
     {
       productions.push_back(std::make_pair(Production(), id));
       activeProduction = &productions[productions.size()-1].first;
@@ -215,28 +202,6 @@ namespace QParser
     activeProduction = null;
   }
 
-  /*void Grammar::productionNonterminal(OSid nonterminal)
-  {
-    OSI_ASSERT(!IsToken(nonterminal));
-    activeProductionSymbols.push_back(nonterminal);
-  }
-
-  void Grammar::productionTerminal(OSid terminal)
-  {
-    OSI_ASSERT(IsToken(terminal));
-    activeProductionSymbols.push_back(terminal);
-  }
-
-  void Grammar::productionBeginScope()
-  {
-    //todo
-  }
-
-  void Grammar::productionEndScope()
-  {
-    //todo
-  }*/
-
   void Grammar::productionToken(OSid token)
   {
     OSI_ASSERT(token > nextTemporaryId || (isTerminal(token)? token >= ID_CONST_NUM && token < nextTerminal : token < nextNonterminal));
@@ -254,7 +219,6 @@ namespace QParser
 
   OSid Grammar::productionIdentifierDecl(const_cstring typeName)
   {
-    /* OLD: OSid typeHash = identifierTypes.insert(typeName).second;*/
     hash_set<const char*>::iterator i = identifierTypes.find(typeName);
     OSid typeHash = identifierTypes.hash_funct()(typeName);
     activeProductionSymbols.push_back(Production::Symbol(ID_IDENTIFIER_DECL, typeHash));
@@ -283,13 +247,7 @@ namespace QParser
     if(i == nonterminalIds.end())
     {
       // Create a new production id for this production
-      id = getTemporaryNonterminalId();
-      
-      
-      // OLD: we don't store the production name anymore, because the id is only temporary
-      //nonterminalNames[id] = productionName;
-      
-      
+      id = getTemporaryNonterminalId();      
       nonterminalIds[productionName] = id;
     }
     else
@@ -440,18 +398,6 @@ namespace QParser
     return (id & 1) == 1;
   }
 
-  /*bool Grammar::isSilent(const ProductionSet& productionSet) const
-  {
-    for(uint cProduction = 0; cProduction < productionSet.productionsLength; ++cProduction)
-    {
-        const Production& production = productions[productionSet.productionsOffset + cProduction].first;
-        if (production.symbolsLength != 1 || isTerminal(production.symbols[0].id))
-          return false;
-    }
-    
-    return true;
-  }*/
-  
   bool Grammar::isSilent(const Production& production) const
   {
     return production.symbolsLength == 1 && !isTerminal(production.symbols[0].id);
@@ -697,8 +643,6 @@ namespace QParser
   bool Grammar::matchBoundingToken(const Token& token, const_cstring inputPosition, uint inputLength, uint16& matchLength) const
   {
     //todo: refactor a little? (store lengths of boundary strings during matches)
-
-    /*const_cstring tokenValue = token.value + 1;*/
     const_cstring const tokenValue = &tokenCharacters[token.valueOffset];
     const_cstring tokenValuePosition = &tokenValue[1];
 
@@ -708,7 +652,6 @@ namespace QParser
     while(true)
     {
       // Test whether remaining characters can contain token boundary strings
-      //BUG: if(cInput >= int(inputLength) - (token.valueLength - 3))
       if((int) cInput > int(inputLength) - (token.valueLength - 3))
         return false; // no match
 
@@ -726,7 +669,6 @@ namespace QParser
     }
 
     // Find end-of-line if the token type is SINGLE_LINE
-    // todo: test
     if((tokenValuePosition[0] == PARSER_TOKEN_VALUE_EOF[0] // todo: remove the EOF concept in favour of \0??
         || tokenValuePosition[0] == '\0'))
     {
@@ -1002,7 +944,6 @@ namespace QParser
         case ID_IDENTIFIER_DECL: return tokenIdentifierDecl;
         case ID_IDENTIFIER_REF:  return tokenIdentifierRef;
         default:
-          //OSI_ASSERT(false);
           return tokenUnknownTerminal;
         }
       }
@@ -1056,25 +997,9 @@ namespace QParser
 #ifdef _DEBUG
   void Grammar::debugOutputTokens() const
   {
-    //todo: const const_cstring tokenTypeHeadings[] = { "Raw Tokens", "Nil Tokens", "Lex Tokens" };
-
     cout << endl
          << "Tokens" << endl
          << "------" << endl;
-
-    /* OLD: This should be replaced
-    for(uint cTokenType = 0; cTokenType < 3; ++cTokenType)
-    {
-      // Output token type heading
-      cout << endl << tokenTypeHeadings[cTokenType] << ':' << endl;
-
-      // Output tokens
-      const TokenNames& tokenNames = Grammar::[cTokenType];
-
-      for(TokenNames::iterator i = tokenNames.begin(); i != tokenNames.end(); ++i)
-        cout << ' ' << i->name << endl;
-    }*/
-    
     for(TokenNames::const_iterator i = terminalNames.begin(); i != terminalNames.end(); ++i)
         cout << ' ' << i->second << endl;
   }
@@ -1114,33 +1039,6 @@ namespace QParser
     }
   }
 
-//  void Grammar::outputStatementMatch(ParseResult& result, uint& index) const
-//  {
-//    ParseMatch& match = result.parseStream.data[index];
-//    if(isTerminal(match.id))
-//      cout << getTokenName(match.id);
-//    else
-//    {
-//      cout << getTokenName(match.id) << " { ";
-//
-//      /*OLD:
-//      for(uint c = match.offset; c < (uint)(match.offset + match.length); ++c)
-//      {
-//        outputStatementMatch(result, c);
-//        cout << ' ';
-//      }*/
-//
-//      for(uint c = 0; c < (uint)match.length; ++c)
-//      {
-//        ++index;
-//        outputStatementMatch(result, index);
-//        cout << ' ';
-//      }
-//
-//      cout << "} ";
-//    }
-//  }
-
   void Grammar::outputStatementMatch(ParseResult& result, uint index) const
   {
     ParseMatch& match = result.parseStream.data[index];
@@ -1152,7 +1050,6 @@ namespace QParser
 
       for(uint c = 0; c < (uint)match.length; ++c)
       {
-        //ParseMatch& subMatch = result.parseStream.data[match.offset+c];
         outputStatementMatch(result, match.offset+c);
         cout << ' ';
       }
@@ -1175,10 +1072,8 @@ namespace QParser
 
     // Output global statements
     cout << "Statements:" << endl;
-    //for(uint c = 0; c < result.globalMatchesLength; ++c)
     if(result.parseStream.length > 0)
     {
-      //outputStatementMatch(result, c);
       uint index = 0;
       outputStatementMatch(result, index);
       cout << endl << endl;
