@@ -61,6 +61,7 @@
 // QParser
 #include "grammar.h"
 //#include "grammarll1.h"
+#include "grammarlr.h"
 //#include "grammarlr0.h"
 #include "grammarlr1.h"
 

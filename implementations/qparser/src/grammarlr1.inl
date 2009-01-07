@@ -228,11 +228,7 @@ namespace QParser
     OSI_ASSERT(!isTerminal(nonterminal));
     ProductionSet* productionSet = getProductionSet(nonterminal);
 
-    Item item;
-    item.inputPosition = 0;
-    item.productionId = nonterminal;
-    item.lookaheadSymbol = -1;
-
+    Item item(nonterminal);
     for(uint cProduction = 0; cProduction < productionSet->productionsLength; ++cProduction)
     {
       item.productionIndex = productionSet->productionsOffset + cProduction;
@@ -257,10 +253,7 @@ namespace QParser
     getLookaheadTerminals(parentItem, lookaheadTerminals);
 
     // Get all the items starting the nonterminal with lookahead terminals apended
-    Item item;
-    item.inputPosition = 0;
-    item.productionId = nonterminal;
-
+    Item item(nonterminal);
     for(uint cProduction = 0; cProduction < productionSet.productionsLength; ++cProduction)
     {
       item.productionIndex = productionSet.productionsOffset + cProduction;
@@ -400,7 +393,8 @@ namespace QParser
         OSid symbol = production.symbols[item.inputPosition].id;
 
         //Note: we remap ID_IDENTIFIER_DECL and ID_IDENTIFIER_REF to be inserted into the map at ID_IDENTIFIER position
-        if(symbol == ID_IDENTIFIER_DECL || symbol == ID_IDENTIFIER_REF) symbol = ID_IDENTIFIER;
+        if(symbol == ID_IDENTIFIER_DECL || symbol == ID_IDENTIFIER_REF) 
+          symbol = ID_IDENTIFIER;
 
         // Construct goto item
         Item goToItem = item;
@@ -454,26 +448,6 @@ namespace QParser
 
     if(cEnd < states.size())
       goTo(states, cEnd, states.size());
-  }
-
-  int GrammarLR1::findItemState(const Item& item)
-  {
-    map<Item, uint>::iterator i = itemStateIndex.find(item);
-    if(i == itemStateIndex.end() || i->first != item)
-      return -1;
-    return i->second;
-  }
-
-  multimap<OSid, OSid>::const_iterator GrammarLR1::findPrecedenceDirective(OSid token1, OSid token2) const
-  {
-    multimap<OSid, OSid>::const_iterator i = precedenceMap.lower_bound(token1);
-    while(i != precedenceMap.end() && i->first == token1)
-    {
-      if(i->second == token2)
-        return i;
-      ++i;
-    }
-    return precedenceMap.end();
   }
 
   void GrammarLR1::constructBinaryLR1Table()
@@ -776,41 +750,6 @@ namespace QParser
     }
   }
 
-  void GrammarLR1::debugOutputEdge(State::Edges::const_reference edge) const
-  {
-    cout << "--(";
-    debugOutputSymbol(edge.first);
-    cout << ")--> " << edge.second;
-  }
-
-  void GrammarLR1::debugOutputStates() const
-  {
-    cout << endl;
-    for(uint c = 0; c < states.size(); ++c)
-    {
-      const State& state = *states[c];
-      cout << "State " << c << endl;
-      cout << "---------" << endl;
-      cout << "Items:" << endl;
-      for(vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
-      {
-        cout << ' ';
-        debugOutputItem(*iItem);
-        cout << endl;
-      }
-
-      cout << "Edges:" << endl;
-      for(State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
-      {
-        cout << ' ';
-        debugOutputEdge(*iEdge);
-        cout << endl;
-      }
-
-      cout << endl;
-    }
-  }
-
   void GrammarLR1::debugOutputTable() const
   {
     uint index = 0;
@@ -837,8 +776,10 @@ namespace QParser
       cout << '\t' << element.param << '\t' << element.largerIndex << endl;
       ++index;
     }
-    cout << endl << "Table size: " << binaryParseTable.size() * sizeof(BinaryIndexElement) << " bytes" << endl << endl;
-
+    cout << endl << "Table size: " << binaryParseTable.size() * sizeof(BinaryIndexElement) << " bytes" << endl;
+    cout << endl << ": " << binaryParseTable.size() * sizeof(BinaryIndexElement) << " bytes" << endl;
+    cout << endl;
+    
     cout << endl;
   }
 #endif

@@ -405,12 +405,15 @@ namespace QParser
 
     // Test whether a lexical token is silent
     INLINE bool isSilent(OSid id) const;
+    
+    // Find a precedence directive for token1 < token2
+    multimap<OSid, OSid>::const_iterator findPrecedenceDirective(OSid token1, OSid token2) const;
 
     //// Accessors
     INLINE const ProductionSet* getProductionSet(OSid nonterminal) const;
     INLINE       ProductionSet* getProductionSet(OSid nonterminal);
     INLINE       OSid getTokenId(const_cstring tokenName) const;
-
+    
     //// Miscelaneous
     //void outputStatementMatch(ParseResult& result, uint& index) const;
     void outputStatementMatch(ParseResult& result, uint index) const;

@@ -4,7 +4,7 @@
 //
 //    GRAMMARLR0.H
 //
-//    Copyright © 2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */
@@ -29,7 +29,26 @@
 namespace QParser
 {
 /*                                  CLASSES                                 */
-  class GrammarLR0 : public Grammar
+  // An LR(0) item
+  struct LR0Item : public LRItem
+  {    
+    INLINE LR0Item(OSid nonterminal) : LRItem(nonterminal) {}
+    
+    FORCE_INLINE bool operator < (const LR0Item& item) const
+    { return productionId < item.productionId
+        || (productionId == item.productionId
+          && (productionIndex < item.productionIndex
+            || (productionIndex == item.productionIndex
+              && inputPosition < item.inputPosition))); }
+    FORCE_INLINE bool operator == (const LR0Item& item) const { return productionId == item.productionId && productionIndex == item.productionIndex && inputPosition == item.inputPosition; }
+    FORCE_INLINE bool operator != (const LR0Item& item) const { return !(*this == item); }
+    
+    //FORCE_INLINE bool operator < (const Item& item) const { return productionId < item.productionId || (productionId == item.productionId && (production < item.production || (production == item.production && inputPosition < item.inputPosition))); }
+    //FORCE_INLINE bool operator == (const Item& item) const { return productionId == item.productionId && production == item.production && inputPosition == item.inputPosition; }
+    //FORCE_INLINE bool operator != (const Item& item) const { return !(*this == item); }
+  };
+    
+  class GrammarLR0 : public GrammarLR<LR0Item>
   {
   public:
     // Constructor
@@ -44,37 +63,18 @@ namespace QParser
     // Construct an LR(0) linear binary indexed parse table
     INLINE void constructParseTable();
 
-    // An LR(0) item
-    struct Item
-    {
-      OSid productionId;
-      Production* production;
-      uint inputPosition;
-
-      FORCE_INLINE bool operator < (const Item& item) const { return productionId < item.productionId || (productionId == item.productionId && (production < item.production || (production == item.production && inputPosition < item.inputPosition))); }
-      FORCE_INLINE bool operator == (const Item& item) const { return productionId == item.productionId && production == item.production && inputPosition == item.inputPosition; }
-      FORCE_INLINE bool operator != (const Item& item) const { return !(*this == item); }
-    };
-
-    // An LR(0) state is a set of LR(0) items
+    /* An LR(0) state is a set of LR(0) items
     struct State
     {
       typedef map<OSid, int> Edges; // (edge label = symbol, target = state index where -1 is an end state)
-      /*struct Edge
-      {
-        //State* state;   // target state
-        uint stateIndex;  // target state index
-        OSid symbol;      // edge label
-      };*/
-
       vector<Item> items;
-      //vector<Edge> edges;
       Edges edges;
     };
 
     vector<State*> states;
     map<Item, uint> itemStateIndex; // And index of what state each item maps to (for quick lookup)
-
+*/
+    
     // Get all initial items for productions that produce a certain non-terminal symbol
     INLINE void getStartItems(OSid nonterminal, vector<Item>& items);
 

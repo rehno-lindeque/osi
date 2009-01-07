@@ -993,6 +993,18 @@ namespace QParser
     
     return OSid(-1);  // no matching token id found
   }
+  
+  multimap<OSid, OSid>::const_iterator Grammar::findPrecedenceDirective(OSid token1, OSid token2) const
+  {
+    multimap<OSid, OSid>::const_iterator i = precedenceMap.lower_bound(token1);
+    while(i != precedenceMap.end() && i->first == token1)
+    {
+      if(i->second == token2)
+        return i;
+      ++i;
+    }
+    return precedenceMap.end();
+  }
 
 #ifdef _DEBUG
   void Grammar::debugOutputTokens() const

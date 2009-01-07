@@ -1,9 +1,9 @@
-#ifdef  __QPARSER_GRAMMARLR0_H__
-#ifndef __QPARSER_GRAMMARLR0_INL__
-#define __QPARSER_GRAMMARLR0_INL__
+#ifdef  __QPARSER_GRAMMARLR_H__
+#ifndef __QPARSER_GRAMMARLR_INL__
+#define __QPARSER_GRAMMARLR_INL__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    GRAMMARLR0.INL
+//    GRAMMARLR.INL
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -11,13 +11,14 @@
 
 namespace QParser
 {
-  GrammarLR0::~GrammarLR0()
+  template<class Item>
+  GrammarLR<Item>::~GrammarLR()
   {
     // Clean up memory
-    for (vector<State*>::iterator i = states.begin(); i != states.end(); ++i)
+    for(typename vector<State*>::iterator i = states.begin(); i != states.end(); ++i)
       delete *i;
   }
-
+/*
   void GrammarLR0::constructProductions()
   {
     constructParseTable();
@@ -175,27 +176,19 @@ namespace QParser
 
     if(cEnd < states.size())
       goTo(states, cEnd, states.size());
-  }
+  }*/
 
-  int GrammarLR0::findItemState(const Item& item)
+  template<class Item>
+  int GrammarLR<Item>::findItemState(const Item& item)
   {
-    map<Item, uint>::iterator i = itemStateIndex.find(item);
-    //if (OLD: i == itemStateIndex.end())
-    if (i == itemStateIndex.end() || i->first != item)
+    typename map<Item, uint>::iterator i = itemStateIndex.find(item);
+    if(i == itemStateIndex.end() || i->first != item)
       return -1;
     return i->second;
   }
 
-  void GrammarLR0::constructBinaryTable()
-  {
-    for(vector<State*>::const_iterator i = states.begin(); i != states.end(); ++i)
-    {
-      //todo..
-    }
-  }
-
 #ifdef _DEBUG
-  void GrammarLR0::debugOutputItem(const Item& item) const
+  /*void GrammarLR0::debugOutputItem(const Item& item) const
   {
     if(!item.production || item.production->symbolsLength <= 0)
       return;
@@ -210,16 +203,18 @@ namespace QParser
         cout << ' ';
     }
     if(item.inputPosition == item.production->symbolsLength) cout << '.';
-  }
+  }*/
 
-  void GrammarLR0::debugOutputEdge(State::Edges::const_reference edge) const
+  template<class Item>
+  void GrammarLR<Item>::debugOutputEdge(typename State::Edges::const_reference edge) const
   {
     cout << "--(";
     debugOutputSymbol(edge.first);
     cout << ")--> " << edge.second;
   }
 
-  void GrammarLR0::debugOutputStates() const
+  template<class Item>
+  void GrammarLR<Item>::debugOutputStates() const
   {
     cout << endl;
     for(uint c = 0; c < states.size(); ++c)
@@ -228,7 +223,7 @@ namespace QParser
       cout << "State " << c << endl;
       cout << "---------" << endl;
       cout << "Items:" << endl;
-      for(vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
+      for(typename vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
       {
         cout << ' ';
         debugOutputItem(*iItem);
@@ -236,7 +231,7 @@ namespace QParser
       }
 
       cout << "Edges:" << endl;
-      for(State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
+      for(typename State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
       {
         cout << ' ';
         debugOutputEdge(*iEdge);
