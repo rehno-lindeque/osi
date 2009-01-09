@@ -30,9 +30,6 @@ namespace QParser
   // An LR(1) item
   struct LR1Item : public LRItem
   {
-    //OSid productionId;
-    //uint productionIndex;
-    //uint inputPosition;
     OSid lookaheadSymbol;
     
     INLINE LR1Item(OSid nonterminal, OSid lookaheadSymbol = -1) : LRItem(nonterminal), lookaheadSymbol(lookaheadSymbol) {}

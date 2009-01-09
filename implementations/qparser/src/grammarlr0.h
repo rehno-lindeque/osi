@@ -42,15 +42,13 @@ namespace QParser
               && inputPosition < item.inputPosition))); }
     FORCE_INLINE bool operator == (const LR0Item& item) const { return productionId == item.productionId && productionIndex == item.productionIndex && inputPosition == item.inputPosition; }
     FORCE_INLINE bool operator != (const LR0Item& item) const { return !(*this == item); }
-    
-    //FORCE_INLINE bool operator < (const Item& item) const { return productionId < item.productionId || (productionId == item.productionId && (production < item.production || (production == item.production && inputPosition < item.inputPosition))); }
-    //FORCE_INLINE bool operator == (const Item& item) const { return productionId == item.productionId && production == item.production && inputPosition == item.inputPosition; }
-    //FORCE_INLINE bool operator != (const Item& item) const { return !(*this == item); }
   };
     
   class GrammarLR0 : public GrammarLR<LR0Item>
   {
   public:
+    typedef LR0Item Item;
+    
     // Constructor
     INLINE GrammarLR0() {}
     INLINE ~GrammarLR0();
@@ -72,7 +70,7 @@ namespace QParser
     INLINE void goTo(vector<State*>& states, uint cBegin, uint cEnd);
 
     // Build the binary table using the states DFA graph
-    INLINE void constructBinaryTable();
+    INLINE void constructBinaryLR0Table();
 
 #ifdef _DEBUG
     virtual void debugOutputItem(const Item& item) const;

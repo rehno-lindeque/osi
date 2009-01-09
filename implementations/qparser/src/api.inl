@@ -311,7 +311,7 @@ void* OSI_API_CALL OSIX::Parser::debugInit()
 OSIX::Parser* OSI_API_CALL OSIX::parserInit()
 {
   return static_cast<OSIX::Parser*>(new QParser::Parser());
-};
+}
 
 #endif
 #endif

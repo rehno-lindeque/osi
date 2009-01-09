@@ -25,7 +25,11 @@ namespace QParser
 
   void GrammarLR0::constructParseTable()
   {
-    OSI_ASSERT(startProductionSet);
+    if(startSymbol == OSid(-1))
+    {
+      if(nextNonterminal == 0) return; // error: no productions defined
+      else startSymbol = nextNonterminal - 2; // Use the last production defined as our root production
+    }
 
     // Algorithm: The LR parsing algorithm from [modern compiler implementation in Java (ISBN 0-521-82060-X)] has been used
     //            states represents the set of states listed as T which is the set of states seen so far
@@ -38,6 +42,7 @@ namespace QParser
 
     // Evaluate each state until no new states are found
     goTo(states);
+    constructBinaryLR0Table();
   }
 
   void GrammarLR0::closure(vector<Item> &items)
@@ -50,15 +55,16 @@ namespace QParser
     for(uint c = cBegin; c < cEnd; ++c)
     {
       Item& item = items[c];
+      const Production& production = productions[item.productionIndex].first;
 
       // Check whether the last symbol has been passed
-      if(item.inputPosition >= item.production->symbolsLength)
+      if(item.inputPosition >= production.symbolsLength)
         continue;
 
-      OSid symbol = item.production->symbols[item.inputPosition].id;
+      OSid symbol = production.symbols[item.inputPosition].id;
 
       // Check whether the symbol at input position is a terminal symbol
-      if(isTokenId(symbol))
+      if(isTerminal(symbol))
         continue;
 
       // Add the closure of the nonterminal at input position to the set
@@ -84,25 +90,23 @@ namespace QParser
       for(uint cItem = 0; cItem < state.items.size(); ++cItem)
       {
         const Item& item = state.items[cItem];
+        const Production& production = productions[item.productionIndex].first;
 
         // Check whether the last symbol has already been passed
-        if(item.inputPosition >= item.production->symbolsLength)
+        if(item.inputPosition >= production.symbolsLength)
           continue;
 
-        OSid symbol = item.production->symbols[item.inputPosition].id;
+        OSid symbol = production.symbols[item.inputPosition].id;        
 
         // Construct goto item
-        Item goToItem;
+        Item goToItem = item;
         goToItem.inputPosition = item.inputPosition + 1;
-        goToItem.productionId = item.productionId;
-        goToItem.production = item.production;
 
         // Check whether there's already an edge for this symbol in the current state
         // Note: This is not legal for LR(0) grammars! However, SLR grammars can sometimes handle this)
         State::Edges::iterator iEdge = state.edges.find(symbol);
         int targetStateIndex;
 
-        //OLD: if(iEdge == state.edges.end())
         if(iEdge == state.edges.end() || iEdge->first != symbol)
         {
           // Check whether there's already a state defined for this goto item
@@ -138,7 +142,6 @@ namespace QParser
         // Note: we still have to check whether the state already contains the goto item since it could have
         // been added by the closure of another item in the state
         vector<Item>::iterator i;
-        //bug: for(i = targetState.items.begin(); i != targetState.items.end(); ++i) if(*i == item) break;
         for(i = targetState.items.begin(); i != targetState.items.end(); ++i) if(*i == goToItem) break;
         if(i != targetState.items.end()) continue;
 
@@ -153,7 +156,7 @@ namespace QParser
       goTo(states, cEnd, states.size());
   }
 
-  void GrammarLR0::constructBinaryTable()
+  void GrammarLR0::constructBinaryLR0Table()
   {
     for(vector<State*>::const_iterator i = states.begin(); i != states.end(); ++i)
     {
@@ -164,19 +167,21 @@ namespace QParser
 #ifdef _DEBUG
   void GrammarLR0::debugOutputItem(const Item& item) const
   {
-    if(!item.production || item.production->symbolsLength <= 0)
-      return;
+    const Production& production = productions[item.productionIndex].first;
 
+    if(production.symbolsLength <= 0)
+      return;
+    
     debugOutputSymbol(item.productionId);
     cout << " -> ";
-    for(uint c = 0; c < item.production->symbolsLength; ++c)
+    for(uint c = 0; c < production.symbolsLength; ++c)
     {
       if(item.inputPosition == c) cout << '.';
-      debugOutputSymbol(item.production->symbols[c].id);
-      if(c < item.production->symbolsLength-1)
+      debugOutputSymbol(production.symbols[c].id);
+      if(c < production.symbolsLength-1)
         cout << ' ';
     }
-    if(item.inputPosition == item.production->symbolsLength) cout << '.';
+    if(item.inputPosition == production.symbolsLength) cout << '.';
   }
 #endif
 }

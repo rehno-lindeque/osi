@@ -46,12 +46,7 @@ namespace QParser
     // Constructor
     INLINE GrammarLR() {}
     INLINE ~GrammarLR();
-/*
-    //// Construction
-    // Construct productions
-    virtual void constructProductions();
- **/
-
+    
   protected:
 
     // An LR state is a set of LR items
@@ -103,15 +98,6 @@ namespace QParser
     // Get an item's lookahead terminal symbols (all possible terminals that can follow after the current input position)
     // including -1 if no terminal is a possibility (i.e. end-of-stream)
     INLINE void getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals);
-    
-    /*
-    // Determine the closure of a set of items
-    INLINE void closure(vector<Item>& items);
-    INLINE void closure(vector<Item>& items, uint cBegin, uint cEnd);
-
-    // Determine the goto states, items and edges for an existing set of states
-    INLINE void goTo(vector<State*>& states);
-    INLINE void goTo(vector<State*>& states, uint cBegin, uint cEnd);*/
 
     // Find the state (index) that an item belongs to. Returns -1 if the item does not exist yet.
     INLINE int findItemState(const Item& items);

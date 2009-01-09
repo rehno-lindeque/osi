@@ -174,8 +174,8 @@ namespace QParser
 
       }
       productionSet.followSet = newFollowSet;
-    }
-  }*/
+    }*/
+  }
 }
 
 #endif

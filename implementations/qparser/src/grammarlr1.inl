@@ -199,7 +199,7 @@ namespace QParser
     if(startSymbol == OSid(-1))
     {
       if(nextNonterminal == 0) return; // error: no productions defined
-      else startSymbol = nextNonterminal - 2;
+      else startSymbol = nextNonterminal - 2; // Use the last production defined as our root production
     }
 
     // Algorithm: The LR parsing algorithm from [modern compiler implementation in Java (ISBN 0-521-82060-X)] has been used
