@@ -63,21 +63,6 @@ namespace QParser
     // Construct an LR(0) linear binary indexed parse table
     INLINE void constructParseTable();
 
-    /* An LR(0) state is a set of LR(0) items
-    struct State
-    {
-      typedef map<OSid, int> Edges; // (edge label = symbol, target = state index where -1 is an end state)
-      vector<Item> items;
-      Edges edges;
-    };
-
-    vector<State*> states;
-    map<Item, uint> itemStateIndex; // And index of what state each item maps to (for quick lookup)
-*/
-    
-    // Get all initial items for productions that produce a certain non-terminal symbol
-    INLINE void getStartItems(OSid nonterminal, vector<Item>& items);
-
     // Determine the closure of a set of items
     INLINE void closure(vector<Item>& items);
     INLINE void closure(vector<Item>& items, uint cBegin, uint cEnd);
@@ -86,16 +71,11 @@ namespace QParser
     INLINE void goTo(vector<State*>& states);
     INLINE void goTo(vector<State*>& states, uint cBegin, uint cEnd);
 
-    // Find the state (index) that an item belongs to. Returns -1 if the item does not exist yet.
-    INLINE int findItemState(const Item& items);
-
     // Build the binary table using the states DFA graph
     INLINE void constructBinaryTable();
 
 #ifdef _DEBUG
-    INLINE void debugOutputItem(const Item& item) const;
-    INLINE void debugOutputEdge(State::Edges::const_reference edge) const;
-    virtual void debugOutputStates() const;
+    virtual void debugOutputItem(const Item& item) const;
 #endif
   };
 }

@@ -223,25 +223,6 @@ namespace QParser
     constructBinaryLR1Table();
   }
 
-  void GrammarLR1::getStartItems(OSid nonterminal, vector<Item> &items)
-  {
-    OSI_ASSERT(!isTerminal(nonterminal));
-    ProductionSet* productionSet = getProductionSet(nonterminal);
-
-    Item item(nonterminal);
-    for(uint cProduction = 0; cProduction < productionSet->productionsLength; ++cProduction)
-    {
-      item.productionIndex = productionSet->productionsOffset + cProduction;
-
-      // Add the item to the set if not already present
-      // todo: (optimization) use some form of index for this... (unfortunately stl doesn't allow multiple indexes...)
-      vector<Item>::iterator i;
-      for(i = items.begin(); i != items.end(); ++i) if (*i == item) break;
-      if(i == items.end())
-        items.push_back(item);
-    }
-  }
-
   void GrammarLR1::getLookaheadStartItems(OSid nonterminal, vector<Item> &items, const Item& parentItem)
   {
     OSI_ASSERT(!isTerminal(nonterminal));
@@ -272,71 +253,6 @@ namespace QParser
           items.push_back(item);
       }
     }
-  }
-
-  void GrammarLR1::getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals)
-  {
-    const Production& production = productions[item.productionIndex].first;
-    for(uint cSymbol = item.inputPosition + 1; cSymbol < production.symbolsLength; ++cSymbol)
-    {
-      if(!getFirstTerminals(production.symbols[cSymbol].id, lookaheadTerminals))
-        return; // The symbol (terminal / nonterminal) is not nullable, so we're done
-    }
-
-    // Add the lookahead symbol of the parent item if all other items are nullable
-    // (this might be -1 for no lookahead)
-    lookaheadTerminals.insert(item.lookaheadSymbol);
-  }
-
-  bool GrammarLR1::getFirstTerminals(OSid id, set<OSid>& firstTerminals)
-  {
-    if(isTerminal(id))
-    {
-      firstTerminals.insert(id);
-      return false;  // FIRST(id) is not nullable
-    }
-
-    // Initialize the nullable attribute
-    ProductionSet& productionSet = *getProductionSet(id);
-    ++productionSet.visitedCount;
-
-    if(productionSet.visitedCount > 1)
-      return productionSet.nullable;
-
-    // Get first items
-    for(uint c = 0; c < productionSet.productionsLength; ++c)
-    {
-      const Production& production = productions[productionSet.productionsOffset + c].first;
-      bool productionNullable = true;
-
-      for(uint cSymbol = 0; cSymbol < production.symbolsLength; ++cSymbol)
-      {
-        productionNullable &= getFirstTerminals(production.symbols[cSymbol].id, firstTerminals);
-        if(!productionNullable)
-          break;
-      }
-
-      // If the production set's nullity changes and the production set is recursive, we must restart the process with the new nullity value
-      if((productionNullable || production.symbolsLength == 0) && productionSet.nullable == false)
-      {
-        // Note: If getFirstTerminals is called on productionSet for the first time, its nullity MUST be false.
-        //       It can change to true during evaluation of this function, but can never return to false.
-        //       If the nullity of the nonterminal changes and the nonterminals is recursive (visited count becomes > 1
-        //       during evaluation of its sub tokens), the function must be restarted using the new nullity value
-        //       (which must then be true since we can't return to false).
-        //       Also note that we don't need to restore the firstTerminals to its previous state since, we can only
-        //       add more terminals by making this nonterminal nullable.
-
-        productionSet.nullable = true;
-        productionSet.visitedCount = 0;
-        return getFirstTerminals(id, firstTerminals);
-      }
-    }
-
-    // Reset the visited count (since this is the first evaluation of the production set)
-    productionSet.visitedCount = 0;
-
-    return productionSet.nullable;
   }
 
   void GrammarLR1::closure(vector<Item> &items)

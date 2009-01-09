@@ -93,10 +93,18 @@ namespace QParser
 #pragma pack(pop)
 
     
-/*
     // Get all initial items for productions that produce a certain non-terminal symbol
     INLINE void getStartItems(OSid nonterminal, vector<Item>& items);
 
+    // Get the first set of terminals for some token id. Returns true if the set is nullable.
+    // todo: we'll remove the bool and instead just store nullable directly in the productionSet
+    INLINE bool getFirstTerminals(OSid id, set<OSid>& firstTerminals);
+    
+    // Get an item's lookahead terminal symbols (all possible terminals that can follow after the current input position)
+    // including -1 if no terminal is a possibility (i.e. end-of-stream)
+    INLINE void getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals);
+    
+    /*
     // Determine the closure of a set of items
     INLINE void closure(vector<Item>& items);
     INLINE void closure(vector<Item>& items, uint cBegin, uint cEnd);

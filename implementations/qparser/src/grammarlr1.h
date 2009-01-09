@@ -67,34 +67,14 @@ namespace QParser
    virtual void parse(ParseResult& parseResult);
 
   protected:
-    
-    /*// An LR(1) state is a set of LR(1) items
-    struct State
-    {
-      typedef map<OSid, int> Edges; // (edge label = symbol, target = state index where -1 is an end state)
-      vector<Item> items;
-      Edges edges;
-    };
-
-    vector<State*>             states;
-    map<Item, uint>            itemStateIndex; // And index of what state each item maps to (for quick lookup)*/
     vector<BinaryIndexElement> binaryParseTable;
 
     // Construct an LR(1) linear binary indexed parse table
     INLINE void constructParseTable();
 
-    // Get all initial items for productions that produce a certain non-terminal symbol. For the second version,
-    // the follow symbol in the parent item is added to each start item's symbols after the lookahead position.
-    INLINE void getStartItems(OSid nonterminal, vector<Item>& items);
+    // This is similar to the getStartItems function in the base class, but the follow symbol in the parent 
+    // item is added to each start item's symbols after the lookahead position.
     INLINE void getLookaheadStartItems(OSid nonterminal, vector<Item>& items, const Item& parentItem);
-
-    // Get an item's lookahead terminal symbols (all possible terminals that can follow after the current input position)
-    // including -1 if no terminal is a possibility (i.e. end-of-stream)
-    INLINE void getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals);
-
-    // Get the first set of terminals for some token id. Returns true if the set is nullable.
-    // todo: we'll remove the bool and instead just store nullable directly in the productionSet
-    INLINE bool getFirstTerminals(OSid id, set<OSid>& firstTerminals);
 
     // Determine the closure of a set of items
     INLINE void closure(vector<Item>& items);

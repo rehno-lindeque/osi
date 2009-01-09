@@ -40,30 +40,6 @@ namespace QParser
     goTo(states);
   }
 
-  void GrammarLR0::getStartItems(OSid nonterminal, vector<Item> &items)
-  {
-    OSI_ASSERT(!isTokenId(nonterminal))
-    ProductionSet* productionSet = getProductionSet(nonterminal);
-
-    Item item;
-    item.inputPosition = 0;
-    item.productionId = nonterminal;
-
-    for(uint cProduction = 0; cProduction < productionSet->productionsLength; ++cProduction)
-    {
-      item.production = &productionSet->productions[cProduction];
-
-      // todo: (optimization) use some form of index for this... (unfortunately stl doesn't allow multiple indexes...)
-      vector<Item>::iterator i;
-      for(i = items.begin(); i != items.end(); ++i)
-        if(*i == item)
-          break;
-
-      if(i == items.end())
-        items.push_back(item);
-    }
-  }
-
   void GrammarLR0::closure(vector<Item> &items)
   {
     closure(items, 0, items.size());
@@ -177,15 +153,6 @@ namespace QParser
       goTo(states, cEnd, states.size());
   }
 
-  int GrammarLR0::findItemState(const Item& item)
-  {
-    map<Item, uint>::iterator i = itemStateIndex.find(item);
-    //if (OLD: i == itemStateIndex.end())
-    if (i == itemStateIndex.end() || i->first != item)
-      return -1;
-    return i->second;
-  }
-
   void GrammarLR0::constructBinaryTable()
   {
     for(vector<State*>::const_iterator i = states.begin(); i != states.end(); ++i)
@@ -210,41 +177,6 @@ namespace QParser
         cout << ' ';
     }
     if(item.inputPosition == item.production->symbolsLength) cout << '.';
-  }
-
-  void GrammarLR0::debugOutputEdge(State::Edges::const_reference edge) const
-  {
-    cout << "--(";
-    debugOutputSymbol(edge.first);
-    cout << ")--> " << edge.second;
-  }
-
-  void GrammarLR0::debugOutputStates() const
-  {
-    cout << endl;
-    for(uint c = 0; c < states.size(); ++c)
-    {
-      const State& state = *states[c];
-      cout << "State " << c << endl;
-      cout << "---------" << endl;
-      cout << "Items:" << endl;
-      for(vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
-      {
-        cout << ' ';
-        debugOutputItem(*iItem);
-        cout << endl;
-      }
-
-      cout << "Edges:" << endl;
-      for(State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
-      {
-        cout << ' ';
-        debugOutputEdge(*iEdge);
-        cout << endl;
-      }
-
-      cout << endl;
-    }
   }
 #endif
 }
