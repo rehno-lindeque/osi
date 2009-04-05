@@ -1,0 +1,26 @@
+##############################################################################
+#
+#     SCONSTRUCT
+#
+#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+import os
+import sys
+
+user_build_dir  = '../../lib'
+user_target     = 'reference'
+user_scons_dirs = ['.', '../../../base/project/scons', '../../../basereference/project/scons']
+user_lib_dirs   = []
+user_libs       = ['libstdc++.a']
+user_include_dirs = ['../../../../api',                 # OSI Headers
+                     '../../../basereference/src',      # Reference Libraries
+                     '../../../base/src'
+                    ]
+user_definitions = [#'MSVC_BUILD',
+                    #'OS_64BIT' (TODO)
+                   ]
+user_debugflag = '-g -D_DEBUG -Wall' # '-ggdb'
+
+execfile('CommonSConstruct', globals())
