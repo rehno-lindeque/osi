@@ -6,6 +6,9 @@
 #
 ##############################################################################
 
+# TODO: Many files listed here are not being ignored. This needs to be 
+#       investigated and fixed.
+
 # Ignore any build directories
 build/
 
