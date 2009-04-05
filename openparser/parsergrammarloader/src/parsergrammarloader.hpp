@@ -1,8 +1,8 @@
-#ifndef __PARSERGRAMMARLOADER_H__
-#define __PARSERGRAMMARLOADER_H__
+#ifndef __PARSERGRAMMARLOADER_HPP__
+#define __PARSERGRAMMARLOADER_HPP__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSERGRAMMARLOADER.H
+//    PARSERGRAMMARLOADER.HPP
 //
 //    Copyright © 2008, Rehno Lindeque. All rights reserved.
 //
@@ -21,20 +21,17 @@
     TODO:
       + Error reporting...
       + Escape character in lexical tokens
-*/
+*/	
 /*                                 INCLUDES                                 */
 // OpenParser
-#include <osix/parser/parser.h>
+#include <osix/parser/parser.hpp>
+
+namespace Parser { 
+namespace GrammarLoader { 
 
 /*                             FORWARD DECLERATIONS                         */
-#ifdef __cplusplus
-extern "C" {
-#endif
+void constructGrammar(OSIX::Parser &parser, const OSchar* buffer, OSuint bufferSize, OSid* ids, OSuint idsBufferSize);
 
-void parserConstructGrammar(const OSchar* buffer, OSuint bufferSize, OSid* ids, OSuint idsBufferSize);
-
-#ifdef __cplusplus
-}
-#endif
+}}
 
 #endif
