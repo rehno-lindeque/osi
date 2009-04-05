@@ -1,0 +1,68 @@
+##############################################################################
+#
+#     COMMONSCONSCRIPT
+#
+#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#
+#     Version 0.02 (2009-04-05)
+#
+#     (The versioning on this file is usefull because it may be copied often.
+#     Try and keep build scripts as up to date as possible. I.e. Always use
+#     the latest CommonSConscript file)
+#
+##############################################################################
+
+import glob
+import os
+from SConsUtils import *
+
+Import('env')
+Import('verbose')
+Import('objects')
+Import('include_dirs')
+Import('definitions')
+
+# Output script information
+def print_script_info():
+  print '-----------------------------------'
+  print_info('Build Script', user_scriptname)
+  print_info('Main Script Dir', scriptdir)
+  print_info('Main Build Dir', abs_build_dir)
+  print_info('Main Source Dir', abs_src_dir)
+  print_info('Source Dirs', src_dirlist)
+  print_info('Objects: ', map(lambda obj: remove_prefix('%s' % obj, abs_build_dir), local_objects))
+
+#########################################################
+# Setup build directories
+
+abs_build_dir = os.path.abspath(os.path.join(user_build_dir, env['PLATFORM'] + '-' + env['CXX']))
+abs_src_dir = os.path.abspath(user_src_dir)
+scriptdir = os.getcwd() 
+
+BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
+
+#########################################################
+# Construct a list of input source directories
+
+src_dirlist = ['.']
+src_dirlist = expand_dirs(user_src_dir, src_dirlist)
+
+#########################################################
+# Compile every cpp file separately
+
+local_objects = []
+
+for dir in src_dirlist:
+  for file in glob.glob(os.path.join(user_src_dir, os.path.join(dir, '*.cpp'))):
+    file_buildpath = os.path.join(abs_build_dir, remove_prefix(file, user_src_dir))
+    object = env.Object(target  = file_buildpath,
+                        CPPPATH = include_dirs,
+                        CPPDEFINES = definitions)
+    objects.append(object[0])
+    local_objects.append(object[0])
+
+#########################################################
+# Output script information
+
+if verbose:
+  print_script_info()
