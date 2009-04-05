@@ -69,6 +69,8 @@
   #include <hash_map>
   #include <hash_set>
   //#include <ext/stdio_filebuf.h>?
+//#elif defined(__GXX_EXPERIMENTAL_CXX0X__)
+//  #include <unordered_map>
 #else
   #include <ext/hash_map>
   #include <ext/hash_set>

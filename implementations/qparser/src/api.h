@@ -54,6 +54,7 @@
 // STL
 #include <list>
 #include <stack>
+//#include <algorithm>
 
 //// SIMD
 //#include "../simd/simd.h"
@@ -64,6 +65,8 @@
 #include "grammarlr.h"
 //#include "grammarlr0.h"
 #include "grammarlr1.h"
+//#include "grammarlrk.h"
+#include "grammarld.h"
 
 /*                                  CLASSES                                 */
 namespace QParser

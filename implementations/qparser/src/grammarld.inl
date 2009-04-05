@@ -1,9 +1,9 @@
-#ifdef  __QPARSER_GRAMMARLR_H__
-#ifndef __QPARSER_GRAMMARLR_INL__
-#define __QPARSER_GRAMMARLR_INL__
+#ifdef  __QPARSER_GRAMMARLD_H__
+#ifndef __QPARSER_GRAMMARLD_INL__
+#define __QPARSER_GRAMMARLD_INL__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    GRAMMARLR.INL
+//    GRAMMARLD.INL
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -11,15 +11,24 @@
 
 namespace QParser
 {
-  template<typename Item>
-  GrammarLR<Item>::~GrammarLR()
+  GrammarLD::~GrammarLD()
   {
-    // Clean up memory
+    /*// Clean up memory
     for(typename vector<State*>::iterator i = states.begin(); i != states.end(); ++i)
-      delete *i;
+      delete *i;*/
+  }
+  
+  void GrammarLD::constructProductions()
+  {
+    builder.ConstructParseTable(parseTable);
   }
 
-  template<typename Item>
+  void GrammarLD::parse(ParseResult& parseResult)
+  {
+    // todo
+  }
+
+  /*template<typename Item>
   void GrammarLR<Item>::getStartItems(OSid nonterminal, vector<Item> &items)
   {
     OSI_ASSERT(!isTerminal(nonterminal));
@@ -152,7 +161,7 @@ namespace QParser
       cout << endl;
     }
   }
-#endif
+#endif*/
 }
 
 #endif

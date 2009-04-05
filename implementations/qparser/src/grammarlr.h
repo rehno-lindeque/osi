@@ -39,7 +39,7 @@ namespace QParser
     INLINE LRItem() {}
   };
   
-  template<class Item>
+  template<typename Item>
   class GrammarLR : public Grammar
   {
   public:
@@ -63,6 +63,7 @@ namespace QParser
     // Binary Index Element for the parse table
     #pragma pack(push)
 #pragma pack(0)
+  public:
     struct BinaryIndexElement
     {
       //uint state;
@@ -85,6 +86,7 @@ namespace QParser
       uint param;
       uint largerIndex;
     };
+  protected:
 #pragma pack(pop)
 
     

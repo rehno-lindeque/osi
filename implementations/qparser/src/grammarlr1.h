@@ -10,7 +10,7 @@
 /*                               DOCUMENTATION                              */
 /*
     DESCRIPTION:
-      LR(0) class grammar construction
+      LR(1) class grammar construction
 
     REFERENCES:
       + [modcomp]

@@ -1,20 +1,28 @@
 ##############################################################################
 #
-#     QPARSER
+#     SCONSTARGETSCRIPT
 #
-#     Copyright (c) 2007-2008 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2007-2009 Rehno Lindeque. All rights reserved.
 #
 ##############################################################################
 
 Import('env')
-Import('target')
+Import('verbose')
+Import('main_target')
 Import('objects')
 Import('lib_dirs')
 Import('libs')
 
-env.StaticLibrary(target         = target,
-                  source         = objects,
-                  LIBPATH        = lib_dirs,
-                  #LIBLINKPREFIX = '',
-                  #LIBPREFIX     = '',
-                  LIBS           = libs)
+if(verbose):
+  print '==================================='
+  print 'Target: %s' % main_target
+  print 'Objects: ', map(lambda obj: '%s' % obj, objects)
+  print 'Library Dirs: %s' % lib_dirs
+  print 'Libraries: %s' % libs
+
+target = env.StaticLibrary(target         = main_target,
+                           source         = objects,
+                           LIBPATH        = lib_dirs,
+                           LIBS           = libs)
+
+Default(target)

@@ -21,7 +21,8 @@ OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
   if(_this.grammar != null)
     return 0; // error
 
-  QParser::Grammar* grammarObject = _this.grammar = (QParser::Grammar*) _this.beginObject<QParser::GrammarLR1>();
+  //QParser::Grammar* grammarObject = _this.grammar = (QParser::Grammar*) _this.beginObject< QParser::GrammarLRK<2> >();
+  QParser::Grammar* grammarObject = _this.grammar = (QParser::Grammar*) _this.beginObject< QParser::GrammarLD >();
   return cast_object(grammarObject);
 }
 
