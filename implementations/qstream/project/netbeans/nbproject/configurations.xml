@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="39">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="src" displayName="src" projectFiles="true">
+      <itemPath>../../src/api.cpp</itemPath>
+      <itemPath>../../src/api.h</itemPath>
+      <itemPath>../../src/api.inl</itemPath>
+    </logicalFolder>
+    <logicalFolder name="stream" displayName="stream" projectFiles="true">
+      <itemPath>../../../../api/osix/stream/stream.h</itemPath>
+      <itemPath>../../../../api/osix/stream/stream.hpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>../make/Makefile</itemPath>
+      <itemPath>../make/Makefile-qstream.mk</itemPath>
+      <itemPath>qstream-Makefile.mk</itemPath>
+      <itemPath>../scons/SConscript</itemPath>
+      <itemPath>../scons/SConstargetscript</itemPath>
+      <itemPath>../scons/SConstruct</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>qstream-Makefile.mk</projectmakefile>
+  <confs>
+    <conf name="Scons_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons </buildCommand>
+          <cleanCommand>scons -c</cleanCommand>
+          <executablePath>../../lib/libqstream.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/stream/stream.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/stream/stream.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+    </conf>
+    <conf name="Make_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../make</buildCommandWorkingDir>
+          <buildCommand>make</buildCommand>
+          <cleanCommand>make clean</cleanCommand>
+          <executablePath>../../lib/libqstream.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../api</directoryPath>
+            </includeDirectories>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/stream/stream.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/stream/stream.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+    </conf>
+    <conf name="Debug_Scons_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons debug=1</buildCommand>
+          <cleanCommand>scons -c debug=1</cleanCommand>
+          <executablePath>../../lib/libqstreamd.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/stream/stream.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/stream/stream.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
