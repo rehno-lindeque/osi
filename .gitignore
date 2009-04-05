@@ -18,6 +18,7 @@ bin/
 # Ignore build files
 *.a               # static library files
 *.o               # object files
+*.pyc             # compiled python bytecode
 
 # Ignore temporary files
 *~
