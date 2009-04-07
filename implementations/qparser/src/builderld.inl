@@ -186,6 +186,16 @@ namespace QParser
     actions.push_back(targetRow);
   }
   
+  INLINE void BuilderLD::ActionRow::AddActionReturn()
+  {
+    actions.push_back(TOKEN_RETURN);
+  }
+  
+  INLINE void BuilderLD::ActionRow::AddActionAccept()
+  {
+    actions.push_back(TOKEN_ACCEPT);
+  }
+  
 }
 
 #endif

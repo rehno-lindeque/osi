@@ -93,8 +93,11 @@ namespace QParser
     //INLINE ActionRow& AddActionGoto();
     INLINE void AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow);
     
+    // Add a return action to the table
+    INLINE void AddActionReturn();
+    
     // Add an accept action to the table
-    INLINE void AddActionAccept() { /* todo */ }
+    INLINE void AddActionAccept();
     
     //// Accessors
     INLINE BuilderLD& GetBuilder() { return builder; }
