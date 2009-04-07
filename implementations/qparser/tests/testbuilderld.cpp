@@ -43,11 +43,18 @@ typedef BuilderLD::ParseTokens ParseTokens;
 void PrintParseTable(const ParseTokens& parseTable)
 {
   //cout << "\tThe constructed parse table:" << endl;
-  cout << "\tOffset\t| Actions" << endl;
-  cout << "\t0\t| ";
-  
+  cout << "\tOffset\t| Actions";  
+  bool printNewLine = true;
   for(uint cToken = 0; cToken < parseTable.size(); ++cToken)
   {
+    // Print the offset of the new line
+    if(printNewLine)
+    {
+      cout << endl << "\t" << cToken << "\t| ";
+      printNewLine = false;
+    }
+    
+    // Print the token info
     ParseToken token = parseTable[cToken];
     if(token == TOKEN_IGNORE)
       cout << "ignore ";
@@ -87,6 +94,16 @@ void PrintParseTable(const ParseTokens& parseTable)
         
       cout << "goto(" << lookaheadOffset << "->" << targetOffset << ") ";
     }
+    else if(token == TOKEN_RETURN)
+    {
+      cout << "return";
+      printNewLine = true;
+    }
+    else if(token == TOKEN_ACCEPT)
+    {
+      cout << "accept";
+      printNewLine = true;
+    }
     else if(token & TOKEN_FLAG_SHIFT)
       cout << "shift(" << (token & ~TOKEN_FLAG_SHIFT) << ") ";
     else if(token & TOKEN_FLAG_REDUCEPREV)
@@ -103,7 +120,7 @@ void BuildTestGrammar1()
 {
   BuilderLD builder;
   
-  // Right-recursive grammar with unbounded look-ahead
+  // Left-recursive grammar with unbounded look-ahead
   ParseToken x = TOKEN_FLAG_SHIFT | 0;
   ParseToken y = TOKEN_FLAG_SHIFT | 1;
   ParseToken z = TOKEN_FLAG_SHIFT | 2;
@@ -156,6 +173,7 @@ void BuildTestGrammar1()
   row1.AddActionGoto(3, 4);
   row1.AddActionReducePrev(rule5);
   row1.AddActionReducePrev(rule1);
+  row1.AddActionReturn();
 
 #ifdef TESTBUILDERLD_DEBUG_INFO
   cout << "\tCreate row 2" << endl;
@@ -164,6 +182,8 @@ void BuildTestGrammar1()
 
   // return
   ActionRow& row2 = pivot0.AddPivot(z);
+  row2.AddActionReturn();
+  
   
 #ifdef TESTBUILDERLD_DEBUG_INFO
   cout << "\tCreate row 3" << endl;
@@ -172,6 +192,7 @@ void BuildTestGrammar1()
 
   // return
   ActionRow& row3 = pivot0.AddPivot(w);
+  row3.AddActionReturn();
   
 #ifdef TESTBUILDERLD_DEBUG_INFO
   cout << "\tCreate row 4" << endl;
@@ -182,6 +203,7 @@ void BuildTestGrammar1()
   ActionRow& row4 = builder.AddActionRow();
   row4.AddActionReducePrev(rule7);
   row4.AddActionReducePrev(rule2);
+  row4.AddActionReturn();
 
 #ifdef TESTBUILDERLD_DEBUG_INFO 
   cout << "\tCreate row 5" << endl;
