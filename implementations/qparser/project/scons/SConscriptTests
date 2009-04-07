@@ -34,22 +34,6 @@ scriptdir = os.getcwd()
 BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
 
 ##############################################################################
-# Unit test builder
-
-#def builder_unit_test(target, source, env):
-#  app = str(source[0].abspath)
-#  #return_code = os.spawnl(os.P_WAIT, app, app)
-#  return_code = subprocess.call(app)
-#  if return_code != 0:
-#    #open(str(target[0]),'w').write("PASSED\n")
-#    #else:
-#    print 'FAILED with return code ', return_code
-#    return 1
-
-# Create a builder for unit tests
-#env.Append(BUILDERS = {'UnitTest' :  Builder(action = builder_unit_test)})
-
-##############################################################################
 # Unit test targets
 
 unit_test_programs = []
@@ -75,10 +59,6 @@ if(verbose):
   print '==================================='
   print 'Perform regression tests...'
   print 'Executables: ', map(lambda prog: '%s' % prog[0], unit_test_programs)
-  
-#env.UnitTest("test.passed", map(lambda prog: '%s' % prog[0], unit_test_programs))
-#testTarget = env.Alias("test", "test.passed")
-#env.AlwaysBuild(testTarget)
 
 commands = map(lambda prog: '%s' % prog[0], unit_test_programs)
 for command in commands:
