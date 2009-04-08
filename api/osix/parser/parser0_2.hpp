@@ -4,9 +4,9 @@
 //
 //    PARSER.HPP
 //
-//    Ver 0.3 (2009-04-08)
+//    Ver 0.2 (2007-11-10)
 //
-//    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */
