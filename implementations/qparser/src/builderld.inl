@@ -46,10 +46,10 @@ namespace QParser
       for(ParseTokens::const_iterator iToken = actionRow.actions.begin(); iToken != actionRow.actions.end(); ++iToken)
       {
         // Process a pivot action
-        if(*iToken == TOKEN_PIVOT)
+        if(*iToken == TOKEN_ACTION_PIVOT)
         {
           // Push the pivot action
-          parseTable.push_back(TOKEN_PIVOT);
+          parseTable.push_back(TOKEN_ACTION_PIVOT);
           const PivotSet& pivotSet = **iPivotSet;
           
           // Push the number of pivots onto the action table
@@ -71,10 +71,10 @@ namespace QParser
         }
         
         // Process a goto action
-        if(*iToken == TOKEN_GOTO)
+        if(*iToken == TOKEN_ACTION_GOTO)
         {
           // Push the goto action
-          parseTable.push_back(TOKEN_GOTO);
+          parseTable.push_back(TOKEN_ACTION_GOTO);
           
           // Push the index of the lookahead row for this goto action
           // (to be replaced by a parse table offset later)
@@ -103,7 +103,7 @@ namespace QParser
     // Replace all row indexes with parse table offsets
     for(ParseTokens::iterator iToken = parseTable.begin(); iToken != parseTable.end(); ++iToken)
     {
-      if(*iToken == TOKEN_PIVOT)
+      if(*iToken == TOKEN_ACTION_PIVOT)
       {
         // Get the length of the pivot
         ++iToken;
@@ -120,7 +120,7 @@ namespace QParser
         continue;
      }
      
-     if(*iToken == TOKEN_GOTO)
+     if(*iToken == TOKEN_ACTION_GOTO)
      {
        // Look up the table offset for the lookahead row index of the goto action
        ++iToken;
@@ -157,7 +157,7 @@ namespace QParser
 
   INLINE BuilderLD::PivotSet& BuilderLD::ActionRow::AddActionPivot()
   {
-    actions.push_back(TOKEN_PIVOT);
+    actions.push_back(TOKEN_ACTION_PIVOT);
     pivotSets.push_back(new PivotSet(GetBuilder(), *this));
     return *pivotSets.back();
   }
@@ -181,19 +181,19 @@ namespace QParser
   
   INLINE void BuilderLD::ActionRow::AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow)
   {
-    actions.push_back(TOKEN_GOTO);
+    actions.push_back(TOKEN_ACTION_GOTO);
     actions.push_back(lookaheadRow);
     actions.push_back(targetRow);
   }
   
   INLINE void BuilderLD::ActionRow::AddActionReturn()
   {
-    actions.push_back(TOKEN_RETURN);
+    actions.push_back(TOKEN_ACTION_RETURN);
   }
   
   INLINE void BuilderLD::ActionRow::AddActionAccept()
   {
-    actions.push_back(TOKEN_ACCEPT);
+    actions.push_back(TOKEN_ACTION_ACCEPT);
   }
   
 }

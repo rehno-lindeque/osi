@@ -5,7 +5,7 @@
 //
 //    GRAMMAR.INL
 //
-//    Copyright © 2007-2008, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -101,13 +101,13 @@ namespace QParser
   void Grammar::constructTokens()
   {
     uint&             nTokens                      = Grammar::nTokens[activeTokenType + activeSubTokenType];
-    Token*&           activeTokens                 = tokens[activeTokenType + activeSubTokenType];
+    LexMatch*&           activeTokens                 = tokens[activeTokenType + activeSubTokenType];
     TokenRootIndex(&  activeTokenRootIndices)[256] = tokenRootIndices[activeTokenType + activeSubTokenType];
 
     //// Consolidate tokens (Copy tokens to a fixed array & construct a root character index)
     // Allocate token array
     nTokens = (uint)constructionTokens.size();
-    activeTokens = new Token[nTokens];
+    activeTokens = new LexMatch[nTokens];
 
     // Clear token root indices
     memset(activeTokenRootIndices, 0, sizeof(TokenRootIndex) * nTokens);
@@ -137,7 +137,7 @@ namespace QParser
           else
           {
             // (move all tokens up by one)
-            memmove(&activeTokens[tokenRootIndex.offset + tokenRootIndex.length + 1], &activeTokens[tokenRootIndex.offset + tokenRootIndex.length], sizeof(Token[cToken - (tokenRootIndex.offset + tokenRootIndex.length)]));
+            memmove(&activeTokens[tokenRootIndex.offset + tokenRootIndex.length + 1], &activeTokens[tokenRootIndex.offset + tokenRootIndex.length], sizeof(LexMatch[cToken - (tokenRootIndex.offset + tokenRootIndex.length)]));
             for(uint c = 0; c <= MAX_UINT8; ++c)
               if(activeTokenRootIndices[c].offset > tokenRootIndex.offset)
                 ++activeTokenRootIndices[c].offset;
@@ -336,7 +336,7 @@ namespace QParser
       terminalIds[tokenName] = id;
 
       // Add a temporary token to the temporary construction set    
-      constructionTokens.push_back(Token(id, bufferLength, valueLength));
+      constructionTokens.push_back(LexMatch(id, bufferLength, valueLength));
     }
     else
     {
@@ -387,8 +387,8 @@ namespace QParser
       
       for(uint c = 0; c < production.symbolsLength; ++c)
       {
-        if(production.symbols[c].id == oldId)
-          production.symbols[c].id = newId;
+        if(production.symbols[c].token == oldId)
+          production.symbols[c].token = newId;
       }
     }
   }
@@ -400,7 +400,7 @@ namespace QParser
 
   bool Grammar::isSilent(const Production& production) const
   {
-    return production.symbolsLength == 1 && !isTerminal(production.symbols[0].id);
+    return production.symbolsLength == 1 && !isTerminal(production.symbols[0].token);
   }
 
   bool Grammar::isSilent(OSid id) const
@@ -597,7 +597,7 @@ namespace QParser
   bool Grammar::parseSymbolToken(TokenType tokenType, const_cstring inputPosition, uint inputLength, ParseMatch& tokenMatch) const
   {
     const TokenRootIndex* const& tokenRootIndices = Grammar::tokenRootIndices[tokenType];
-    Token* const&                tokens           = Grammar::tokens[tokenType];
+    LexMatch* const&             tokens           = Grammar::tokens[tokenType];
     const char                   rootCharacter    = *inputPosition;
 
     // Lookup token root character
@@ -606,11 +606,11 @@ namespace QParser
     // Parse possible characters
     for(uint cToken = 0; cToken < tokenRootIndex.length; ++cToken)
     {
-      const Token& token = tokens[tokenRootIndex.offset + cToken];
+      const LexMatch& token = tokens[tokenRootIndex.offset + cToken];
 
       if(matchSymbolToken(token, inputPosition, inputLength, tokenMatch.length))
       {
-        tokenMatch.id = token.id;
+        tokenMatch.token = token.token;
         return true; // token match found
       }
     }
@@ -618,7 +618,7 @@ namespace QParser
     return false; // no token match found
   }
 
-  bool Grammar::matchSymbolToken(const Token& token, const_cstring inputPosition, uint inputLength, uint16& matchLength) const
+  bool Grammar::matchSymbolToken(const LexMatch& token, const_cstring inputPosition, uint inputLength, uint16& matchLength) const
   {
     // Precondition:
     OSI_ASSERT(token.valueLength >= 1);
@@ -640,7 +640,7 @@ namespace QParser
     return true;
   }
 
-  bool Grammar::matchBoundingToken(const Token& token, const_cstring inputPosition, uint inputLength, uint16& matchLength) const
+  bool Grammar::matchBoundingToken(const LexMatch& token, const_cstring inputPosition, uint inputLength, uint16& matchLength) const
   {
     //todo: refactor a little? (store lengths of boundary strings during matches)
     const_cstring const tokenValue = &tokenCharacters[token.valueOffset];
@@ -737,7 +737,7 @@ namespace QParser
   void Grammar::parseWordToken(const_cstring inputPosition, ParseMatch& tokenMatch) const
   {
     const TokenRootIndex* const& tokenRootIndices = lexWordTokenRootIndices;
-    Token* const&                tokens           = lexWordTokens;
+    LexMatch* const&                tokens           = lexWordTokens;
     const char                   rootCharacter    = *inputPosition;
 
     // Lookup token root character
@@ -746,7 +746,7 @@ namespace QParser
     // Parse possible characters
     for(uint cToken = 0; cToken < tokenRootIndex.length; ++cToken)
     {
-      const Token& token = tokens[tokenRootIndex.offset + cToken];
+      const LexMatch& token = tokens[tokenRootIndex.offset + cToken];
 
       // Use input length to quickly discard token words
       if(token.valueLength - 1 != tokenMatch.length)
@@ -755,7 +755,7 @@ namespace QParser
       // Match token
       if(matchWordToken(token, inputPosition))
       {
-        tokenMatch.id = token.id;
+        tokenMatch.token = token.token;
         return; // token match found
       }
     }
@@ -767,12 +767,12 @@ namespace QParser
     // Todo:  Periods are also separated into tokens, hence it's the parser's task to put together real numbers...
     //        (But is this correct?)
     if(rootCharacter >= '0' && rootCharacter <= '9')
-      tokenMatch.id = ID_CONST_NUM;
+      tokenMatch.token = ID_CONST_NUM;
     else
-      tokenMatch.id = ID_IDENTIFIER;
+      tokenMatch.token = ID_IDENTIFIER;
   }
 
-  bool Grammar::matchWordToken(const Token& token, const_cstring inputPosition) const
+  bool Grammar::matchWordToken(const LexMatch& token, const_cstring inputPosition) const
   {
     for(uint c = 0; c < (uint)(token.valueLength - 1); ++c)
       /*if(token.value[c] != inputPosition[c])*/
@@ -828,12 +828,12 @@ namespace QParser
       // Get the match we are traversing
       const ParseMatch& currentMatch = parseResult.parseStream.data[c];
       
-      OSI_DEBUG(cout << getTokenName(currentMatch.id) << ' ');
+      OSI_DEBUG(cout << getTokenName(currentMatch.token) << ' ');
       OSI_DEBUG(cout.flush());
       
       // Increment current level if we reach a non-terminal node
       // (I.e. we've reached the beginning of a production)
-      if(!isTerminal(currentMatch.id) && currentMatch.length > 0)
+      if(!isTerminal(currentMatch.token) && currentMatch.length > 0)
       {
         OSI_DEBUG(cout << "{" << level << ' ');
         OSI_DEBUG(cout.flush());
@@ -888,11 +888,11 @@ namespace QParser
       // Get the match we are traversing
       ParseMatch& currentMatch = parseResult.parseStream.data[c];
       
-      OSI_DEBUG(cout << getTokenName(currentMatch.id) << ' ');
+      OSI_DEBUG(cout << getTokenName(currentMatch.token) << ' ');
       OSI_DEBUG(cout.flush());
       
       // Update the offset of this node since the (future) index of its children is now known
-      if(!isTerminal(currentMatch.id))
+      if(!isTerminal(currentMatch.token))
         currentMatch.offset = indices[level+1] + offsets[level+1];
       
       // Copy the match data to the shuffle buffer
@@ -905,7 +905,7 @@ namespace QParser
       
       // Increment current level if we reach a non-terminal node
       // (I.e. we've reached the beginning of a production)
-      if(!isTerminal(currentMatch.id) && currentMatch.length > 0)
+      if(!isTerminal(currentMatch.token) && currentMatch.length > 0)
       {
         OSI_DEBUG(cout << "{" << level << ' ');
         OSI_DEBUG(cout.flush());
@@ -1020,7 +1020,7 @@ namespace QParser
   {
     for(uint c = 0; c < production.symbolsLength; ++c)
     {
-      debugOutputSymbol(production.symbols[c].id);
+      debugOutputSymbol(production.symbols[c].token);
       if(int(c) < production.symbolsLength-1)
         cout << ' ';
     }
@@ -1054,11 +1054,11 @@ namespace QParser
   void Grammar::outputStatementMatch(ParseResult& result, uint index) const
   {
     ParseMatch& match = result.parseStream.data[index];
-    if(isTerminal(match.id))
-      cout << getTokenName(match.id);
+    if(isTerminal(match.token))
+      cout << getTokenName(match.token);
     else
     {
-      cout << getTokenName(match.id) << " { ";
+      cout << getTokenName(match.token) << " { ";
 
       for(uint c = 0; c < (uint)match.length; ++c)
       {
@@ -1079,7 +1079,7 @@ namespace QParser
     // Output lex tokens
     cout << "Lex tokens:" << endl;
     for(uint c = 0; c < result.lexStream.length; ++c)
-      cout << getTokenName(result.lexStream.data[c].id) << ' ';
+      cout << getTokenName(result.lexStream.data[c].token) << ' ';
     cout << endl << endl;
 
     // Output global statements
@@ -1093,7 +1093,7 @@ namespace QParser
 
     for(uint c = 0; c < result.parseStream.length; ++c)
     {
-      debugOutputSymbol(result.parseStream.data[c].id);
+      debugOutputSymbol(result.parseStream.data[c].token);
       cout << ' ';
     }
     cout << endl;

@@ -77,7 +77,3 @@ if(verbose):
 for testname,program in zip(user_tests, unit_test_programs):
   env.UnitTest("run"+testname, "%s" % program[0])
 
-#commands = map(lambda prog: '%s' % prog[0], unit_test_programs)
-#for command in commands:
-#  env.AlwaysBuild(Command("run"+command, "", "../../tests/" + command))
-

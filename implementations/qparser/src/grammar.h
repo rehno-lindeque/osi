@@ -4,7 +4,7 @@
 //
 //    GRAMMAR.H
 //
-//    Copyright © 2007-2008, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */
@@ -23,6 +23,9 @@
       + Token ids are sequenced rather than hashed. Tokens and statements
         share the same id space, hence a token can't have the same id as a
         statement.
+ 
+    OLD: This is no longer true! Have a look at the Tokens.h header
+        we'll have to re-factor this system...
         + Even tokens are nonterminals (production ids)
         + Odd tokens are terminal tokens (lexical ids)
           + -1 is a special token, sometimes used to represent no token or
@@ -40,6 +43,7 @@
     TODO:
       + Implement precedence mechanism for shift-reduce collision resolution
       + Add "multi-identifier" merging extension
+      + The lexer implementation should be separated from the parser!
 */
 
 /*                              COMPILER MACROS                             */
@@ -105,7 +109,8 @@ namespace QParser
 {
   struct ParseMatch : public OSIX::ParseMatch
   {
-    FORCE_INLINE ParseMatch(uint16 offset, uint16 length, OSid id) { ParseMatch::offset = offset; ParseMatch::length = length; ParseMatch::id = id; }
+    //FORCE_INLINE ParseMatch(uint16 offset, uint16 length, OSid id) { ParseMatch::offset = offset; ParseMatch::length = length; ParseMatch::id = id; }
+    FORCE_INLINE ParseMatch(uint16 offset, uint16 length, ParseToken token) { ParseMatch::offset = offset; ParseMatch::length = length; ParseMatch::token = token; }
     INLINE ParseMatch() {}
   };
   
@@ -202,6 +207,12 @@ namespace QParser
         ParseMatch* data;
       } lexStream;
 
+      ParseResult() 
+      { 
+        memset(&inputStream, 0, sizeof(inputStream));
+        memset(&parseStream, 0, sizeof(parseStream));
+        memset(&lexStream, 0, sizeof(lexStream));
+      }
       virtual ~ParseResult() { delete[] parseStream.data; delete[] lexStream.data; }
     };
 
@@ -254,28 +265,28 @@ namespace QParser
 
     //// Lexical tokens (terminals)
     // Token value sets (parse data)
-    struct Token
+    struct LexMatch
     {
-      OSid id;
+      ParseToken token;
       uint16 valueOffset;
       uint8  valueLength;
 
-      INLINE Token(OSid id, uint16 valueOffset, uint8 valueLength) : id(id), valueOffset(valueOffset), valueLength(valueLength) {}
-      INLINE Token(const Token& token) : id(token.id), valueOffset(token.valueOffset), valueLength(token.valueLength) {}
-      INLINE Token() {}
+      INLINE LexMatch(ParseToken token, uint16 valueOffset, uint8 valueLength) : token(token), valueOffset(valueOffset), valueLength(valueLength) {}
+      INLINE LexMatch(const LexMatch& match) : token(match.token), valueOffset(match.valueOffset), valueLength(match.valueLength) {}
+      INLINE LexMatch() {}
     };
 
-    vector<char> tokenCharacters; // concatenation of all token characters
+    vector<char> tokenCharacters; // concatenation of all lexical token characters
 
     union
     {
-      Token* tokens[4];
+      LexMatch* tokens[4];
       struct
       {
-        Token* rawTokens;
-        Token* nilTokens;
-        Token* lexSymbolTokens;
-        Token* lexWordTokens;
+        LexMatch* rawTokens;
+        LexMatch* nilTokens;
+        LexMatch* lexSymbolTokens;
+        LexMatch* lexWordTokens;
       };
     };
 
@@ -303,7 +314,7 @@ namespace QParser
     TokenNames terminalNames;
     TokenIds terminalIds;
 
-    typedef vector<Token> TokenConstructionSet;
+    typedef vector<LexMatch> TokenConstructionSet;
     TokenConstructionSet constructionTokens; // tokens array used during construction (Indexed by token value)
 
     //// Productions (non-terminals)
@@ -312,16 +323,17 @@ namespace QParser
       // Symbols
       struct Symbol
       {
-        union
+        /*union
         {
           bool isTerminal : 1;
           OSid id;
-        };
+        };*/
+        ParseToken token;
         uint32 param;
 
         FORCE_INLINE Symbol() {}
-        FORCE_INLINE Symbol(OSid id) : id(id) , param(0) {}
-        FORCE_INLINE Symbol(OSid id, uint32 param) : id(id), param(param) {}
+        FORCE_INLINE Symbol(ParseToken token) : token(token) , param(0) {}
+        FORCE_INLINE Symbol(ParseToken token, uint32 param) : token(token), param(param) {}
       };
 
       Symbol* symbols;
@@ -365,11 +377,11 @@ namespace QParser
     //// Parse operations
     INLINE void lexicalAnalysis(ParseResult& parseResult);
     INLINE bool parseSymbolToken(TokenType tokenType, const_cstring inputPosition, uint inputLength, ParseMatch& tokenMatch) const;
-    INLINE bool matchSymbolToken(const Token& token, const_cstring inputPosition, uint length, uint16& matchLength) const;
-    INLINE bool matchBoundingToken(const Token& token, const_cstring inputPosition, uint length, uint16& matchLength) const;
+    INLINE bool matchSymbolToken(const LexMatch& token, const_cstring inputPosition, uint length, uint16& matchLength) const;
+    INLINE bool matchBoundingToken(const LexMatch& token, const_cstring inputPosition, uint length, uint16& matchLength) const;
 
     INLINE void parseWordToken(const_cstring inputPosition, ParseMatch& tokenMatch) const;
-    INLINE bool matchWordToken(const Token& token, const_cstring inputPosition) const;
+    INLINE bool matchWordToken(const LexMatch& token, const_cstring inputPosition) const;
     
     INLINE void reshuffleResult(ParseResult& parseResult);
 

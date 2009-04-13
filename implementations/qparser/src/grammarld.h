@@ -65,6 +65,9 @@ namespace QParser
   protected:
     BuilderLD builder;
     ParseTokens parseTable;
+    
+    // Perform the recognition pass
+    void recognitionPass(ParseResult& parseResult, ParseTokens& rules);
   };
 }
 

@@ -60,11 +60,12 @@
 //#include "../simd/simd.h"
 
 // QParser
+#include "token.h"
 #include "grammar.h"
 //#include "grammarll1.h"
-#include "grammarlr.h"
+//#include "grammarlr.h"
 //#include "grammarlr0.h"
-#include "grammarlr1.h"
+//#include "grammarlr1.h"
 //#include "grammarlrk.h"
 #include "grammarld.h"
 

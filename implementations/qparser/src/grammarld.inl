@@ -25,7 +25,187 @@ namespace QParser
 
   void GrammarLD::parse(ParseResult& parseResult)
   {
-    // todo
+    // Check that the parse table has been created. We know it should contain at 
+    // least an accept action, so if it is empty we exit immmediately.
+    if(parseTable.size() == 0)
+      return; // todo: error, parse table is empty (no grammar defined)
+
+    // Perform the recognition pass
+    ParseTokens rules;
+    recognitionPass(parseResult, rules);
+    
+    // Perform the final translation pass
+    
+    
+    /*// Main parse loop
+    while(true)
+    {
+      token = (cToken < parseResult.lexStream.length)? parseResult.lexStream.data[cToken].id : ID_SPECIAL;
+
+    skipTokenInitialization:
+
+      const BinaryIndexElement& parseElement = binaryParseTable[cTable];
+      if(parseElement.action == BinaryIndexElement::LRACTION_ERROR)
+      {*/
+  }
+  
+  void GrammarLD::recognitionPass(ParseResult& parseResult, ParseTokens& rules)
+  {
+    rules.clear();
+    
+    // Parse table (actions) state
+    uint parseState = 0;                  // The current position in the parse table
+    ParseToken parseAction;               // The current parse action (from parseTable[parseState])
+    std::stack<ParseToken> returnStates;  // Positions in the parse table to return on a return action
+    uint lookaheadState;                  // The last leaf-node position in the parse table to use for resolving goto actions
+    std::stack<ParseToken> delayedStates; // The position of each ignore token reduced (which still needs to be resolved)
+            
+    // Lexical stream state
+    uint16 lexState = 0;              // The current position in the lex stream
+    ParseToken lexToken;              // The last token read from the lex stream
+        
+    // Perform the recognition
+    while(true)
+    {
+      // Read a lexical token from the stream
+      lexToken = (lexState < parseResult.lexStream.length? parseResult.lexStream.data[lexState].token : TOKEN_SPECIAL_EOF);
+          
+      // Read a parse action from the parse table
+      parseAction = parseTable[parseState];
+      
+      // Recognize a terminal token
+      // (Perform a shift action)
+      if(parseAction == lexToken)
+      {
+        ++parseState;
+        ++lexState;
+        continue;
+      }
+      
+      // Check for a reduce action
+      // (we do this first because reduce and reduce previous actions are
+      // likely to occur first, so we want to optimize for them)
+      if(parseAction < TOKEN_RESERVED_TOKENS)
+      {
+        // Check whether this is a normal reduce action
+        if(!(parseAction&(TOKEN_FLAG_SHIFT|TOKEN_FLAG_REDUCEPREV)))
+        {
+          // If the token to reduce is an ignore token, add its position to the delayed states
+          if(parseAction == TOKEN_SPECIAL_IGNORE)
+            delayedStates.push(ParseToken(rules.size()));
+          
+          // Reduce the rule
+          rules.push_back(parseAction);
+          ++parseState;
+          ++lexState;
+          continue;
+        }
+        
+        // Reduce a previously delayed token
+        if(parseAction&TOKEN_FLAG_REDUCEPREV)
+        {
+          // Look up the position of the delayed rule
+          OSI_ASSERT(!delayedStates.empty());
+          ParseToken delayedState = delayedStates.top();
+          delayedStates.pop();
+          
+          // Substitute the delayed rule with the proper token
+          rules[delayedState] = parseAction&(~TOKEN_FLAG_REDUCEPREV);
+          continue;
+        }
+
+        if(parseAction&TOKEN_FLAG_SHIFT)
+        {
+          // ERROR: Expected lexToken
+          return;
+        }
+        
+        continue;
+      }
+      
+      // Check for all branching parse actions
+      // (goto, ignore, return, accept)
+      switch(parseAction)
+      {
+        case TOKEN_ACTION_PIVOT: 
+        {
+          // Look up the number of branches in the pivot
+          OSI_ASSERT(parseState != parseTable.size());
+          ++parseState;
+          ParseToken nPivots = parseTable[parseState];
+          
+          // Attempt to shift each of the pivots until a hit is 
+          uint c;
+          for(c = 0; c < nPivots; ++c)
+          {
+            ParseToken shiftToken = parseTable[parseState];
+            parseState += 2;
+            if(shiftToken == lexToken)
+            {
+              // Push the next parse state onto the return stack (we will return to this point once done with the target state)
+              returnStates.push(parseState);
+              
+              // Get the target state to jump to and set this to the current parse state
+              parseState = parseTable[parseState+1];
+              
+              // Set the lookahead state to this state (for use with "goto" actions after we return)
+              lookaheadState = parseState;
+              
+              // Advance the current position in the lexical stream
+              ++lexState;
+              
+              break;
+            }
+          }
+          
+          // Check whether a pivot was reached
+          if(c == nPivots)
+          {
+            // ERROR: Expected lexToken
+            return;
+          }
+          
+          continue;
+        }
+        case TOKEN_ACTION_RETURN:
+        {
+          // Get the parse state to return to from the return stack
+          parseState = returnStates.top();
+          returnStates.pop();
+          continue;
+        }
+        case TOKEN_ACTION_GOTO: 
+        {
+          OSI_ASSERT(parseState+2 < parseTable.size());
+          
+          // Get the lookahead state associated with this goto action and test it against 
+          // the current lookahead state to determine if we should perform the jump
+          ParseToken gotoLookaheadState = parseTable[parseState+1];
+          if(lookaheadState == gotoLookaheadState)
+          {
+            // Lookup the target state to jump to 
+            // (Do not assign this new state to the lookahead state. Goto actions do not set the 
+            // lookahead state.)
+            parseState = parseTable[parseState+2];
+            continue;
+          }
+          parseState += 3;
+          
+          continue;
+        }
+        case TOKEN_ACTION_ACCEPT: 
+        {
+          // Check whether there are any lexical tokens left
+          // If so, then log an error since the end of the file was expected at this point
+          if(lexToken != TOKEN_SPECIAL_EOF)
+          {
+            // ERROR: End-of-file expected
+            return;
+          }          
+          return; // we're done with the recognition phase
+        }
+      }      
+    }
   }
 
   /*template<typename Item>

@@ -25,6 +25,7 @@
 #include <algorithm>
 
 // QParser
+#include "../src/token.h"
 #include "../src/grammar.h"
 #include "../src/grammarld.h"
 using namespace QParser;
@@ -36,15 +37,17 @@ using namespace QParser;
 typedef BuilderLD::ActionRow ActionRow;
 typedef BuilderLD::PivotSet PivotSet;
 
+/*                                 TEST DATA                                */
+// Lexical tokens to use
+ParseToken x = TOKEN_FLAG_SHIFT | 0;
+ParseToken y = TOKEN_FLAG_SHIFT | 1;
+ParseToken z = TOKEN_FLAG_SHIFT | 2; 
+ParseToken w = TOKEN_FLAG_SHIFT | 3;
+
 /*                                   TESTS                                  */
+// Build a left-recursive grammar with unbounded look-ahead (found at around page 23 of the draft)
 void BuildTestGrammar1(BuilderLD& builder)
 {
-  // Left-recursive grammar with unbounded look-ahead
-  ParseToken x = TOKEN_FLAG_SHIFT | 0;
-  ParseToken y = TOKEN_FLAG_SHIFT | 1;
-  ParseToken z = TOKEN_FLAG_SHIFT | 2;
-  ParseToken w = TOKEN_FLAG_SHIFT | 3;
-
   ParseToken rule1 = 0; // 1.A -> x
   ParseToken rule2 = 1; // 2.B -> x
   ParseToken rule3 = 2; // 3.C -> y
@@ -58,10 +61,10 @@ void BuildTestGrammar1(BuilderLD& builder)
   // s(x), r(i), s(y), r(3), r(i), p{x > 1, z > 2, w > 3}, g{3 > 5}, rp(4), rp(1), r(8), accept
   ActionRow& row0 = builder.AddActionRow();
   row0.AddActionShift(x);
-  row0.AddActionReduce(TOKEN_IGNORE);
+  row0.AddActionReduce(TOKEN_SPECIAL_IGNORE);
   row0.AddActionShift(y);
   row0.AddActionReduce(rule3);
-  row0.AddActionReduce(TOKEN_IGNORE);
+  row0.AddActionReduce(TOKEN_SPECIAL_IGNORE);
   PivotSet& pivot0 = row0.AddActionPivot();
   row0.AddActionGoto(3, 5);
   row0.AddActionReducePrev(rule4);
@@ -71,10 +74,10 @@ void BuildTestGrammar1(BuilderLD& builder)
 
   // r(i), s(y), r(3), r(i), p{x > 1, z > 2, w > 3}, g{3 > 4}, rp(5), rp(1), return
   ActionRow& row1 = pivot0.AddPivot(x);
-  row1.AddActionReduce(TOKEN_IGNORE);
+  row1.AddActionReduce(TOKEN_SPECIAL_IGNORE);
   row1.AddActionShift(y);
   row1.AddActionReduce(rule3);
-  row1.AddActionShift(TOKEN_IGNORE);
+  row1.AddActionReduce(TOKEN_SPECIAL_IGNORE);
   PivotSet& pivot1 = row1.AddActionPivot();
   pivot1.AddPivot(x, 1);
   pivot1.AddPivot(z, 2);
@@ -106,6 +109,22 @@ void BuildTestGrammar1(BuilderLD& builder)
   row5.AddActionAccept();
 }
 
+void PackParseResult(Grammar::ParseResult& result, ParseToken* streamBegin, ParseToken* streamEnd)
+{
+  // Allocate the lex stream
+  delete[] result.lexStream.data;
+  result.lexStream.length = streamEnd-streamBegin;
+  result.lexStream.data = new ParseMatch[result.lexStream.length];
+  
+  // Assign each match a token and an offset and length of 0.
+  for(uint c = 0; c < result.lexStream.length; ++c)
+  {
+    result.lexStream.data[c].token = streamBegin[c];
+    result.lexStream.data[c].offset = 0;
+    result.lexStream.data[c].length = 0;
+  }
+}
+
 void TestGrammar1()
 {
   class TestGrammarLD : public GrammarLD
@@ -114,13 +133,38 @@ void TestGrammar1()
     BuilderLD& TEST_GetBuilder() { return builder; }
   } grammar;
     
-  // Build the parse table
+  //// Build the parse table
   BuildTestGrammar1(grammar.TEST_GetBuilder());
   grammar.constructProductions();
   
-  // Use the grammar class to parse the data
-  Grammar::ParseResult parseResult;
+  //// Construct some test input (lexical) streams along with their expected results (rules)  
+  // Stream 1: xyxyxyz (Correct input)
+  ParseToken lexStream1[] = { x,y,x,y,x,y,z };
+  ParseToken correctOutput1[] = { 0,2,3,0,2,4,0,2,4,7 };
+  
+  // Stream 2: xyxyxyz (Correct input)
+  ParseToken lexStream2[] = { x,y,x,y,x,y,w };
+  ParseToken correctOutput2[] = { 1,2,5,1,2,6,1,2,6,8 };
+  
+  // Stream 3: xyz (Correct input)
+  ParseToken lexStream3[] = { x,y,w };
+  ParseToken correctOutput3[] = { 0,2,3,7 };
+  
+  // Stream 4: xyxyxy (Incorrect input)
+  ParseToken lexStream4[] = { x,y,x,y,x,y };
+  
+  // Stream 5: xz (Incorrect input)
+  ParseToken lexStream5[] = { x,z };
+  
+  // Stream 6: xyyz (Incorrect input)
+  ParseToken lexStream6[] = { x,y,y,z };
+  
+  //// Use the grammar class to parse the data
+  Grammar::ParseResult parseResult;  
+  PackParseResult(parseResult, lexStream1, lexStream1 + sizeof(lexStream1)/sizeof(ParseToken));
   grammar.parse(parseResult);
+  
+  // todo: busy here...
   
 }
 
