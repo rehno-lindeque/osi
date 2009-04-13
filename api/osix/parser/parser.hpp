@@ -4,9 +4,9 @@
 //
 //    PARSER.HPP
 //
-//    Ver 0.2 (2007-11-10)
+//    Ver 0.21 (2009-04-08)
 //
-//    Copyright © 2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*                               DOCUMENTATION                              */
@@ -18,17 +18,19 @@
 #include "../../osi/os.hpp"
 
 /*                                 CONSTANTS                                */
-#define PARSER_VERSION "0.2"
+#define PARSER_VERSION "0.21"
 #define PARSER_TOKEN_VALUE_EOF "\x01"
 
 namespace OSIX
 {
   /*                                   TYPES                                  */
+  typedef OSuint16 ParseToken;
+  
   struct ParseMatch
   {
-    OSuint16  offset;
-    OSuint16  length;
-    OSid id;
+    OSuint16 offset;
+    OSuint16 length;
+    ParseToken token;
   };
 
   /*enum PARSER_SEQUENCE_MULTIPLIER
