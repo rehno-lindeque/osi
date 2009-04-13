@@ -18,7 +18,7 @@
 #include "../../osi/os.hpp"
 
 /*                                 CONSTANTS                                */
-#define PARSER_VERSION "0.3"
+#define PARSER_VERSION "0.2"
 #define PARSER_TOKEN_VALUE_EOF "\x01"
 
 namespace OSIX
