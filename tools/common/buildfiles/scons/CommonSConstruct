@@ -4,7 +4,7 @@
 #
 #     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
 #
-#     Version 0.02 (2009-04-05)
+#     Version 0.03 (2009-04-19)
 #
 #     (The versioning on this file is usefull because it may be copied often.
 #     Try and keep build scripts as up to date as possible. I.e. Always use
@@ -45,8 +45,9 @@ else:
     definitions.append('OSI_CPP_STATIC_BUILD')
 
 # Compiler flags
+env.Append(CCFLAGS = user_flags)
 if ARGUMENTS.get('debug', 0):
-  env.Append(CCFLAGS = user_debugflag)
+  env.Append(CCFLAGS = user_debugflags)
 
 # System parameters
 if sys.platform=='win32':
