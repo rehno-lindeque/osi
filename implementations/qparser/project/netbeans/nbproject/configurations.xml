@@ -1398,7 +1398,7 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons debug=1</buildCommand>
+          <buildCommand>scons ../../tests/testbuilderld debug=1</buildCommand>
           <cleanCommand>scons -c debug=1</cleanCommand>
           <executablePath>../../tests/testbuilderld</executablePath>
           <cCompilerTool>
@@ -1614,7 +1614,7 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons debug=1</buildCommand>
+          <buildCommand>scons ../../tests/testgrammarld debug=1</buildCommand>
           <cleanCommand>scons -c debug=1</cleanCommand>
           <executablePath>../../tests/testgrammarld</executablePath>
           <cCompilerTool>

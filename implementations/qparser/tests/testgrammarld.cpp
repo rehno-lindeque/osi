@@ -25,6 +25,7 @@
 #include <algorithm>
 
 // QParser
+#define QPARSER_TEST_GRAMMARLD // Turn on unit testing output in the library        
 #include "../src/token.h"
 #include "../src/grammar.h"
 #include "../src/grammarld.h"
@@ -36,6 +37,7 @@ using namespace QParser;
 /*                                  ALIASES                                 */
 typedef BuilderLD::ActionRow ActionRow;
 typedef BuilderLD::PivotSet PivotSet;
+typedef GrammarLD::ParseTokens ParseTokens;
 
 /*                                 TEST DATA                                */
 // Lexical tokens to use
@@ -114,6 +116,7 @@ void PackParseResult(Grammar::ParseResult& result, ParseToken* streamBegin, Pars
   // Allocate the lex stream
   delete[] result.lexStream.data;
   result.lexStream.length = streamEnd-streamBegin;
+  result.lexStream.elementSize = sizeof(ParseMatch);
   result.lexStream.data = new ParseMatch[result.lexStream.length];
   
   // Assign each match a token and an offset and length of 0.
@@ -125,14 +128,28 @@ void PackParseResult(Grammar::ParseResult& result, ParseToken* streamBegin, Pars
   }
 }
 
-void TestGrammar1()
+void PrintRules(const ParseTokens& rules)
 {
-  class TestGrammarLD : public GrammarLD
-  {
-  public:
-    BuilderLD& TEST_GetBuilder() { return builder; }
-  } grammar;
-    
+  cout << "Rules: ";
+  for(ParseTokens::const_iterator i = rules.begin(); i != rules.end(); ++i)
+    if (*i == TOKEN_SPECIAL_IGNORE)
+      cout << "ignore ";
+    else
+      cout << *i << ' ';
+  cout << endl;
+}
+
+class TestGrammarLD : public GrammarLD
+{
+public:
+  BuilderLD& TEST_GetBuilder() { return builder; }
+  void TEST_RecognitionPass(Grammar::ParseResult& parseResult, ParseTokens& rules) { recognitionPass(parseResult, rules); }
+};
+
+bool TestGrammar1()
+{
+  TestGrammarLD grammar;
+  
   //// Build the parse table
   BuildTestGrammar1(grammar.TEST_GetBuilder());
   grammar.constructProductions();
@@ -148,7 +165,7 @@ void TestGrammar1()
   
   // Stream 3: xyz (Correct input)
   ParseToken lexStream3[] = { x,y,w };
-  ParseToken correctOutput3[] = { 0,2,3,7 };
+  ParseToken correctOutput3[] = { 1,2,5,8 };
   
   // Stream 4: xyxyxy (Incorrect input)
   ParseToken lexStream4[] = { x,y,x,y,x,y };
@@ -159,13 +176,47 @@ void TestGrammar1()
   // Stream 6: xyyz (Incorrect input)
   ParseToken lexStream6[] = { x,y,y,z };
   
-  //// Use the grammar class to parse the data
-  Grammar::ParseResult parseResult;  
+  //// Test the recognition pass
+  Grammar::ParseResult parseResult;  // The parse result
+  ParseTokens rules;                 // Rules output by the recognition pass
+  
   PackParseResult(parseResult, lexStream1, lexStream1 + sizeof(lexStream1)/sizeof(ParseToken));
-  grammar.parse(parseResult);
+  grammar.TEST_RecognitionPass(parseResult, rules);
+  PrintRules(rules);
+  for(uint c = 0; c < rules.size(); ++c)
+  {
+    if(rules[c] != correctOutput1[c])
+    {
+      cout << "Error: rule does not match the expected outcome" << endl;  
+      return false;
+    }
+  }
   
-  // todo: busy here...
+  PackParseResult(parseResult, lexStream2, lexStream2 + sizeof(lexStream2)/sizeof(ParseToken));
+  grammar.TEST_RecognitionPass(parseResult, rules);
+  PrintRules(rules);
+  for(uint c = 0; c < rules.size(); ++c)
+  {
+    if(rules[c] != correctOutput2[c])
+    {
+      cout << "Error: rule does not match the expected outcome" << endl;  
+      return false;
+    }
+  }
   
+  PackParseResult(parseResult, lexStream3, lexStream3 + sizeof(lexStream3)/sizeof(ParseToken));
+  grammar.TEST_RecognitionPass(parseResult, rules);
+  PrintRules(rules);
+  for(uint c = 0; c < rules.size(); ++c)
+  {
+    if(rules[c] != correctOutput3[c])
+    {
+      cout << "Error: rule does not match the expected outcome" << endl;  
+      return false;
+    }
+  }
+    
+  return true;
 }
 
 /*                                ENTRY POINT                               */
@@ -174,9 +225,14 @@ int main()
   cout << "-----------------------------------" << endl
        << "Testing GrammarLD: " << endl;
   cout.flush();
-  TestGrammar1();
-  
-  cout << "SUCCESS" << endl;
-  cout.flush();
-  return 0;
+  if (TestGrammar1())  
+  {
+    cout << "SUCCESS" << endl;
+    cout.flush();
+    return 0;
+  }
+  else
+  {
+    return 1; // Test case failed
+  }
 }

@@ -41,7 +41,7 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS} 
-	cd ../scons && scons debug=1
+	cd ../scons && scons ../../tests/testgrammarld debug=1
 
 # Subprojects
 .build-subprojects:

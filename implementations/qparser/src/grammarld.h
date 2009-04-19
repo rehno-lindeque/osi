@@ -23,6 +23,10 @@
 */
 
 /*                              COMPILER MACROS                             */
+// Turn on testing for the library (This should be turned off for any production
+// build)
+//#define QPARSER_TEST_GRAMMARLD
+
 /*                                   INCLUDES                               */
 #include "builderld.h"
 
