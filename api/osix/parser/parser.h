@@ -95,7 +95,7 @@ void OSI_API_C_CALL endProduction();
 void OSI_API_C_CALL productionToken(OSid token);
 OSid OSI_API_C_CALL productionTokenName(const OSchar* tokenName);
 OSid OSI_API_C_CALL productionIdentifierDecl(const OSchar* typeName);
-void OSI_API_C_CALL productionIdentifierRef(OSid type);
+//void OSI_API_C_CALL productionIdentifierRef(OSid type);
 OSid OSI_API_C_CALL productionIdentifierRefName(const OSchar* typeName);
 void OSI_API_C_CALL productionLiteralToken(enum OSIX_PARSER_LITERAL_TOKEN literalToken);
 

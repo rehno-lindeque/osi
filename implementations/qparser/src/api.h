@@ -36,31 +36,50 @@
         performance differences are to see whether it makes sense though.
 */
 /*                              COMPILER MACROS                             */
-
+#ifdef _MSC_VER
+# define STDEXT_NAMESPACE stdext
+#else
+# define STDEXT_NAMESPACE __gnu_cxx
+#endif
+        
 /*                                 INCLUDES                                 */
-//// Standard Parser (pseudo-OSI)
-//#include "../common/types.h"
-//#include "../common/definitions.h"
-
 // OpenParser
 #include <osix/parser/parser.hpp>
 #ifdef _DEBUG
-  #include <osix/parser/parserdbg.hpp>
+# include <osix/parser/parserdbg.hpp>
 #endif
 
 // BaseParser
 #include <baseparser/baseparser.h>
 
 // STL
+#include <algorithm>
 #include <list>
+#include <vector>
 #include <stack>
-//#include <algorithm>
+#include <set>
+#include <map>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <unordered_map>
+#include <unordered_set>
 
-//// SIMD
-//#include "../simd/simd.h"
+// STL extensions
+#ifdef _MSC_VER
+# include <ext/stdio_filebuf.h>?
+#else
+# include <ext/stdio_filebuf.h>
+#endif
+
+// CLib
+#include <memory.h>
 
 // QParser
 #include "token.h"
+#include "tokenregistry.h"
+#include "parseresult.h"
+#include "lexer.h"
 #include "grammar.h"
 //#include "grammarll1.h"
 //#include "grammarlr.h"

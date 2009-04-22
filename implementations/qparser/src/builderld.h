@@ -150,5 +150,4 @@ namespace QParser
 /*                                   INCLUDES                               */
 #include "builderld.inl"
 
-
 #endif

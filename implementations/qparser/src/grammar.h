@@ -24,7 +24,7 @@
         share the same id space, hence a token can't have the same id as a
         statement.
  
-    OLD: This is no longer true! Have a look at the Tokens.h header
+    OLD: This is no longer true! Have a look at the tokens.h header
         we'll have to re-factor this system...
         + Even tokens are nonterminals (production ids)
         + Odd tokens are terminal tokens (lexical ids)
@@ -53,73 +53,14 @@
 # pragma warning(disable:4312)
 #endif
 
-#ifdef _MSC_VER
-# define STDEXT_NAMESPACE stdext
-#else
-# define STDEXT_NAMESPACE __gnu_cxx
-#endif
-
-/*                                   INCLUDES                               */
-// STL
-#include <string>
-#include <vector>
-#include <stack>
-#include <set>
-#include <map>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#ifdef _MSC_VER
-  #include <hash_map>
-  #include <hash_set>
-  //#include <ext/stdio_filebuf.h>?
-//#elif defined(__GXX_EXPERIMENTAL_CXX0X__)
-//  #include <unordered_map>
-#else
-  #include <ext/hash_map>
-  #include <ext/hash_set>
-  #include <ext/stdio_filebuf.h>
-#endif
-//#include <unordered_map>
-//#include <unordered_set>
-
-using std::string;
-using std::vector;
-using std::stack;
-using std::set;
-using std::map;
-using std::multimap;
-using std::ifstream;
-using std::ios_base;
-using std::ostream;
-using std::pair;
-using std::cout;
-using std::clog;
-using std::cerr;
-using std::endl;
-using STDEXT_NAMESPACE::hash;
-using STDEXT_NAMESPACE::hash_map;
-using STDEXT_NAMESPACE::hash_set;
-using STDEXT_NAMESPACE::stdio_filebuf;
-
-// CLib
-#include <string.h>
-
+/*                                  CLASSES                                 */
 namespace QParser
 {
-  struct ParseMatch : public OSIX::ParseMatch
-  {
-    //FORCE_INLINE ParseMatch(uint16 offset, uint16 length, OSid id) { ParseMatch::offset = offset; ParseMatch::length = length; ParseMatch::id = id; }
-    FORCE_INLINE ParseMatch(uint16 offset, uint16 length, ParseToken token) { ParseMatch::offset = offset; ParseMatch::length = length; ParseMatch::token = token; }
-    INLINE ParseMatch() {}
-  };
-  
-/*                                  CLASSES                                 */
   class Grammar : public Base::Object
   {
   public:
 
-    enum TerminalId
+    /*enum TerminalId
     {
       ID_SPECIAL         = -1,
       ID_IDENTIFIER      = 1,
@@ -127,20 +68,7 @@ namespace QParser
       ID_IDENTIFIER_REF  = 5,
       ID_CONST_NUM       = 7,
       ID_FIRST_TERMINAL  = 9
-    };
-
-    enum TokenType
-    {
-      RAW_TOKEN = 0,
-      NIL_TOKEN = 1,
-      LEX_TOKEN = 2
-    };
-
-    enum SubTokenType
-    {
-      LEX_SYMBOL = 0,
-      LEX_WORD = 1
-    };
+    };*/
 
     // Constructor
     INLINE Grammar();
@@ -149,173 +77,67 @@ namespace QParser
     virtual ~Grammar();
 
     // Token construction
-    TokenType activeTokenType;
-    SubTokenType activeSubTokenType;
-
-    INLINE OSid stringToken(const_cstring tokenName, const_cstring value);
-    INLINE OSid charToken(const_cstring tokenName, char value);
-    INLINE OSid boundedToken(const_cstring tokenName, const_cstring leftBoundingValue, const_cstring rightBoundingValue, OSIX::PARSER_BOUNDED_LINETYPE lineType);
-    INLINE void constructTokens();
+    //Lexer::TokenType activeTokenType;
+    //Lexer::SubTokenType activeSubTokenType;
+    //INLINE void ConstructTokens();
 
     // Productions
-    INLINE OSid beginProduction(const_cstring productionName);
-    INLINE void endProduction();
+    INLINE ParseToken BeginProduction(const_cstring productionName);
+    INLINE void EndProduction();
 
-    INLINE void productionToken(OSid token);
-    INLINE OSid productionToken(const_cstring tokenName);
-    INLINE OSid productionIdentifierDecl(const_cstring typeName);
-    INLINE void productionIdentifierRef(OSid type);
-    INLINE OSid productionIdentifierRef(const_cstring typeName);
+    INLINE void ProductionToken(ParseToken token);
+    INLINE ParseToken ProductionToken(const_cstring tokenName);
+    INLINE ParseToken ProductionIdentifierDecl(const_cstring typeName);
+    //INLINE void ProductionIdentifierRef(OSid type);
+    INLINE ParseToken ProductionIdentifierRef(const_cstring typeName);
 
-    INLINE OSid declareProduction(const_cstring productionName);
+    INLINE ParseToken DeclareProduction(const_cstring productionName);
 
-    INLINE void precedence(const_cstring token1Name, const_cstring token2Name);
-    INLINE void precedence(OSid token1, OSid token2);
+    INLINE void Precedence(const_cstring token1Name, const_cstring token2Name);
+    INLINE void Precedence(ParseToken token1, ParseToken token2);
 
-    INLINE void grammarStartSymbol(OSid nonterminal);
+    INLINE void GrammarStartSymbol(ParseToken nonterminal);
 
-    INLINE bool checkForwardDeclarations() const;
+    INLINE bool CheckForwardDeclarations() const;
 
-    virtual void constructProductions() = 0;
+    virtual void ConstructProductions() = 0;
+    
+    // Tokens
+    INLINE TokenRegistry& GetTokenRegistry() { return tokenRegistry; }
+    INLINE const TokenRegistry& GetTokenRegistry() const { return tokenRegistry; }
+    
+    // Lexing
+    INLINE Lexer& GetLexer() { return lexer; }
+    INLINE const Lexer& GetLexer() const { return lexer; }
 
     // Parsing
-    class ParseResult : public Base::Object
-    {
-    public:
-      // Input data
-      struct
-      {
-        uint          length;
-        uint          elementSize;
-        const_cstring data;
-      } inputStream;
+    virtual void Parse(ParseResult& parseResult) = 0;
 
-      // Parse matches
-      struct
-      {
-        uint        length;
-        uint        elementSize;
-        ParseMatch* data;
-      } parseStream;
-      uint globalMatchesLength;
+    INLINE void ParseFile(const_cstring fileName, ParseResult& parseResult);
+    INLINE void ParseString(const_cstring stringBuffer, ParseResult& parseResult);
 
-      // Lexical token matches
-      struct
-      {
-        uint        length;
-        uint        elementSize;
-        ParseMatch* data;
-      } lexStream;
+/*#ifdef _DEBUG
+    void DebugOutputTokens() const;
+    void DebugOutputProductions() const;
+    //virtual void DebugOutputStates() const = 0;
+    virtual void DebugOutputStates() const {};
+    virtual void DebugOutputTable() const {};
+    void DebugOutputParseResult(OSobject& parseResult) const;
+#endif*/
 
-      ParseResult() 
-      { 
-        memset(&inputStream, 0, sizeof(inputStream));
-        memset(&parseStream, 0, sizeof(parseStream));
-        memset(&lexStream, 0, sizeof(lexStream));
-      }
-      virtual ~ParseResult() { delete[] parseStream.data; delete[] lexStream.data; }
-    };
-
-    virtual void parse(ParseResult& parseResult) = 0;
-
-    INLINE void parseFile(const_cstring fileName, ParseResult& parseResult);
-    INLINE void parseString(const_cstring stringBuffer, ParseResult& parseResult);
-    
-    INLINE const string& getTokenName(OSid tokenId) const;
-
-#ifdef _DEBUG
-    void debugOutputTokens() const;
-    void debugOutputProductions() const;
-    //virtual void debugOutputStates() const = 0;
-    virtual void debugOutputStates() const {};
-    virtual void debugOutputTable() const {};
-    void debugOutputParseResult(OSobject& parseResult) const;
-#endif
-
-    INLINE void setErrorStream(FILE* stream);
-    INLINE void setWarningStream(FILE* stream);
-    INLINE void setInfoStream(FILE* stream);
+    INLINE void SetErrorStream(FILE* stream);
+    INLINE void SetWarningStream(FILE* stream);
+    INLINE void SetInfoStream(FILE* stream);
 
   protected:
 
-    static const char SPECIAL_SINGLELINE_BOUNDING_CHAR;
-    static const char SPECIAL_MULTILINE_BOUNDING_CHAR;
-
-    //// Miscelaneous
-    ostream errorStream;
-    ostream warnStream;
-    ostream infoStream;
-
-    ////// Grammar construction
-    //// General
-    struct StlStringHash
-    { INLINE size_t operator()(const string& arg) const { return hash<const char*>()(arg.c_str()); }  };
+    TokenRegistry tokenRegistry;  // A registry of the tokens used by both the parser and the lexer
+    Lexer lexer;                  // The lexer used to tokenize the incoming stream of characters
     
-    // todo: The different hash_map implementations are inconsistent. Try to find some standard way for defining one.
-    typedef hash_map<const string, OSid, StlStringHash> TokenIds; // Token name -> id
-    //typedef hash_map<const_cstring, OSid, hash<const_cstring> > TokenIds; // Token name -> id
-    typedef map<OSid, string> TokenNames;                            // Token id -> name
-    
-    OSid nextTerminal;     // Terminal ids are always odd     (lexical tokens)
-    OSid nextNonterminal;  // Nonterminal ids are always even (production tokens)
-    OSid nextTemporaryId;  // Temporary ids are always > nextNonterminal (they are eventually replaced by normal nonterminals
-
-    //// Identifiers
-    hash_set<const char*> identifierTypes;
-
-    //// Lexical tokens (terminals)
-    // Token value sets (parse data)
-    struct LexMatch
-    {
-      ParseToken token;
-      uint16 valueOffset;
-      uint8  valueLength;
-
-      INLINE LexMatch(ParseToken token, uint16 valueOffset, uint8 valueLength) : token(token), valueOffset(valueOffset), valueLength(valueLength) {}
-      INLINE LexMatch(const LexMatch& match) : token(match.token), valueOffset(match.valueOffset), valueLength(match.valueLength) {}
-      INLINE LexMatch() {}
-    };
-
-    vector<char> tokenCharacters; // concatenation of all lexical token characters
-
-    union
-    {
-      LexMatch* tokens[4];
-      struct
-      {
-        LexMatch* rawTokens;
-        LexMatch* nilTokens;
-        LexMatch* lexSymbolTokens;
-        LexMatch* lexWordTokens;
-      };
-    };
-
-    uint nTokens[4];
-
-    // Token root indexing tables
-    struct TokenRootIndex
-    {
-      uint8 offset; // offset of the first token in the token liste
-      uint8 length; // number of tokens corresponding to the token root character
-    };
-
-    union
-    {
-      TokenRootIndex tokenRootIndices[4][256];
-      struct
-      {
-        TokenRootIndex rawTokenRootIndices[256];
-        TokenRootIndex nilTokenRootIndices[256];
-        TokenRootIndex lexSymbolTokenRootIndices[256];
-        TokenRootIndex lexWordTokenRootIndices[256];
-      };
-    };
-
-    TokenNames terminalNames;
-    TokenIds terminalIds;
-
-    typedef vector<LexMatch> TokenConstructionSet;
-    TokenConstructionSet constructionTokens; // tokens array used during construction (Indexed by token value)
+    // Streams for parser messages to be output
+    std::ostream errorStream;
+    std::ostream warnStream;
+    std::ostream infoStream;
 
     //// Productions (non-terminals)
     struct Production
@@ -329,11 +151,12 @@ namespace QParser
           OSid id;
         };*/
         ParseToken token;
-        uint32 param;
+        //uint32 param;
 
         FORCE_INLINE Symbol() {}
-        FORCE_INLINE Symbol(ParseToken token) : token(token) , param(0) {}
-        FORCE_INLINE Symbol(ParseToken token, uint32 param) : token(token), param(param) {}
+        //FORCE_INLINE Symbol(ParseToken token) : token(token) , param(0) {}
+        FORCE_INLINE Symbol(ParseToken token) : token(token) {}
+        //FORCE_INLINE Symbol(ParseToken token, uint32 param) : token(token), param(param) {}
       };
 
       Symbol* symbols;
@@ -360,83 +183,54 @@ namespace QParser
       FORCE_INLINE ProductionSet() : productionsOffset(0), productionsLength(0), nullable(false), visitedCount(0) /*, firstSet(null), firstSetLength(0), followSet(null), followSetLength(0)*/ {}
     };
 
-    Production*                activeProduction;
-    vector<Production::Symbol> activeProductionSymbols;
-    TokenNames nonterminalNames;
-    TokenIds nonterminalIds;
+    Production*                     activeProduction;
+    std::vector<Production::Symbol> activeProductionSymbols;
 
-    multimap<OSid, OSid> precedenceMap;
-    set<OSid> silentTerminals;
+    std::multimap<ParseToken, ParseToken> precedenceMap;
+    std::set<ParseToken> silentTerminals;
 
-    OSid startSymbol;
+    ParseToken startSymbol;
 
     ////// Parsing
-    vector<ParseMatch> constructMatches; // construction set for parse matches
-    vector< vector<ParseMatch> > constructStatementMatches;
-
-    //// Parse operations
-    INLINE void lexicalAnalysis(ParseResult& parseResult);
-    INLINE bool parseSymbolToken(TokenType tokenType, const_cstring inputPosition, uint inputLength, ParseMatch& tokenMatch) const;
-    INLINE bool matchSymbolToken(const LexMatch& token, const_cstring inputPosition, uint length, uint16& matchLength) const;
-    INLINE bool matchBoundingToken(const LexMatch& token, const_cstring inputPosition, uint length, uint16& matchLength) const;
-
-    INLINE void parseWordToken(const_cstring inputPosition, ParseMatch& tokenMatch) const;
-    INLINE bool matchWordToken(const LexMatch& token, const_cstring inputPosition) const;
-    
-    INLINE void reshuffleResult(ParseResult& parseResult);
+    std::vector< std::vector<ParseMatch> > constructStatementMatches;    
+    INLINE void ReshuffleResult(ParseResult& parseResult);
 
     //// Grammar construction operations
-    map<OSid, ProductionSet*>               productionSets; // todo: rename to something like ProductionUnions / ProductionGroups
-    vector< pair<Production, OSid> >        productions;
+    std::map<ParseToken, ProductionSet*>             productionSets; // todo: rename to something like ProductionUnions / ProductionGroups
+    std::vector< std::pair<Production, ParseToken> > productions;
 
-    // Construct an LL(1) linear binary indexed parse table
-    INLINE void constructParseTableLL1();
-
-    // Get the next available (odd numbered) terminal id
-    INLINE OSid getNextTerminalId();
-
-    // Get the next available (even numbered) nonterminal id
-    INLINE OSid getNextNonterminalId();
-    
-    // Get the next available temporary nonterminal id
-    INLINE OSid getTemporaryNonterminalId();
-    
     // Construct a terminal token (and add it to the list of tokens being processed)
-    INLINE OSid constructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength);
+    //INLINE ParseToken ConstructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength);
     
     // Construct a non-terminal token
-    INLINE OSid constructNonterminal(const_cstring tokenName);
+    INLINE ParseToken ConstructNonterminal(const_cstring tokenName);
     
     // Replace all tokens 
-    INLINE void replaceAllTokens(OSid oldId, OSid newId);
-
-    // Test whether id is a token id (i.e. not a production)
-    INLINE bool isTerminal(OSid id) const;
+    INLINE void ReplaceAllTokens(ParseToken oldToken, ParseToken newToken);
 
     // Test whether a production is silent
     //INLINE bool isSilent(const ProductionSet& productionSet) const;
-    INLINE bool isSilent(const Production& production) const;
+    INLINE bool IsSilent(const Production& production) const;
 
     // Test whether a lexical token is silent
-    INLINE bool isSilent(OSid id) const;
+    INLINE bool IsSilent(ParseToken token) const;
     
     // Find a precedence directive for token1 < token2
-    multimap<OSid, OSid>::const_iterator findPrecedenceDirective(OSid token1, OSid token2) const;
+    std::multimap<ParseToken, ParseToken>::const_iterator FindPrecedenceDirective(ParseToken token1, ParseToken token2) const;
 
     //// Accessors
-    INLINE const ProductionSet* getProductionSet(OSid nonterminal) const;
-    INLINE       ProductionSet* getProductionSet(OSid nonterminal);
-    INLINE       OSid getTokenId(const_cstring tokenName) const;
+    INLINE const ProductionSet* GetProductionSet(ParseToken nonterminal) const;
+    INLINE       ProductionSet* GetProductionSet(ParseToken nonterminal);
     
-    //// Miscelaneous
-    //void outputStatementMatch(ParseResult& result, uint& index) const;
-    void outputStatementMatch(ParseResult& result, uint index) const;
-
-#ifdef _DEBUG
-    INLINE void debugOutputProduction(OSid id, const Production& production) const;
-    INLINE void debugOutputProduction(const Production& production) const;
-    INLINE void debugOutputSymbol(OSid symbol) const;
-#endif
+    //// Miscelaneous    
+/*#ifdef _DEBUG
+    //void OutputStatementMatch(ParseResult& result, uint& index) const;
+    void OutputStatementMatch(ParseResult& result, uint index) const;
+    
+    INLINE void DebugOutputProduction(ParseToken token, const Production& production) const;
+    INLINE void DebugOutputProduction(const Production& production) const;
+    INLINE void DebugOutputSymbol(ParseToken token) const;
+#endif*/
   };
 }
 

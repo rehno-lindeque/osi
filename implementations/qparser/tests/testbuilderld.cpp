@@ -12,7 +12,7 @@
  */
 
 /*                                 INCLUDES                                 */
-// OpenParser
+/* OpenParser
 #include <osix/parser/parser.hpp>
 #ifdef _DEBUG
 # include <osix/parser/parserdbg.hpp>
@@ -23,9 +23,10 @@
 
 // STL
 #include <algorithm>
+*/
 
 // QParser
-#include "../src/builderld.h"
+#include "../src/api.h"
 using namespace QParser;
 
 // QParser unit tests

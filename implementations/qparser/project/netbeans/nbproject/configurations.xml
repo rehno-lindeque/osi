@@ -70,12 +70,18 @@
       <itemPath>../../src/grammarlr1.inl</itemPath>
       <itemPath>../../src/grammarlrk.h</itemPath>
       <itemPath>../../src/grammarlrk.inl</itemPath>
+      <itemPath>../../src/lexer.h</itemPath>
+      <itemPath>../../src/lexer.inl</itemPath>
+      <itemPath>../../src/parseresult.h</itemPath>
       <itemPath>../../src/token.h</itemPath>
+      <itemPath>../../src/tokenregistry.h</itemPath>
+      <itemPath>../../src/tokenregistry.inl</itemPath>
     </logicalFolder>
     <logicalFolder name="tests" displayName="tests" projectFiles="true">
       <itemPath>../../tests/testbuilderld.cpp</itemPath>
       <itemPath>../../tests/testcommon.h</itemPath>
       <itemPath>../../tests/testgrammarld.cpp</itemPath>
+      <itemPath>../../tests/testparserld.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -295,7 +301,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -305,6 +326,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -510,7 +534,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -520,6 +559,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -726,7 +768,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -736,6 +793,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -942,7 +1002,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -952,6 +1027,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -1158,7 +1236,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -1168,6 +1261,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -1374,7 +1470,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -1384,6 +1495,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -1590,7 +1704,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -1600,6 +1729,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>
@@ -1806,7 +1938,22 @@
       <item path="../../src/grammarlrk.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testbuilderld.cpp">
@@ -1816,6 +1963,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
         <itemTool>1</itemTool>
       </item>
     </conf>

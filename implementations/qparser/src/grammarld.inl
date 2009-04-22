@@ -18,12 +18,12 @@ namespace QParser
       delete *i;*/
   }
   
-  void GrammarLD::constructProductions()
+  void GrammarLD::ConstructProductions()
   {
     builder.ConstructParseTable(parseTable);
   }
 
-  void GrammarLD::parse(ParseResult& parseResult)
+  void GrammarLD::Parse(ParseResult& parseResult)
   {
     // Check that the parse table has been created. We know it should contain at 
     // least an accept action, so if it is empty we exit immmediately.
@@ -32,7 +32,7 @@ namespace QParser
 
     // Perform the recognition pass
     ParseTokens rules;
-    recognitionPass(parseResult, rules);
+    RecognitionPass(parseResult, rules);
     
     // Perform the final translation pass   
     
@@ -48,7 +48,7 @@ namespace QParser
       {*/
   }
   
-  void GrammarLD::recognitionPass(ParseResult& parseResult, ParseTokens& rules)
+  void GrammarLD::RecognitionPass(ParseResult& parseResult, ParseTokens& rules)
   {
     rules.clear();
     
@@ -73,7 +73,7 @@ namespace QParser
         // Read a lexical token from the stream
         lexToken = (lexState < parseResult.lexStream.length? parseResult.lexStream.data[lexState].token : TOKEN_SPECIAL_EOF);
 #ifdef QPARSER_TEST_GRAMMARLD
-        infoStream << "Read lexical token (" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ')' << endl;
+        infoStream << "Read lexical token (" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ')' << std::endl;
 #endif
       }
       skipReadingToken = true;
@@ -90,7 +90,7 @@ namespace QParser
       if(parseAction == lexToken)
       {
 #ifdef QPARSER_TEST_GRAMMARLD
-        infoStream << "Shift(" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ')' << endl;
+        infoStream << "Shift(" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ')' << std::endl;
 #endif
         ++parseState;
         ++lexState;
@@ -108,9 +108,9 @@ namespace QParser
         {
 #ifdef QPARSER_TEST_GRAMMARLD
           if(parseAction == TOKEN_SPECIAL_IGNORE)
-            infoStream << "Reduce (delay)" << endl;
+            infoStream << "Reduce (delay)" << std::endl;
           else
-            infoStream << "Reduce (" << parseAction << ')' << endl;
+            infoStream << "Reduce (" << parseAction << ')' << std::endl;
 #endif
       
           // If the token to reduce is an ignore token, add its position to the delayed states
@@ -128,9 +128,9 @@ namespace QParser
         {
 #ifdef QPARSER_TEST_GRAMMARLD
           if((parseAction & (~TOKEN_FLAG_REDUCEPREV)) == TOKEN_SPECIAL_IGNORE)
-            infoStream << "ReducePrev (delay)" << endl;
+            infoStream << "ReducePrev (delay)" << std::endl;
           else
-            infoStream << "ReducePrev (" << (parseAction & (~TOKEN_FLAG_REDUCEPREV)) << ')' << endl;
+            infoStream << "ReducePrev (" << (parseAction & (~TOKEN_FLAG_REDUCEPREV)) << ')' << std::endl;
 #endif
           
           // Look up the position of the delayed rule
@@ -148,8 +148,8 @@ namespace QParser
         if(parseAction&TOKEN_FLAG_SHIFT)
         {
           // ERROR: Expected lexToken
-          errorStream << "Unexpected token, at line [???] in program [???]" << endl;            
-          errorStream << "-> Expected: " << (parseAction & (~TOKEN_FLAG_SHIFT)) << endl;          
+          errorStream << "Unexpected token, at line [???] in program [???]" << std::endl;            
+          errorStream << "-> Expected: " << (parseAction & (~TOKEN_FLAG_SHIFT)) << std::endl;          
           return;
         }
         
@@ -183,7 +183,7 @@ namespace QParser
               parseState = parseTable[parseState-1];
               
 #ifdef QPARSER_TEST_GRAMMARLD
-              infoStream << "Pivot(" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ") -> " << parseState << endl;
+              infoStream << "Pivot(" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ") -> " << parseState << std::endl;
 #endif
               
               // Set the lookahead state to this state (for use with "goto" actions after we return)
@@ -203,14 +203,14 @@ namespace QParser
             returnStates.pop();
             
             // ERROR: Expected lexToken
-            errorStream << "Unexpected token, at line [???] in program [???]" << endl;            
+            errorStream << "Unexpected token, at line [???] in program [???]" << std::endl;            
             errorStream << "-> Expected one of: ";
             for(uint c = 0; c < nPivots; ++c)
             {
               ParseToken shiftToken = parseTable[parseState - 2*(c+1)];
               errorStream << (shiftToken & (~TOKEN_FLAG_SHIFT)) << ' ';
             }
-            errorStream << endl;
+            errorStream << std::endl;
             
             return;
           }
@@ -224,7 +224,7 @@ namespace QParser
           returnStates.pop();
           
 #ifdef QPARSER_TEST_GRAMMARLD
-          infoStream << "Return -> " << parseState << endl;
+          infoStream << "Return -> " << parseState << std::endl;
 #endif              
           
           continue;
@@ -234,7 +234,7 @@ namespace QParser
           OSI_ASSERT(parseState+2 < parseTable.size());
           
 #ifdef QPARSER_TEST_GRAMMARLD
-          infoStream << "Goto" << endl;
+          infoStream << "Goto" << std::endl;
 #endif
           
           // Get the lookahead state associated with this goto action and test it against 
@@ -259,7 +259,7 @@ namespace QParser
           OSI_ASSERT(returnStates.empty());
           
 #ifdef QPARSER_TEST_GRAMMARLD
-          infoStream << "Accept" << endl;
+          infoStream << "Accept" << std::endl;
 #endif
           
           // Check whether there are any lexical tokens left
@@ -267,8 +267,8 @@ namespace QParser
           if(lexToken != TOKEN_SPECIAL_EOF)
           {
             // ERROR: End-of-file expected
-            errorStream << "Unexpected token, at line [???] in program [???]" << endl;            
-            errorStream << "-> Expected end of file" << endl;
+            errorStream << "Unexpected token, at line [???] in program [???]" << std::endl;            
+            errorStream << "-> Expected end of file" << std::endl;
             return;
           }          
           return; // we're done with the recognition phase
@@ -385,29 +385,29 @@ namespace QParser
   template<typename Item>
   void GrammarLR<Item>::debugOutputStates() const
   {
-    cout << endl;
+    cout << std::endl;
     for(uint c = 0; c < states.size(); ++c)
     {
       const State& state = *states[c];
-      cout << "State " << c << endl;
-      cout << "---------" << endl;
-      cout << "Items:" << endl;
+      cout << "State " << c << std::endl;
+      cout << "---------" << std::endl;
+      cout << "Items:" << std::endl;
       for(typename vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
       {
         cout << ' ';
         debugOutputItem(*iItem);
-        cout << endl;
+        cout << std::endl;
       }
 
-      cout << "Edges:" << endl;
+      cout << "Edges:" << std::endl;
       for(typename State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
       {
         cout << ' ';
         debugOutputEdge(*iEdge);
-        cout << endl;
+        cout << std::endl;
       }
 
-      cout << endl;
+      cout << std::endl;
     }
   }
 #endif*/

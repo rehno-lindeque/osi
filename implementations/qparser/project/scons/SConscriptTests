@@ -12,7 +12,7 @@ import subprocess
 user_build_dir = '../../build/tests'
 user_src_dir = '../tests'
 user_scriptname = 'QParser Unit Tests'
-user_tests = ['testbuilderld', 'testgrammarld']
+user_tests = ['testbuilderld', 'testgrammarld', 'testparserld']
 
 Import('env')
 Import('verbose')

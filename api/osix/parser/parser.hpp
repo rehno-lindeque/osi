@@ -98,7 +98,7 @@ namespace OSIX
     OSI_DYNAMIC_METHOD void OSI_API_CALL productionToken(OSid token);
     OSI_DYNAMIC_METHOD OSid OSI_API_CALL productionToken(const OSchar* tokenName);
     OSI_DYNAMIC_METHOD OSid OSI_API_CALL productionIdentifierDecl(const OSchar* typeName);
-    OSI_DYNAMIC_METHOD void OSI_API_CALL productionIdentifierRef(OSid type);
+    //OSI_DYNAMIC_METHOD void OSI_API_CALL productionIdentifierRef(OSid type);
     OSI_DYNAMIC_METHOD OSid OSI_API_CALL productionIdentifierRef(const OSchar* typeName);
     OSI_DYNAMIC_METHOD void OSI_API_CALL productionLiteralToken(PARSER_LITERAL_TOKEN literalToken = NUMERIC_LITERAL);
 

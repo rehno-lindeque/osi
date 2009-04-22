@@ -22,7 +22,8 @@ user_include_dirs = ['../../../../api',                 # OSI Headers
 user_definitions = [#'MSVC_BUILD',
                     #'OS_64BIT' (TODO)
                    ]
-user_debugflag = '-g -D_DEBUG -Wall' # '-ggdb'
+user_flags = '-std=c++0x'
+user_debugflags = '-g -D_DEBUG -Wall' # '-ggdb'
 
 execfile('CommonSConstruct', globals())
 

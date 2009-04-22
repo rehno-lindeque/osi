@@ -61,17 +61,17 @@ namespace QParser
     INLINE ~GrammarLD();
     
     // Construct productions
-    virtual void constructProductions();
+    virtual void ConstructProductions();
 
     // Parse
-    virtual void parse(ParseResult& parseResult);
+    virtual void Parse(ParseResult& parseResult);
       
   protected:
     BuilderLD builder;
     ParseTokens parseTable;
     
     // Perform the recognition pass
-    void recognitionPass(ParseResult& parseResult, ParseTokens& rules);
+    void RecognitionPass(ParseResult& parseResult, ParseTokens& rules);
   };
 }
 
