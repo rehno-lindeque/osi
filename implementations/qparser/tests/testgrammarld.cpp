@@ -12,23 +12,7 @@
  */
 
 /*                                 INCLUDES                                 */
-/*// OpenParser
-#include <osix/parser/parser.hpp>
-#ifdef _DEBUG
-  #include <osix/parser/parserdbg.hpp>
-#endif
-
-// BaseParser
-#include <baseparser/baseparser.h>
-
-// STL
-//#include <algorithm>
-
 // QParser
-#define QPARSER_TEST_GRAMMARLD // Turn on unit testing output in the library        
-#include "../src/token.h"
-#include "../src/grammar.h"
-#include "../src/grammarld.h"*/
 #include "../src/api.h"
 using namespace QParser;
 
@@ -114,57 +98,6 @@ void BuildTestGrammar1(ParserLD& parser, Lexer& lexer, GrammarLD& grammar)
     grammar.ProductionToken("E");
     grammar.ProductionToken("w");
   grammar.EndProduction();
-  
-  /* 
-  // s(x), r(i), s(y), r(3), r(i), p{x > 1, z > 2, w > 3}, g{3 > 5}, rp(4), rp(1), r(8), accept
-  ActionRow& row0 = builder.AddActionRow();
-  row0.AddActionShift(x);
-  row0.AddActionReduce(TOKEN_SPECIAL_IGNORE);
-  row0.AddActionShift(y);
-  row0.AddActionReduce(rule3);
-  row0.AddActionReduce(TOKEN_SPECIAL_IGNORE);
-  PivotSet& pivot0 = row0.AddActionPivot();
-  row0.AddActionGoto(3, 5);
-  row0.AddActionReducePrev(rule4);
-  row0.AddActionReducePrev(rule1);
-  row0.AddActionReduce(rule8);
-  row0.AddActionAccept();
-
-  // r(i), s(y), r(3), r(i), p{x > 1, z > 2, w > 3}, g{3 > 4}, rp(5), rp(1), return
-  ActionRow& row1 = pivot0.AddPivot(x);
-  row1.AddActionReduce(TOKEN_SPECIAL_IGNORE);
-  row1.AddActionShift(y);
-  row1.AddActionReduce(rule3);
-  row1.AddActionReduce(TOKEN_SPECIAL_IGNORE);
-  PivotSet& pivot1 = row1.AddActionPivot();
-  pivot1.AddPivot(x, 1);
-  pivot1.AddPivot(z, 2);
-  pivot1.AddPivot(w, 3);
-  row1.AddActionGoto(3, 4);
-  row1.AddActionReducePrev(rule5);
-  row1.AddActionReducePrev(rule1);
-  row1.AddActionReturn();
-
-  // return
-  ActionRow& row2 = pivot0.AddPivot(z);
-  row2.AddActionReturn();
-  
-  // return
-  ActionRow& row3 = pivot0.AddPivot(w);
-  row3.AddActionReturn();
-  
-  // rp(7), rp(2), return
-  ActionRow& row4 = builder.AddActionRow();
-  row4.AddActionReducePrev(rule7);
-  row4.AddActionReducePrev(rule2);
-  row4.AddActionReturn();
-  
-  // rp(6), rp(2), r(9), accept
-  ActionRow& row5 = builder.AddActionRow();
-  row5.AddActionReducePrev(rule6);
-  row5.AddActionReducePrev(rule2);
-  row5.AddActionReduce(rule9);
-  row5.AddActionAccept();*/
 }
 
 void PackParseResult(ParseResult& result, ParseToken* streamBegin, ParseToken* streamEnd)
@@ -213,6 +146,7 @@ bool TestGrammar1()
   parser.ConstructParser(&grammar);
   
   // Print out the parse table
+  // todo
   
   
   //// Construct some test input (lexical) streams along with their expected results (rules)  
@@ -233,7 +167,7 @@ bool TestGrammar1()
   ParseTokens rules;        // Rules output by the recognition pass
   
   PackParseResult(parseResult, lexStream1, lexStream1 + sizeof(lexStream1)/sizeof(ParseToken));
-  /*parser.TEST_RecognitionPass(parseResult, rules);
+  parser.TEST_RecognitionPass(parseResult, rules);
   PrintRules(rules);
   for(uint c = 0; c < rules.size(); ++c)
   {
@@ -242,9 +176,9 @@ bool TestGrammar1()
       cout << "Error: rule does not match the expected outcome" << endl;  
       return false;
     }
-  }*/
+  }
   
-  /*PackParseResult(parseResult, lexStream2, lexStream2 + sizeof(lexStream2)/sizeof(ParseToken));
+  PackParseResult(parseResult, lexStream2, lexStream2 + sizeof(lexStream2)/sizeof(ParseToken));
   parser.TEST_RecognitionPass(parseResult, rules);
   PrintRules(rules);
   for(uint c = 0; c < rules.size(); ++c)
@@ -266,7 +200,7 @@ bool TestGrammar1()
       cout << "Error: rule does not match the expected outcome" << endl;  
       return false;
     }
-  }*/
+  }
     
   return true;
 }

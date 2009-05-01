@@ -12,31 +12,6 @@
  */
 
 /*                                 INCLUDES                                 */
-/* OpenParser
-#include <osix/parser/parser.hpp>
-#ifdef _DEBUG
-  #include <osix/parser/parserdbg.hpp>
-#endif
-
-// BaseParser
-#include <baseparser/baseparser.h>
-
-// STL
-#include <algorithm>
-#include <list>
-#include <vector>
-#include <stack>
-#include <set>
-#include <map>
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <unordered_map>
-#include <unordered_set>
-
-// CLib
-#include <memory.h>*/
-
 // QParser
 #define QPARSER_TEST_GRAMMARLD // Turn on unit testing output in the library
 #include "../src/api.h"
