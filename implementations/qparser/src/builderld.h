@@ -66,7 +66,7 @@ namespace QParser
   class BuilderLD::ActionRow
   {
   public:
-    ParseTokens actions;   // Sequence of actions contained in this row
+    ParseTokens actions; // Sequence of actions contained in this row
     PivotSets pivotSets; // Sets of pivots contained in the row
 
     // Construction / Destruction

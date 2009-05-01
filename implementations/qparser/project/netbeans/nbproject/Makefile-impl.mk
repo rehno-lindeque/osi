@@ -31,7 +31,7 @@ DEFAULTCONF=Scons_Static_CPP
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Scons_Static_CPP Make_Static_CPP Debug_Scons_Static_CPP Debug_Scons_Static_C Scons_Static_C All_Debug_Scons_Static_CPP Test_BuilderLD Test_GrammarLD 
+ALLCONFS=Scons_Static_CPP Make_Static_CPP Debug_Scons_Static_CPP Debug_Scons_Static_C Scons_Static_C All_Debug_Scons_Static_CPP Test_BuilderLD Test_GrammarLD Test_ParserLD 
 
 
 # build

@@ -26,7 +26,7 @@ namespace QParser
   const ParseToken TOKEN_FLAG_SHIFT      = (ParseToken(1) << (sizeof(ParseToken)*8 - 1));
   
   const ParseToken TOKEN_SPECIAL_EOF     = ~ParseToken(0);
-  const ParseToken TOKEN_SPECIAL_IGNORE  = ParseToken(~(TOKEN_FLAG_REDUCEPREV|TOKEN_FLAG_SHIFT));
+  const ParseToken TOKEN_SPECIAL_IGNORE  = ParseToken(~(TOKEN_FLAG_REDUCEPREV | TOKEN_FLAG_SHIFT));
   
   const ParseToken TOKEN_TERMINAL_IDENTIFIER = TOKEN_FLAG_SHIFT | 0;
   const ParseToken TOKEN_TERMINAL_LITERAL    = TOKEN_FLAG_SHIFT | 1;

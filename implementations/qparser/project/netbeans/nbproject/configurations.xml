@@ -1969,5 +1969,239 @@
         <itemTool>1</itemTool>
       </item>
     </conf>
+    <conf name="Test_ParserLD" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons ../../tests/testparserld debug=1</buildCommand>
+          <cleanCommand>scons -c debug=1</cleanCommand>
+          <executablePath>../../tests/testparserld</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+            <preprocessor>_DEBUG</preprocessor>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/parser/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parser.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parser0_1.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parser0_2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parser0_2.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parserdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parserdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/parser/parserdbg0_1.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../baseparser/src/baseparser/baseparser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../baseparser/src/baseparser/baseparser.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../baseparser/src/baseparser/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/builderld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/builderld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlrk.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/lexer.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/token.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/tokenregistry.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testbuilderld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testgrammarld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../tests/testparserld.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
   </confs>
 </configurationDescriptor>
