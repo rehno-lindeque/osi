@@ -22,156 +22,119 @@ OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
     return 0; // error
 
   QParser::ParserImplementation* parserObject = _this.parser = _this.beginObject<QParser::ParserLD>();
-  //_this.grammar = static_cast<QParser::Grammar*>(_this.beginObject< QParser::GrammarLD >());
   return cast_object(parserObject);
 }
 
 void OSI_API_CALL OSIX::Parser::endGrammar()
 {
-  QParser::Grammar* grammarObject = _this.endObject<QParser::Grammar>();
-  if(grammarObject->CheckForwardDeclarations())
-    _this->ConstructParser(grammarObject);
+  _this.endObject<QParser::ParserLD>();
+  
+  if(_this.grammar->CheckForwardDeclarations())
+    _this->ConstructParser(_this.grammar);
 }
 
 void OSI_API_CALL OSIX::Parser::beginRaw()
 {
-  /*QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->ActiveTokenType = QParser::Lexer::TOKENTYPE_RAW;*/
 }
 
 void OSI_API_CALL OSIX::Parser::endRaw()
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->GetLexer().Build(QParser::Lexer::TOKENTYPE_RAW);
-  //grammarObject->constructTokens();
-  //grammarObject->activeTokenType = (QParser::Grammar::TokenType)0;
+  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_RAW);
 }
 
 void OSI_API_CALL OSIX::Parser::beginNil()
 {
-  /*QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->activeTokenType = QParser::Grammar::NIL_TOKEN;*/
 }
 
 void OSI_API_CALL OSIX::Parser::endNil()
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->GetLexer().Build(QParser::Lexer::TOKENTYPE_NIL);
-  //grammarObject->constructTokens();
-  //grammarObject->activeTokenType = (QParser::Grammar::TokenType)0;
+  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_NIL);
 }
 
 void OSI_API_CALL OSIX::Parser::beginLex()
 {
-  /*QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->activeTokenType = QParser::Grammar::LEX_TOKEN;*/
 }
 
 void OSI_API_CALL OSIX::Parser::endLex()
 {
-  /*QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->activeTokenType = (QParser::Grammar::TokenType)0;*/
 }
 
 void OSI_API_CALL OSIX::Parser::beginLexSymbols()
 {
-  /*QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->activeSubTokenType = QParser::Grammar::LEX_SYMBOL;*/
 }
 
 void OSI_API_CALL OSIX::Parser::endLexSymbols()
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_SYMBOL);
-  //grammarObject->constructTokens();
-  //grammarObject->activeSubTokenType = (QParser::Grammar::SubTokenType)0;
+  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_SYMBOL);
 }
 
 void OSI_API_CALL OSIX::Parser::beginLexWords()
 {
-  /*QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->activeSubTokenType = QParser::Grammar::LEX_WORD;*/
 }
 
 void OSI_API_CALL OSIX::Parser::endLexWords()
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
-  //grammarObject->constructTokens();
-  //grammarObject->activeSubTokenType = (QParser::Grammar::SubTokenType)0;
+  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
 }
 
 OSid OSI_API_CALL OSIX::Parser::stringToken(const OSchar* tokenName, const OSchar* value)
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  return grammarObject->GetLexer().StringToken(tokenName, value);
+  return _this->GetLexer().StringToken(tokenName, value);
 }
 
 OSid OSI_API_CALL OSIX::Parser::charToken(const OSchar* tokenName, char value)
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  return grammarObject->GetLexer().CharToken(tokenName, value);
+  return _this->GetLexer().CharToken(tokenName, value);
 }
 
 OSid OSI_API_CALL OSIX::Parser::boundedToken(const OSchar* tokenName, const OSchar* leftBoundingValue, const OSchar* rightBoundingValue, PARSER_BOUNDED_LINETYPE lineType)
 {
-  // todo: handle line type.....
-
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  return grammarObject->GetLexer().BoundedToken(tokenName, leftBoundingValue, rightBoundingValue, lineType);
+  return _this->GetLexer().BoundedToken(tokenName, leftBoundingValue, rightBoundingValue, lineType);
 }
 
 void OSI_API_CALL OSIX::Parser::beginLanguage()
-{}
+{
+  _this.grammar = static_cast<QParser::Grammar*>(_this.beginObject<QParser::GrammarLD>());
+}
 
 void OSI_API_CALL OSIX::Parser::endLanguage()
 {
+  _this.endObject<QParser::Grammar>();  
 }
 
 OSid OSI_API_CALL OSIX::Parser::beginProduction(const OSchar* productionName)
 {
-  return _this.getActiveObject<QParser::Grammar>()->BeginProduction(productionName);
+  return _this.grammar->BeginProduction(productionName);
 }
 
 void OSI_API_CALL OSIX::Parser::endProduction()
 {
-  return _this.getActiveObject<QParser::Grammar>()->EndProduction();
+  return _this.grammar->EndProduction();
 }
-
-/*OLD:
-void OSI_API_CALL OSIX::Parser::productionProduction(OSid production)
-{
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  return grammarObject->productionNonterminal(production);
-}
-void OSI_API_CALL OSIX::Parser::productionRaw(OSid token)
-{
-  return _this.getActiveObject<QParser::Grammar>()->productionTerminal(token);
-}*/
 
 void OSI_API_CALL OSIX::Parser::productionToken(OSid token)
 {
-  _this.getActiveObject<QParser::Grammar>()->ProductionToken(token);
+  _this.grammar->ProductionToken(token);
 }
 
 OSid OSI_API_CALL OSIX::Parser::productionToken(const OSchar* tokenName)
 {
-  return _this.getActiveObject<QParser::Grammar>()->ProductionToken(tokenName);
+  return _this.grammar->ProductionToken(tokenName);
 }
 
 OSid OSI_API_CALL OSIX::Parser::productionIdentifierDecl(const OSchar* typeName)
 {
-  return _this.getActiveObject<QParser::Grammar>()->ProductionIdentifierDecl(typeName);
+  return _this.grammar->ProductionIdentifierDecl(typeName);
 }
 
 /*void OSI_API_CALL OSIX::Parser::productionIdentifierRef(OSid type)
 {
-  _this.getActiveObject<QParser::Grammar>()->ProductionIdentifierRef(type);
+  _this.grammar->ProductionIdentifierRef(type);
 }*/
 
 OSid OSI_API_CALL OSIX::Parser::productionIdentifierRef(const OSchar* typeName)
 {
-  return _this.getActiveObject<QParser::Grammar>()->ProductionIdentifierRef(typeName);
+  return _this.grammar->ProductionIdentifierRef(typeName);
 }
 
 void OSI_API_CALL OSIX::Parser::productionLiteralToken(PARSER_LITERAL_TOKEN literalToken)
@@ -179,8 +142,7 @@ void OSI_API_CALL OSIX::Parser::productionLiteralToken(PARSER_LITERAL_TOKEN lite
   switch(literalToken)
   {
     case NUMERIC_LITERAL:
-      //_this.getActiveObject<QParser::Grammar>()->ProductionToken(QParser::Grammar::ID_CONST_NUM);
-      _this.getActiveObject<QParser::Grammar>()->ProductionToken(QParser::TOKEN_TERMINAL_LITERAL);
+      _this.grammar->ProductionToken(QParser::TOKEN_TERMINAL_LITERAL);
       break;
     default:; // error: unkown literal token
   }
@@ -188,12 +150,12 @@ void OSI_API_CALL OSIX::Parser::productionLiteralToken(PARSER_LITERAL_TOKEN lite
 
 OSid OSI_API_CALL OSIX::Parser::declareProduction(const OSchar* productionName)
 {
-  return _this.getActiveObject<QParser::Grammar>()->DeclareProduction(productionName);
+  return _this.grammar->DeclareProduction(productionName);
 }
 
 void OSI_API_CALL OSIX::Parser::startProduction(OSid production)
 {
-  _this.getActiveObject<QParser::Grammar>()->GrammarStartSymbol(production);
+  _this.grammar->GrammarStartSymbol(production);
 }
 
 OSobject OSI_API_CALL OSIX::Parser::parseFile(const OSchar* fileName)
@@ -234,14 +196,12 @@ OSobject OSI_API_CALL OSIX::Parser::getParseStream(OSobject parseResult)
 
 void OSI_API_CALL OSIX::Parser::precedence(const OSchar* token1Name, const OSchar* token2Name)
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->Precedence(token1Name, token2Name);
+  _this.grammar->Precedence(token1Name, token2Name);
 }
 
 void OSI_API_CALL OSIX::Parser::precedence(OSid token1, OSid token2)
 {
-  QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
-  grammarObject->Precedence(token1, token2);
+  _this.grammar->Precedence(token1, token2);
 }
 
 const OSchar* OSI_API_CALL OSIX::Parser::getTokenName(OSid token)

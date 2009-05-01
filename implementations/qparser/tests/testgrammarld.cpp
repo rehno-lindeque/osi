@@ -275,7 +275,7 @@ bool TestGrammar1()
 int main()
 {
   cout << "-----------------------------------" << endl
-       << "Testing ParserLD: " << endl;
+       << "Testing GrammarLD: " << endl;
   cout.flush();
   if (TestGrammar1())  
   {
