@@ -80,13 +80,13 @@
 #include "tokenregistry.h"
 #include "parseresult.h"
 #include "lexer.h"
-#include "grammar.h"
-//#include "grammarll1.h"
-//#include "grammarlr.h"
-//#include "grammarlr0.h"
-//#include "grammarlr1.h"
-//#include "grammarlrk.h"
-#include "grammarld.h"
+#include "parser.h"
+//#include "parserll1.h"
+//#include "parserlr.h"
+//#include "parserlr0.h"
+//#include "parserlr1.h"
+//#include "parserlrk.h"
+#include "parserld.h"
 
 /*                                  CLASSES                                 */
 namespace QParser

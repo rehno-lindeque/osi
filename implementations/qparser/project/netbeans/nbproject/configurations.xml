@@ -56,23 +56,23 @@
       <itemPath>../../src/builderld.h</itemPath>
       <itemPath>../../src/builderld.inl</itemPath>
       <itemPath>../../src/functors.h</itemPath>
-      <itemPath>../../src/grammar.h</itemPath>
-      <itemPath>../../src/grammar.inl</itemPath>
-      <itemPath>../../src/grammarld.h</itemPath>
-      <itemPath>../../src/grammarld.inl</itemPath>
-      <itemPath>../../src/grammarll1.h</itemPath>
-      <itemPath>../../src/grammarll1.inl</itemPath>
-      <itemPath>../../src/grammarlr.h</itemPath>
-      <itemPath>../../src/grammarlr.inl</itemPath>
-      <itemPath>../../src/grammarlr0.h</itemPath>
-      <itemPath>../../src/grammarlr0.inl</itemPath>
-      <itemPath>../../src/grammarlr1.h</itemPath>
-      <itemPath>../../src/grammarlr1.inl</itemPath>
-      <itemPath>../../src/grammarlrk.h</itemPath>
-      <itemPath>../../src/grammarlrk.inl</itemPath>
       <itemPath>../../src/lexer.h</itemPath>
       <itemPath>../../src/lexer.inl</itemPath>
+      <itemPath>../../src/parser.h</itemPath>
+      <itemPath>../../src/parser.inl</itemPath>
       <itemPath>../../src/parseresult.h</itemPath>
+      <itemPath>../../src/parserld.h</itemPath>
+      <itemPath>../../src/parserld.inl</itemPath>
+      <itemPath>../../src/parserll1.h</itemPath>
+      <itemPath>../../src/parserll1.inl</itemPath>
+      <itemPath>../../src/parserlr.h</itemPath>
+      <itemPath>../../src/parserlr.inl</itemPath>
+      <itemPath>../../src/parserlr0.h</itemPath>
+      <itemPath>../../src/parserlr0.inl</itemPath>
+      <itemPath>../../src/parserlr1.h</itemPath>
+      <itemPath>../../src/parserlr1.inl</itemPath>
+      <itemPath>../../src/parserlrk.h</itemPath>
+      <itemPath>../../src/parserlrk.inl</itemPath>
       <itemPath>../../src/token.h</itemPath>
       <itemPath>../../src/tokenregistry.h</itemPath>
       <itemPath>../../src/tokenregistry.inl</itemPath>
@@ -259,55 +259,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -492,55 +492,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -726,55 +726,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -960,55 +960,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -1194,55 +1194,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -1428,55 +1428,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -1662,55 +1662,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -1896,55 +1896,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">
@@ -2130,55 +2130,55 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
-      <item path="../../src/grammar.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammar.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarld.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarll1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr0.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlr1.inl">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.h">
-        <itemTool>3</itemTool>
-      </item>
-      <item path="../../src/grammarlrk.inl">
-        <itemTool>3</itemTool>
-      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/parser.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parser.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/parseresult.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserll1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr0.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlr1.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/parserlrk.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/token.h">

@@ -235,6 +235,6 @@ namespace QParser
 }
 
 /*                                   INCLUDES                               */
-#include "grammar.inl"
+#include "parser.inl"
 
 #endif

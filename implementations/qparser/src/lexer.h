@@ -24,7 +24,7 @@ namespace QParser
   {
   public:
     // Types of lexical tokens recognized by the lexer
-    enum TokenType
+    enum TokenType 
     {
       TOKENTYPE_RAW        = 0,
       TOKENTYPE_NIL        = 1,
@@ -32,7 +32,6 @@ namespace QParser
       TOKENTYPE_LEX_SYMBOL = 2,
       TOKENTYPE_LEX_WORD   = 3
     };
-
     
     // Construction
     INLINE Lexer(TokenRegistry& tokenRegistry);

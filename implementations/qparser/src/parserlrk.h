@@ -143,6 +143,6 @@ namespace QParser
 }
 
 /*                                   INCLUDES                               */
-#include "grammarlrk.inl"
+#include "parserlrk.inl"
 
 #endif
