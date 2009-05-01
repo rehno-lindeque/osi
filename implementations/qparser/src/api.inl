@@ -160,7 +160,7 @@ void OSI_API_CALL OSIX::Parser::startProduction(OSid production)
 
 OSobject OSI_API_CALL OSIX::Parser::parseFile(const OSchar* fileName)
 {
-  QParser::ParseResult::ParseResult* parseResult = _this.beginObject<QParser::ParseResult>();
+  auto parseResult = _this.beginObject<QParser::ParseResult>();
   _this->ParseFile(fileName, *parseResult);
   _this.endObject<QParser::ParseResult>();
 
@@ -169,7 +169,7 @@ OSobject OSI_API_CALL OSIX::Parser::parseFile(const OSchar* fileName)
 
 OSobject OSI_API_CALL OSIX::Parser::parseString(const OSchar* stringBuffer)
 {
-  QParser::ParseResult* parseResult = _this.beginObject<QParser::ParseResult>();
+  auto parseResult = _this.beginObject<QParser::ParseResult>();
   _this->ParseString(stringBuffer, *parseResult);
   _this.endObject<QParser::ParseResult>();
 
@@ -178,19 +178,19 @@ OSobject OSI_API_CALL OSIX::Parser::parseString(const OSchar* stringBuffer)
 
 OSobject OSI_API_CALL OSIX::Parser::getInputStream(OSobject parseResult)
 {
-  QParser::ParseResult& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
+  auto& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
   return reinterpret_cast<OSobject>((OSuint32*)&resultObject.inputStream);
 }
 
 OSobject OSI_API_CALL OSIX::Parser::getLexStream(OSobject parseResult)
 {
-  QParser::ParseResult& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
+  auto& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
   return reinterpret_cast<OSobject>((OSuint32*)&resultObject.lexStream);
 }
 
 OSobject OSI_API_CALL OSIX::Parser::getParseStream(OSobject parseResult)
 {
-  QParser::ParseResult& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
+  auto& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
   return reinterpret_cast<OSobject>((OSuint32*)&resultObject.parseStream);
 }
 
@@ -221,8 +221,8 @@ OSbool OSI_API_CALL OSIX::Parser::isNumeric(OSid token)
 
 void OSI_API_CALL OSIX::Parser::getMatchText(OSobject parseResult, const ParseMatch& match, char* text)
 {
-  QParser::ParseResult& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
-  ParseMatch &lexMatch = resultObject.lexStream.data[match.offset];
+  auto& resultObject = *reinterpret_cast<QParser::ParseResult*>(parseResult);
+  auto& lexMatch = resultObject.lexStream.data[match.offset];
   memcpy(text, reinterpret_cast<const OSuint8*>(resultObject.inputStream.data) + lexMatch.offset, lexMatch.length);
   text[lexMatch.length] = '\0';
 }
