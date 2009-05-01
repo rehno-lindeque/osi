@@ -83,8 +83,6 @@ namespace QParser
     INLINE void GrammarStartSymbol(ParseToken nonterminal);
 
     INLINE bool CheckForwardDeclarations() const;
-
-    virtual void ConstructProductions() = 0;
     
     // Tokens
     INLINE TokenRegistry& GetTokenRegistry() { return tokenRegistry; }

@@ -54,8 +54,8 @@ namespace QParser
     INLINE ~GrammarLR0();
 
     //// Construction
-    // Construct productions
-    virtual void constructProductions();
+    // Construct the parser
+    virtual void ConstructParser(Grammar* grammar);
 
   protected:
     // Construct an LR(0) linear binary indexed parse table

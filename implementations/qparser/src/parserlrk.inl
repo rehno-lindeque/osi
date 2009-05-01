@@ -20,7 +20,7 @@ namespace QParser
   }
 
   template<int K>
-  void GrammarLRK<K>::constructProductions()
+  void GrammarLRK<K>::constructGrammar(Grammar* grammar)
   {
     // Construct the parse table using closure / goto algorithms
     constructParseTable();

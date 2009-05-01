@@ -56,7 +56,8 @@ namespace QParser
 
     INLINE bool CheckForwardDeclarations() const;
 
-    virtual void ConstructProductions() = 0;
+    // Construct the parser implementation using the given grammar definition
+    virtual void ConstructParser(Grammar* grammar) = 0;
     
     // Tokens
     INLINE TokenRegistry& GetTokenRegistry() { return tokenRegistry; }
@@ -86,7 +87,6 @@ namespace QParser
     INLINE void SetInfoStream(FILE* stream);
 
   protected:
-
     TokenRegistry tokenRegistry;  // A registry of the tokens used by both the parser and the lexer
     Lexer lexer;                  // The lexer used to tokenize the incoming stream of characters
     

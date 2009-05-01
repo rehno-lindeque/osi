@@ -26,7 +26,7 @@ namespace QParser
 
     //// Construction
     // Construct productions
-    virtual void constructProductions();
+    virtual void ConstructParser(Grammar* grammar);
 
     // Construct an LL(1) linear binary indexed parse table
     INLINE void constructParseTable();

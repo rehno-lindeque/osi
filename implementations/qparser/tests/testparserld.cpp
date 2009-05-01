@@ -8,11 +8,11 @@
 /*                               DOCUMENTATION                              */
 /*
     UNIT TEST:
-      Test the LD grammar functionality
+      Test the LD parser functionality
  */
 
 /*                                 INCLUDES                                 */
-/*// OpenParser
+/* OpenParser
 #include <osix/parser/parser.hpp>
 #ifdef _DEBUG
   #include <osix/parser/parserdbg.hpp>
@@ -22,13 +22,23 @@
 #include <baseparser/baseparser.h>
 
 // STL
-//#include <algorithm>
+#include <algorithm>
+#include <list>
+#include <vector>
+#include <stack>
+#include <set>
+#include <map>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <unordered_map>
+#include <unordered_set>
+
+// CLib
+#include <memory.h>*/
 
 // QParser
-#define QPARSER_TEST_GRAMMARLD // Turn on unit testing output in the library        
-#include "../src/token.h"
-#include "../src/grammar.h"
-#include "../src/grammarld.h"*/
+#define QPARSER_TEST_GRAMMARLD // Turn on unit testing output in the library
 #include "../src/api.h"
 using namespace QParser;
 
@@ -36,87 +46,31 @@ using namespace QParser;
 #include "testcommon.h"
 
 /*                                  ALIASES                                 */
-//typedef BuilderLD::ActionRow ActionRow;
-//typedef BuilderLD::PivotSet PivotSet;
-typedef GrammarLD::ParseTokens ParseTokens;
+typedef BuilderLD::ActionRow ActionRow;
+typedef BuilderLD::PivotSet PivotSet;
+typedef ParserLD::ParseTokens ParseTokens;
 
 /*                                 TEST DATA                                */
 // Lexical tokens to use
-ParseToken x = 0, y = 0, z = 0, w = 0;
+ParseToken x = TOKEN_FLAG_SHIFT | 0;
+ParseToken y = TOKEN_FLAG_SHIFT | 1;
+ParseToken z = TOKEN_FLAG_SHIFT | 2; 
+ParseToken w = TOKEN_FLAG_SHIFT | 3;
 
 /*                                   TESTS                                  */
 // Build a left-recursive grammar with unbounded look-ahead (found at around page 23 of the draft)
-void BuildTestGrammar1(GrammarLD& grammar)
+void BuildTestGrammar1(BuilderLD& builder)
 {
-  // Add lexical tokens
-  x = grammar.GetLexer().CharToken("x", 'x');
-  y = grammar.GetLexer().CharToken("y", 'y');
-  z = grammar.GetLexer().CharToken("z", 'z');
-  w = grammar.GetLexer().CharToken("w", 'w');
-  grammar.GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
-  
-  cout << "Terminals:" << endl;
-  cout << "  x = " << x << endl;
-  cout << "  y = " << y << endl;
-  cout << "  z = " << z << endl;
-  cout << "  w = " << w << endl;
-  
-  // Add productions
-  // 1.A -> x
-  grammar.BeginProduction("A");
-    grammar.ProductionToken("x");
-  grammar.EndProduction();
-  
-  // 2.B -> x
-  grammar.BeginProduction("B");
-    grammar.ProductionToken("x");
-  grammar.EndProduction();
-  
-  // 3.C -> y
-  grammar.BeginProduction("C");
-    grammar.ProductionToken("y");
-  grammar.EndProduction();
-  
-  // 4.D -> AC
-  grammar.BeginProduction("D");
-    grammar.ProductionToken("A");
-    grammar.ProductionToken("C");
-  grammar.EndProduction();
-  
-  // 5.D -> DAC
-  grammar.BeginProduction("D");
-    grammar.ProductionToken("D");
-    grammar.ProductionToken("A");
-    grammar.ProductionToken("C");
-  grammar.EndProduction();
-  
-  // 6.E -> BC
-  grammar.BeginProduction("E");
-    grammar.ProductionToken("B");
-    grammar.ProductionToken("C");
-  grammar.EndProduction();
-  
-  // 7.E -> EBC
-  grammar.BeginProduction("E");
-    grammar.ProductionToken("E");
-    grammar.ProductionToken("B");
-    grammar.ProductionToken("C");
-  grammar.EndProduction();
-  
-  // 8.S -> Dz
-  grammar.BeginProduction("S");
-    grammar.ProductionToken("D");
-    grammar.ProductionToken("z");
-  grammar.EndProduction();
-  
-  // 9.S -> Ew
-  grammar.BeginProduction("S");
-    grammar.ProductionToken("E");
-    grammar.ProductionToken("w");
-  grammar.EndProduction();
-  
-  
-  /* 
+  ParseToken rule1 = 0; // 1.A -> x
+  ParseToken rule2 = 1; // 2.B -> x
+  ParseToken rule3 = 2; // 3.C -> y
+  ParseToken rule4 = 3; // 4.D -> AC
+  ParseToken rule5 = 4; // 5.D -> DAC
+  ParseToken rule6 = 5; // 6.E -> BC
+  ParseToken rule7 = 6; // 7.E -> EBC
+  ParseToken rule8 = 7; // 8.S -> Dz
+  ParseToken rule9 = 8; // 9.S -> Ew
+ 
   // s(x), r(i), s(y), r(3), r(i), p{x > 1, z > 2, w > 3}, g{3 > 5}, rp(4), rp(1), r(8), accept
   ActionRow& row0 = builder.AddActionRow();
   row0.AddActionShift(x);
@@ -165,7 +119,7 @@ void BuildTestGrammar1(GrammarLD& grammar)
   row5.AddActionReducePrev(rule6);
   row5.AddActionReducePrev(rule2);
   row5.AddActionReduce(rule9);
-  row5.AddActionAccept();*/
+  row5.AddActionAccept();
 }
 
 void PackParseResult(ParseResult& result, ParseToken* streamBegin, ParseToken* streamEnd)
@@ -196,7 +150,7 @@ void PrintRules(const ParseTokens& rules)
   cout << endl;
 }
 
-class TestGrammarLD : public GrammarLD
+class TestParserLD : public ParserLD
 {
 public:
   BuilderLD& TEST_GetBuilder() { return builder; }
@@ -205,14 +159,12 @@ public:
 
 bool TestGrammar1()
 {
-  TestGrammarLD grammar;
+  TestParserLD parser;
   
   //// Build the parse table
-  BuildTestGrammar1(grammar);
-  grammar.ConstructProductions();
-  
-  // Print out the parse table
-  
+  GrammarLD grammar;
+  BuildTestGrammar1(parser.TEST_GetBuilder());
+  parser.ConstructParser(&grammar);
   
   //// Construct some test input (lexical) streams along with their expected results (rules)  
   // Stream 1: xyxyxyz (Correct input)
@@ -226,13 +178,22 @@ bool TestGrammar1()
   // Stream 3: xyz (Correct input)
   ParseToken lexStream3[] = { x,y,w };
   ParseToken correctOutput3[] = { 1,2,5,8 };
-    
+  
+  // Stream 4: xyxyxy (Incorrect input)
+  //ParseToken lexStream4[] = { x,y,x,y,x,y };
+  
+  // Stream 5: xz (Incorrect input)
+  //ParseToken lexStream5[] = { x,z };
+  
+  // Stream 6: xyyz (Incorrect input)
+  //ParseToken lexStream6[] = { x,y,y,z };
+  
   //// Test the recognition pass
   ParseResult parseResult;  // The parse result
-  ParseTokens rules;        // Rules output by the recognition pass
+  ParseTokens rules;                 // Rules output by the recognition pass
   
   PackParseResult(parseResult, lexStream1, lexStream1 + sizeof(lexStream1)/sizeof(ParseToken));
-  /*grammar.TEST_RecognitionPass(parseResult, rules);
+  parser.TEST_RecognitionPass(parseResult, rules);
   PrintRules(rules);
   for(uint c = 0; c < rules.size(); ++c)
   {
@@ -241,10 +202,10 @@ bool TestGrammar1()
       cout << "Error: rule does not match the expected outcome" << endl;  
       return false;
     }
-  }*/
+  }
   
-  /*PackParseResult(parseResult, lexStream2, lexStream2 + sizeof(lexStream2)/sizeof(ParseToken));
-  grammar.TEST_RecognitionPass(parseResult, rules);
+  PackParseResult(parseResult, lexStream2, lexStream2 + sizeof(lexStream2)/sizeof(ParseToken));
+  parser.TEST_RecognitionPass(parseResult, rules);
   PrintRules(rules);
   for(uint c = 0; c < rules.size(); ++c)
   {
@@ -256,7 +217,7 @@ bool TestGrammar1()
   }
   
   PackParseResult(parseResult, lexStream3, lexStream3 + sizeof(lexStream3)/sizeof(ParseToken));
-  grammar.TEST_RecognitionPass(parseResult, rules);
+  parser.TEST_RecognitionPass(parseResult, rules);
   PrintRules(rules);
   for(uint c = 0; c < rules.size(); ++c)
   {
@@ -265,7 +226,7 @@ bool TestGrammar1()
       cout << "Error: rule does not match the expected outcome" << endl;  
       return false;
     }
-  }*/
+  }
     
   return true;
 }
@@ -274,7 +235,7 @@ bool TestGrammar1()
 int main()
 {
   cout << "-----------------------------------" << endl
-       << "Testing ParserLD: " << endl;
+       << "Testing GrammarLD: " << endl;
   cout.flush();
   if (TestGrammar1())  
   {

@@ -1,9 +1,9 @@
-#ifdef  __QPARSER_PARSERLD_H__
-#ifndef __QPARSER_PARSERLD_INL__
-#define __QPARSER_PARSERLD_INL__
+#ifdef  __QPARSER_GRAMMARLD_H__
+#ifndef __QPARSER_GRAMMARLD_INL__
+#define __QPARSER_GRAMMARLD_INL__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSERLD.INL
+//    GRAMMARLD.INL
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -11,19 +11,19 @@
 
 namespace QParser
 {
-  ParserLD::~ParserLD()
+  GrammarLD::~GrammarLD()
   {
     /*// Clean up memory
     for(typename vector<State*>::iterator i = states.begin(); i != states.end(); ++i)
       delete *i;*/
   }
   
-  void ParserLD::ConstructParser(Grammar* grammar)
+  void GrammarLD::ConstructParser(Grammar* grammar)
   {
     builder.ConstructParseTable(parseTable);
   }
 
-  void ParserLD::Parse(ParseResult& parseResult)
+  void GrammarLD::Parse(ParseResult& parseResult)
   {
     // Check that the parse table has been created. We know it should contain at 
     // least an accept action, so if it is empty we exit immmediately.
@@ -48,7 +48,7 @@ namespace QParser
       {*/
   }
   
-  void ParserLD::RecognitionPass(ParseResult& parseResult, ParseTokens& rules)
+  void GrammarLD::RecognitionPass(ParseResult& parseResult, ParseTokens& rules)
   {
     rules.clear();
     
@@ -72,7 +72,7 @@ namespace QParser
       {
         // Read a lexical token from the stream
         lexToken = (lexState < parseResult.lexStream.length? parseResult.lexStream.data[lexState].token : TOKEN_SPECIAL_EOF);
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
         infoStream << "Read lexical token (" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ')' << std::endl;
 #endif
       }
@@ -89,7 +89,7 @@ namespace QParser
       // (Perform a shift action)
       if(parseAction == lexToken)
       {
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
         infoStream << "Shift(" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ')' << std::endl;
 #endif
         ++parseState;
@@ -106,7 +106,7 @@ namespace QParser
         // Check whether this is a normal reduce action
         if(!(parseAction&(TOKEN_FLAG_SHIFT|TOKEN_FLAG_REDUCEPREV)))
         {
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
           if(parseAction == TOKEN_SPECIAL_IGNORE)
             infoStream << "Reduce (delay)" << std::endl;
           else
@@ -126,7 +126,7 @@ namespace QParser
         // Reduce a previously delayed token
         if(parseAction & TOKEN_FLAG_REDUCEPREV)
         {
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
           if((parseAction & (~TOKEN_FLAG_REDUCEPREV)) == TOKEN_SPECIAL_IGNORE)
             infoStream << "ReducePrev (delay)" << std::endl;
           else
@@ -182,7 +182,7 @@ namespace QParser
               // Get the target state to jump to and set this to the current parse state
               parseState = parseTable[parseState-1];
               
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
               infoStream << "Pivot(" << (lexToken & (~TOKEN_FLAG_SHIFT)) << ") -> " << parseState << std::endl;
 #endif
               
@@ -223,7 +223,7 @@ namespace QParser
           parseState = returnStates.top();
           returnStates.pop();
           
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
           infoStream << "Return -> " << parseState << std::endl;
 #endif              
           
@@ -233,7 +233,7 @@ namespace QParser
         {
           OSI_ASSERT(parseState+2 < parseTable.size());
           
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
           infoStream << "Goto" << std::endl;
 #endif
           
@@ -258,7 +258,7 @@ namespace QParser
           OSI_ASSERT(delayedStates.empty());
           OSI_ASSERT(returnStates.empty());
           
-#ifdef QPARSER_TEST_ParserLD
+#ifdef QPARSER_TEST_GRAMMARLD
           infoStream << "Accept" << std::endl;
 #endif
           

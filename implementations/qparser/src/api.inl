@@ -21,16 +21,16 @@ OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
   if(_this.parser != null)
     return 0; // error
 
-  QParser::ParserImplementation* parserObject = _this.parser = (QParser::ParserImplementation*) _this.beginObject< QParser::GrammarLD >();
+  QParser::ParserImplementation* parserObject = _this.parser = _this.beginObject<QParser::ParserLD>();
+  //_this.grammar = static_cast<QParser::Grammar*>(_this.beginObject< QParser::GrammarLD >());
   return cast_object(parserObject);
 }
 
 void OSI_API_CALL OSIX::Parser::endGrammar()
 {
   QParser::Grammar* grammarObject = _this.endObject<QParser::Grammar>();
-  //QParser::Grammar* grammarObject = _this.getActiveObject<QParser::Grammar>();
   if(grammarObject->CheckForwardDeclarations())
-    grammarObject->ConstructProductions();
+    _this->ConstructParser(grammarObject);
 }
 
 void OSI_API_CALL OSIX::Parser::beginRaw()

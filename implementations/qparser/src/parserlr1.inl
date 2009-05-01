@@ -18,7 +18,7 @@ namespace QParser
       delete *i;
   }
 
-  void GrammarLR1::constructProductions()
+  void GrammarLR1::constructGrammar(Grammar* grammar)
   {
     // Construct the parse table using closure / goto algorithms
     constructParseTable();

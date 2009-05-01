@@ -81,6 +81,7 @@
 #include "parseresult.h"
 #include "lexer.h"
 #include "grammar.h"
+#include "grammarld.h"
 #include "parser.h"
 #include "parserld.h"
 
@@ -91,8 +92,9 @@ namespace QParser
   {
   public:
     ParserImplementation* parser;
+    Grammar* grammar;
 
-    FORCE_INLINE Parser() : parser(null) {}
+    FORCE_INLINE Parser() : parser(null), grammar(null) {}
     FORCE_INLINE ParserImplementation* operator-> () { return parser; }
 
 #   ifdef _DEBUG

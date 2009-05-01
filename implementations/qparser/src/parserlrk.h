@@ -84,7 +84,7 @@ namespace QParser
     INLINE ~GrammarLRK();
 
     // Construct productions
-    virtual void constructProductions();
+    virtual void ConstructParser(Grammar* grammar);
 
     // Parse
     virtual void parse(ParseResult& parseResult);

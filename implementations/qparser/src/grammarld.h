@@ -1,8 +1,8 @@
-#ifndef __QPARSER_PARSERLD_H__
-#define __QPARSER_PARSERLD_H__
+#ifndef __QPARSER_GRAMMARLD_H__
+#define __QPARSER_GRAMMARLD_H__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSERLD.H
+//    GRAMMARLD.H
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -25,7 +25,7 @@
 /*                              COMPILER MACROS                             */
 // Turn on testing for the library (This should be turned off for any production
 // build)
-//#define QPARSER_TEST_ParserLD
+//#define QPARSER_TEST_GRAMMARLD
 
 /*                                   INCLUDES                               */
 #include "builderld.h"
@@ -45,20 +45,14 @@ namespace QParser
     INLINE LRItem() {}
   };*/
   
-  struct LDOutput
-  {
-    uint16 ruleNumber;
-    uint16 descendants;
-  };
-  
-  class ParserLD : public ParserImplementation
+  class GrammarLD : public Grammar
   {
   public:
     typedef std::vector<ParseToken> ParseTokens;
     
     // Constructor
-    INLINE ParserLD() {}
-    INLINE ~ParserLD();
+    INLINE GrammarLD() {}
+    INLINE ~GrammarLD();
     
     // Construct productions
     virtual void ConstructParser(Grammar* grammar);
@@ -76,6 +70,6 @@ namespace QParser
 }
 
 /*                                   INCLUDES                               */
-#include "parserld.inl"
+#include "grammarld.inl"
 
 #endif

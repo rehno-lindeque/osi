@@ -11,7 +11,7 @@
 
 namespace QParser
 {
-  void GrammarLL1::constructProductions()
+  void GrammarLL1::ConstructParser(Grammar* grammar)
   {
     constructParseTable();
   }
