@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="39">
   <projectmakefile>qparser-Makefile.mk</projectmakefile>
-  <defaultConf>8</defaultConf>
+  <defaultConf>5</defaultConf>
   <confs>
     <conf name="Scons_Static_CPP" type="0">
       <gdbdebugger version="1">

@@ -18,12 +18,11 @@
 /*                              IMPLEMENTATION                              */
 OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
 {
-  if(_this.grammar != null)
+  if(_this.parser != null)
     return 0; // error
 
-  //QParser::Grammar* grammarObject = _this.grammar = (QParser::Grammar*) _this.beginObject< QParser::GrammarLRK<2> >();
-  QParser::Grammar* grammarObject = _this.grammar = (QParser::Grammar*) _this.beginObject< QParser::GrammarLD >();
-  return cast_object(grammarObject);
+  QParser::ParserImplementation* parserObject = _this.parser = (QParser::ParserImplementation*) _this.beginObject< QParser::GrammarLD >();
+  return cast_object(parserObject);
 }
 
 void OSI_API_CALL OSIX::Parser::endGrammar()
@@ -199,10 +198,8 @@ void OSI_API_CALL OSIX::Parser::startProduction(OSid production)
 
 OSobject OSI_API_CALL OSIX::Parser::parseFile(const OSchar* fileName)
 {
-  QParser::Grammar* grammarObject = _this.grammar;
-
   QParser::ParseResult::ParseResult* parseResult = _this.beginObject<QParser::ParseResult>();
-  grammarObject->ParseFile(fileName, *parseResult);
+  _this->ParseFile(fileName, *parseResult);
   _this.endObject<QParser::ParseResult>();
 
   return cast_object(parseResult);
@@ -210,10 +207,8 @@ OSobject OSI_API_CALL OSIX::Parser::parseFile(const OSchar* fileName)
 
 OSobject OSI_API_CALL OSIX::Parser::parseString(const OSchar* stringBuffer)
 {
-  QParser::Grammar* grammarObject = _this.grammar;
-
   QParser::ParseResult* parseResult = _this.beginObject<QParser::ParseResult>();
-  grammarObject->ParseString(stringBuffer, *parseResult);
+  _this->ParseString(stringBuffer, *parseResult);
   _this.endObject<QParser::ParseResult>();
 
   return cast_object(parseResult);
@@ -251,8 +246,7 @@ void OSI_API_CALL OSIX::Parser::precedence(OSid token1, OSid token2)
 
 const OSchar* OSI_API_CALL OSIX::Parser::getTokenName(OSid token)
 {
-  QParser::Grammar* grammarObject = _this.grammar;
-  return grammarObject->GetTokenRegistry().GetTokenName(token).c_str();
+  return _this->GetTokenRegistry().GetTokenName(token).c_str();
 }
 
 OSbool OSI_API_CALL OSIX::Parser::isIdentifier(OSid token)

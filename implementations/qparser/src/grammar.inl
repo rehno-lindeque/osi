@@ -1,9 +1,9 @@
-#ifdef  __QPARSER_PARSER_H__
-#ifndef __QPARSER_PARSER_INL__
-#define __QPARSER_PARSER_INL__
+#ifdef  __QPARSER_GRAMMAR_H__
+#ifndef __QPARSER_GRAMMAR_INL__
+#define __QPARSER_GRAMMAR_INL__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSER.INL
+//    GRAMMAR.INL
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -11,7 +11,7 @@
 
 namespace QParser
 {
-  ParserImplementation::ParserImplementation() : //activeTokenType(static_cast<Lexer::TokenType>(0)),
+  Grammar::Grammar() : //activeTokenType(static_cast<Lexer::TokenType>(0)),
                        //activeSubTokenType(static_cast<Lexer::SubTokenType>(0)),
                        lexer(tokenRegistry),
                        errorStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
@@ -22,7 +22,7 @@ namespace QParser
   {
   }
 
-  ParserImplementation::~ParserImplementation()
+  Grammar::~Grammar()
   {
     errorStream.flush();
     warnStream.flush();
@@ -33,9 +33,9 @@ namespace QParser
     delete infoStream.rdbuf(null);
   }
 
-  /*void ParserImplementation::ConstructTokens()
+  /*void Grammar::ConstructTokens()
   {
-    uint&             nTokens                      = ParserImplementation::nTokens[activeTokenType + activeSubTokenType];
+    uint&             nTokens                      = Grammar::nTokens[activeTokenType + activeSubTokenType];
     LexMatch*&        activeTokens                 = tokens[activeTokenType + activeSubTokenType];
     TokenRootIndex(&  activeTokenRootIndices)[256] = tokenRootIndices[activeTokenType + activeSubTokenType];
 
@@ -91,7 +91,7 @@ namespace QParser
   }*/
 
   // Productions
-  ParseToken ParserImplementation::BeginProduction(const_cstring productionName)
+  ParseToken Grammar::BeginProduction(const_cstring productionName)
   {
     // Construct a nonterminal token for this production (if none exists)
     ParseToken token = ConstructNonterminal(productionName);
@@ -124,7 +124,7 @@ namespace QParser
     return token;
   }
 
-  void ParserImplementation::EndProduction()
+  void Grammar::EndProduction()
   {
     // Add symbols to production
     if (activeProductionSymbols.size() > 0)
@@ -137,13 +137,13 @@ namespace QParser
     activeProduction = null;
   }
 
-  void ParserImplementation::ProductionToken(ParseToken token)
+  void Grammar::ProductionToken(ParseToken token)
   {
     OSI_ASSERT(tokenRegistry.IsTemporaryToken(token) || tokenRegistry.IsTokenValid(token));
     activeProductionSymbols.push_back(token);
   }
 
-  ParseToken ParserImplementation::ProductionToken(const_cstring tokenName)
+  ParseToken Grammar::ProductionToken(const_cstring tokenName)
   {
     ParseToken token = tokenRegistry.GetToken(tokenName);
     if(token == ParseToken(-1))
@@ -152,7 +152,7 @@ namespace QParser
     return token;
   }
 
-  ParseToken ParserImplementation::ProductionIdentifierDecl(const_cstring typeName)
+  ParseToken Grammar::ProductionIdentifierDecl(const_cstring typeName)
   {
     /*hash_set<const char*>::iterator i = identifierTypes.find(typeName);
     ParseToken typeHash = identifierTypes.hash_funct()(typeName);
@@ -164,7 +164,7 @@ namespace QParser
     return TOKEN_TERMINAL_IDENTIFIER;
   }
 
-  /*void ParserImplementation::ProductionIdentifierRef(ParseToken type)
+  /*void Grammar::ProductionIdentifierRef(ParseToken type)
   {
     activeProductionSymbols.push_back(Production::Symbol(ID_IDENTIFIER_REF, type));
     
@@ -172,7 +172,7 @@ namespace QParser
     activeProductionSymbols.push_back(TOKEN_TERMINAL_IDENTIFIER);
   }*/
 
-  ParseToken ParserImplementation::ProductionIdentifierRef(const_cstring typeName)
+  ParseToken Grammar::ProductionIdentifierRef(const_cstring typeName)
   {
     /*hash_set<const char*>::iterator i = identifierTypes.find(typeName);
     OSid typeHash = identifierTypes.hash_funct()(typeName);
@@ -184,12 +184,12 @@ namespace QParser
     return TOKEN_TERMINAL_IDENTIFIER;
   }
 
-  ParseToken ParserImplementation::DeclareProduction(const_cstring productionName)
+  ParseToken Grammar::DeclareProduction(const_cstring productionName)
   {
     return tokenRegistry.FindOrGenerateTemporaryNonterminal(productionName);
   }
 
-  void ParserImplementation::Precedence(const_cstring token1Name, const_cstring token2Name)
+  void Grammar::Precedence(const_cstring token1Name, const_cstring token2Name)
   {
     ParseToken token1 = tokenRegistry.GetToken(token1Name);
     ParseToken token2 = tokenRegistry.GetToken(token2Name);
@@ -198,18 +198,18 @@ namespace QParser
     //else error: incorrect ids
   }
 
-  void ParserImplementation::Precedence(ParseToken token1, ParseToken token2)
+  void Grammar::Precedence(ParseToken token1, ParseToken token2)
   {
     precedenceMap.insert(std::make_pair(token1, token2));
   }
 
-  void ParserImplementation::GrammarStartSymbol(ParseToken nonterminal)
+  void Grammar::GrammarStartSymbol(ParseToken nonterminal)
   {
     OSI_ASSERT(!TokenRegistry::IsTerminal(nonterminal));
     startSymbol = nonterminal;
   }
 
-  bool ParserImplementation::CheckForwardDeclarations() const
+  bool Grammar::CheckForwardDeclarations() const
   {
     bool success = true;
 
@@ -226,7 +226,7 @@ namespace QParser
     return success;
   }
 
-  /*ParseToken ParserImplementation::ConstructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength)
+  /*ParseToken Grammar::ConstructTerminal(const_cstring tokenName, uint bufferLength, uint valueLength)
   {
     / *ParseToken token = -1;
     
@@ -255,7 +255,7 @@ namespace QParser
     return token;
   }*/
   
-  ParseToken ParserImplementation::ConstructNonterminal(const_cstring tokenName)
+  ParseToken Grammar::ConstructNonterminal(const_cstring tokenName)
   {
     /*ParseToken token = -1;
     // Try to find an existing nonterminal token with this name
@@ -306,7 +306,7 @@ namespace QParser
     return token;    
   }
   
-  void ParserImplementation::ReplaceAllTokens(ParseToken oldToken, ParseToken newToken)
+  void Grammar::ReplaceAllTokens(ParseToken oldToken, ParseToken newToken)
   {
     for(std::vector< std::pair<Production, ParseToken> >::iterator i = productions.begin(); i != productions.end(); ++i)
     {
@@ -320,17 +320,17 @@ namespace QParser
     }
   }
 
-  bool ParserImplementation::IsSilent(const Production& production) const
+  bool Grammar::IsSilent(const Production& production) const
   {
     return production.symbolsLength == 1 && !TokenRegistry::IsTerminal(production.symbols[0].token);
   }
 
-  bool ParserImplementation::IsSilent(ParseToken token) const
+  bool Grammar::IsSilent(ParseToken token) const
   {
     return TokenRegistry::IsTerminal(token) && silentTerminals.find(token) != silentTerminals.end();
   }
 
-  void ParserImplementation::ParseFile(const_cstring fileName, ParseResult& parseResult)
+  void Grammar::ParseFile(const_cstring fileName, ParseResult& parseResult)
   {
     using std::ios_base;
     
@@ -384,7 +384,7 @@ namespace QParser
     ReshuffleResult(parseResult);
   }
 
-  void ParserImplementation::ParseString(const_cstring stringBuffer, ParseResult& parseResult)
+  void Grammar::ParseString(const_cstring stringBuffer, ParseResult& parseResult)
   {
     //// Parse file data
     parseResult.inputStream.data       = stringBuffer;
@@ -403,7 +403,7 @@ namespace QParser
     ReshuffleResult(parseResult);
   }
 
-  INLINE void ParserImplementation::ReshuffleResult(ParseResult& parseResult)
+  INLINE void Grammar::ReshuffleResult(ParseResult& parseResult)
   {
     using std::vector;
     
@@ -543,7 +543,7 @@ namespace QParser
     memcpy(parseResult.parseStream.data, shuffleData, parseResult.parseStream.length * parseResult.parseStream.elementSize);
   }
 
-  const ParserImplementation::ProductionSet* ParserImplementation::GetProductionSet(ParseToken nonterminal) const
+  const Grammar::ProductionSet* Grammar::GetProductionSet(ParseToken nonterminal) const
   {
     std::map<ParseToken, ProductionSet*>::const_iterator i = productionSets.find(nonterminal);
     if(i == productionSets.end() || i->first != nonterminal)
@@ -551,7 +551,7 @@ namespace QParser
     return i->second;
   }
 
-  ParserImplementation::ProductionSet* ParserImplementation::GetProductionSet(ParseToken nonterminal)
+  Grammar::ProductionSet* Grammar::GetProductionSet(ParseToken nonterminal)
   {
     std::map<ParseToken, ProductionSet*>::iterator i = productionSets.find(nonterminal);
     if(i == productionSets.end() || i->first != nonterminal)
@@ -559,7 +559,7 @@ namespace QParser
     return i->second;
   }
 
-  std::multimap<ParseToken, ParseToken>::const_iterator ParserImplementation::FindPrecedenceDirective(ParseToken token1, ParseToken token2) const
+  std::multimap<ParseToken, ParseToken>::const_iterator Grammar::FindPrecedenceDirective(ParseToken token1, ParseToken token2) const
   {
     std::multimap<ParseToken, ParseToken>::const_iterator i = precedenceMap.lower_bound(token1);
     while(i != precedenceMap.end() && i->first == token1)
@@ -572,7 +572,7 @@ namespace QParser
   }
 
 /*#ifdef _DEBUG
-  void ParserImplementation::OutputStatementMatch(ParseResult& result, uint index) const
+  void Grammar::OutputStatementMatch(ParseResult& result, uint index) const
   {
     ParseMatch& match = result.parseStream.data[index];
     if(TokenRegistry::IsTerminal(match.token))
@@ -591,7 +591,7 @@ namespace QParser
     }
   }
  
-  void ParserImplementation::DebugOutputTokens() const
+  void Grammar::DebugOutputTokens() const
   {
     std::cout << std::endl
          << "Tokens" << std::endl
@@ -600,7 +600,7 @@ namespace QParser
         std::cout << ' ' << i->second << std::endl;
   }
 
-  void ParserImplementation::DebugOutputProduction(const Production& production) const
+  void Grammar::DebugOutputProduction(const Production& production) const
   {
     for(uint c = 0; c < production.symbolsLength; ++c)
     {
@@ -610,14 +610,14 @@ namespace QParser
     }
   }
 
-  void ParserImplementation::DebugOutputProduction(OSid id, const Production& production) const
+  void Grammar::DebugOutputProduction(OSid id, const Production& production) const
   {
     debugOutputSymbol(id);
     std::cout << " -> ";
     debugOutputProduction(production);
   }
 
-  void ParserImplementation::DebugOutputProductions() const
+  void Grammar::DebugOutputProductions() const
   {
     std::cout << std::endl
               << "Productions" << std::endl
@@ -635,7 +635,7 @@ namespace QParser
     }
   }
 
-  void ParserImplementation::DebugOutputParseResult(OSobject& parseResult) const
+  void Grammar::DebugOutputParseResult(OSobject& parseResult) const
   {
     ParseResult& result = *(ParseResult*)parseResult;
 
@@ -665,25 +665,25 @@ namespace QParser
     std::cout.flush();
   }
 
-  void ParserImplementation::DebugOutputSymbol(OSid symbol) const
+  void Grammar::DebugOutputSymbol(OSid symbol) const
   {
       std::cout << getTokenName(symbol);
   }
 #endif*/
 
-  void ParserImplementation::SetErrorStream(FILE* stream)
+  void Grammar::SetErrorStream(FILE* stream)
   {
     errorStream.flush();
     delete errorStream.rdbuf(new STDEXT_NAMESPACE::stdio_filebuf<char>(stream, std::ios::out));
   }
 
-  void ParserImplementation::SetWarningStream(FILE* stream)
+  void Grammar::SetWarningStream(FILE* stream)
   {
     warnStream.flush();
     delete warnStream.rdbuf(new STDEXT_NAMESPACE::stdio_filebuf<char>(stream, std::ios::out));
   }
 
-  void ParserImplementation::SetInfoStream(FILE* stream)
+  void Grammar::SetInfoStream(FILE* stream)
   {
     infoStream.flush();
     delete infoStream.rdbuf(new STDEXT_NAMESPACE::stdio_filebuf<char>(stream, std::ios::out));

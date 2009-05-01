@@ -56,6 +56,8 @@
       <itemPath>../../src/builderld.h</itemPath>
       <itemPath>../../src/builderld.inl</itemPath>
       <itemPath>../../src/functors.h</itemPath>
+      <itemPath>../../src/grammar.h</itemPath>
+      <itemPath>../../src/grammar.inl</itemPath>
       <itemPath>../../src/lexer.h</itemPath>
       <itemPath>../../src/lexer.inl</itemPath>
       <itemPath>../../src/parser.h</itemPath>
@@ -257,6 +259,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -490,6 +498,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -726,6 +740,12 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -958,6 +978,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -1194,6 +1220,12 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -1426,6 +1458,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -1662,6 +1700,12 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -1896,6 +1940,12 @@
       <item path="../../src/functors.h">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -2128,6 +2178,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammar.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">

@@ -40,7 +40,7 @@ namespace QParser
   };
   
   template<typename Item>
-  class GrammarLR : public Grammar
+  class GrammarLR : public ParserImplementation
   {
   public:
     // Constructor

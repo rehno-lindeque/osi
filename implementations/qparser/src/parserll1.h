@@ -18,7 +18,7 @@
 namespace QParser
 {
 /*                                  CLASSES                                 */
-  class GrammarLL1 : public Grammar
+  class GrammarLL1 : public ParserImplementation
   {
   public:
     // Constructor

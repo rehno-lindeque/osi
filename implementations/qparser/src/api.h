@@ -80,12 +80,8 @@
 #include "tokenregistry.h"
 #include "parseresult.h"
 #include "lexer.h"
+#include "grammar.h"
 #include "parser.h"
-//#include "parserll1.h"
-//#include "parserlr.h"
-//#include "parserlr0.h"
-//#include "parserlr1.h"
-//#include "parserlrk.h"
 #include "parserld.h"
 
 /*                                  CLASSES                                 */
@@ -94,9 +90,10 @@ namespace QParser
   class Parser : public BaseParser::Parser
   {
   public:
-    Grammar* grammar;
+    ParserImplementation* parser;
 
-    FORCE_INLINE Parser() : grammar(null) {}
+    FORCE_INLINE Parser() : parser(null) {}
+    FORCE_INLINE ParserImplementation* operator-> () { return parser; }
 
 #   ifdef _DEBUG
       class ParserDbg : public OSIX::ParserDbg

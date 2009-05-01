@@ -1,8 +1,8 @@
-#ifndef __QPARSER_PARSER_H__
-#define __QPARSER_PARSER_H__
+  #ifndef __QPARSER_GRAMMAR_H__
+#define __QPARSER_GRAMMAR_H__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSER.H
+//    GRAMMAR.H
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -10,7 +10,40 @@
 /*                               DOCUMENTATION                              */
 /*
     DESCRIPTION:
-      QParser parser base.
+      QParser grammar base.
+
+    USAGE:
+      + Derive specific grammar implementations from this class. (e.g. for
+        LL / LR / LARL class grammars etc.)
+
+    IMPLEMENTATION:
+      + Root tables (e.g. lexRootIndices, nilTokensRootIndices, etc) list
+        indexes into their respective token parse table. An index of 255
+        indicates no token.
+      + Token ids are sequenced rather than hashed. Tokens and statements
+        share the same id space, hence a token can't have the same id as a
+        statement.
+ 
+    OLD: This is no longer true! Have a look at the tokens.h header
+        we'll have to re-factor this system...
+        + Even tokens are nonterminals (production ids)
+        + Odd tokens are terminal tokens (lexical ids)
+          + -1 is a special token, sometimes used to represent no token or
+            end-of-stream token in subclasses (specific to the grammar
+            implementation)
+          + 1 is an identifier token used for both declerations and
+            references (during lexical analysis and parsing stage)
+          + 3 is an identifier declaration (psuedo-)token used in production symbols
+            during the grammar construction phase
+          + 5 is an identifier reference (psuedo-)token used in production symbols
+            during the grammar construction phase
+          + 7 is a numeric constant token. representing integer or
+            real values
+
+    TODO:
+      + Implement precedence mechanism for shift-reduce collision resolution
+      + Add "multi-identifier" merging extension
+      + The lexer implementation should be separated from the parser!
 */
 
 /*                              COMPILER MACROS                             */
@@ -23,19 +56,14 @@
 /*                                  CLASSES                                 */
 namespace QParser
 {
-  class ParserImplementation : public Base::Object
+  class Grammar : public Base::Object
   {
   public:
     // Constructor
-    INLINE ParserImplementation();
+    INLINE Grammar();
 
     //Destructor
-    virtual ~ParserImplementation();
-
-    // Token construction
-    //Lexer::TokenType activeTokenType;
-    //Lexer::SubTokenType activeSubTokenType;
-    //INLINE void ConstructTokens();
+    virtual ~Grammar();
 
     // Productions
     INLINE ParseToken BeginProduction(const_cstring productionName);
@@ -191,6 +219,6 @@ namespace QParser
 }
 
 /*                                   INCLUDES                               */
-#include "parser.inl"
+#include "grammar.inl"
 
 #endif

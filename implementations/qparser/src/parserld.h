@@ -51,7 +51,7 @@ namespace QParser
     uint16 descendants;
   };
   
-  class GrammarLD : public Grammar
+  class GrammarLD : public ParserImplementation
   {
   public:
     typedef std::vector<ParseToken> ParseTokens;
