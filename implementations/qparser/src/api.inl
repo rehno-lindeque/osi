@@ -21,16 +21,16 @@ OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
   if(_this.parser != null)
     return 0; // error
 
-  auto parserObject = _this.parser = _this.beginObject<QParser::ParserLD>();
-  _this.lexer = _this.beginObject<QParser::Lexer, QParser::TokenRegistry&>(_this->GetTokenRegistry());
+  auto parserObject = _this.parser = _this.BeginObject<QParser::ParserLD>();
+  _this.lexer = _this.BeginObject<QParser::Lexer, QParser::TokenRegistry&>(_this->GetTokenRegistry());
 
   return cast_object(parserObject);
 }
 
 void OSI_API_CALL OSIX::Parser::endGrammar()
 {
-  _this.endObject<QParser::Lexer>();
-  _this.endObject<QParser::ParserLD>();
+  _this.EndObject<QParser::Lexer>();
+  _this.EndObject<QParser::ParserLD>();
   
   if(_this.grammar->CheckForwardDeclarations())
     _this->ConstructParser(_this.grammar);
@@ -97,12 +97,12 @@ OSid OSI_API_CALL OSIX::Parser::boundedToken(const OSchar* tokenName, const OSch
 
 void OSI_API_CALL OSIX::Parser::beginLanguage()
 {
-  _this.grammar = static_cast<QParser::Grammar*>(_this.beginObject<QParser::GrammarLD, QParser::TokenRegistry&>(_this->GetTokenRegistry()));
+  _this.grammar = static_cast<QParser::Grammar*>(_this.BeginObject<QParser::GrammarLD, QParser::TokenRegistry&>(_this->GetTokenRegistry()));
 }
 
 void OSI_API_CALL OSIX::Parser::endLanguage()
 {
-  _this.endObject<QParser::Grammar>();  
+  _this.EndObject<QParser::Grammar>();  
 }
 
 OSid OSI_API_CALL OSIX::Parser::beginProduction(const OSchar* productionName)
@@ -163,18 +163,18 @@ void OSI_API_CALL OSIX::Parser::startProduction(OSid production)
 
 OSobject OSI_API_CALL OSIX::Parser::parseFile(const OSchar* fileName)
 {
-  auto parseResult = _this.beginObject<QParser::ParseResult>();
+  auto parseResult = _this.BeginObject<QParser::ParseResult>();
   _this->ParseFile(fileName, *parseResult);
-  _this.endObject<QParser::ParseResult>();
+  _this.EndObject<QParser::ParseResult>();
 
   return cast_object(parseResult);
 }
 
 OSobject OSI_API_CALL OSIX::Parser::parseString(const OSchar* stringBuffer)
 {
-  auto parseResult = _this.beginObject<QParser::ParseResult>();
+  auto parseResult = _this.BeginObject<QParser::ParseResult>();
   _this->ParseString(stringBuffer, *parseResult);
-  _this.endObject<QParser::ParseResult>();
+  _this.EndObject<QParser::ParseResult>();
 
   return cast_object(parseResult);
 }
@@ -232,7 +232,7 @@ void OSI_API_CALL OSIX::Parser::getMatchText(OSobject parseResult, const ParseMa
 
 void OSI_API_CALL OSIX::Parser::delObject(OSobject object)
 {
-  _this.delObject((Base::Object*)object);
+  _this.DeleteObject((Base::Object*)object);
 }
 
 void* OSI_API_CALL OSIX::Parser::debugInit()
