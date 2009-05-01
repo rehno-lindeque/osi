@@ -92,9 +92,11 @@ namespace QParser
   {
   public:
     ParserImplementation* parser;
+    Lexer* lexer;
     Grammar* grammar;
+    
 
-    FORCE_INLINE Parser() : parser(null), grammar(null) {}
+    FORCE_INLINE Parser() : parser(null), lexer(null), grammar(null) {}
     FORCE_INLINE ParserImplementation* operator-> () { return parser; }
 
 #   ifdef _DEBUG

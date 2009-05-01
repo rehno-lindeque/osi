@@ -20,7 +20,7 @@
 /*                                  CLASSES                                 */
 namespace QParser
 {
-  class Lexer
+  class Lexer : public Base::Object
   {
   public:
     // Types of lexical tokens recognized by the lexer

@@ -13,7 +13,7 @@ namespace QParser
 {
   ParserImplementation::ParserImplementation() : //activeTokenType(static_cast<Lexer::TokenType>(0)),
                        //activeSubTokenType(static_cast<Lexer::SubTokenType>(0)),
-                       lexer(tokenRegistry),
+                       //lexer(tokenRegistry),
                        errorStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
                        warnStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
                        infoStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out))

@@ -22,11 +22,14 @@ OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
     return 0; // error
 
   auto parserObject = _this.parser = _this.beginObject<QParser::ParserLD>();
+  _this.lexer = _this.beginObject<QParser::Lexer, QParser::TokenRegistry&>(_this->GetTokenRegistry());
+
   return cast_object(parserObject);
 }
 
 void OSI_API_CALL OSIX::Parser::endGrammar()
 {
+  _this.endObject<QParser::Lexer>();
   _this.endObject<QParser::ParserLD>();
   
   if(_this.grammar->CheckForwardDeclarations())
@@ -39,7 +42,7 @@ void OSI_API_CALL OSIX::Parser::beginRaw()
 
 void OSI_API_CALL OSIX::Parser::endRaw()
 {
-  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_RAW);
+  _this.lexer->Build(QParser::Lexer::TOKENTYPE_RAW);
 }
 
 void OSI_API_CALL OSIX::Parser::beginNil()
@@ -48,7 +51,7 @@ void OSI_API_CALL OSIX::Parser::beginNil()
 
 void OSI_API_CALL OSIX::Parser::endNil()
 {
-  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_NIL);
+  _this.lexer->Build(QParser::Lexer::TOKENTYPE_NIL);
 }
 
 void OSI_API_CALL OSIX::Parser::beginLex()
@@ -65,7 +68,7 @@ void OSI_API_CALL OSIX::Parser::beginLexSymbols()
 
 void OSI_API_CALL OSIX::Parser::endLexSymbols()
 {
-  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_SYMBOL);
+  _this.lexer->Build(QParser::Lexer::TOKENTYPE_LEX_SYMBOL);
 }
 
 void OSI_API_CALL OSIX::Parser::beginLexWords()
@@ -74,22 +77,22 @@ void OSI_API_CALL OSIX::Parser::beginLexWords()
 
 void OSI_API_CALL OSIX::Parser::endLexWords()
 {
-  _this->GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
+  _this.lexer->Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
 }
 
 OSid OSI_API_CALL OSIX::Parser::stringToken(const OSchar* tokenName, const OSchar* value)
 {
-  return _this->GetLexer().StringToken(tokenName, value);
+  return _this.lexer->StringToken(tokenName, value);
 }
 
 OSid OSI_API_CALL OSIX::Parser::charToken(const OSchar* tokenName, char value)
 {
-  return _this->GetLexer().CharToken(tokenName, value);
+  return _this.lexer->CharToken(tokenName, value);
 }
 
 OSid OSI_API_CALL OSIX::Parser::boundedToken(const OSchar* tokenName, const OSchar* leftBoundingValue, const OSchar* rightBoundingValue, PARSER_BOUNDED_LINETYPE lineType)
 {
-  return _this->GetLexer().BoundedToken(tokenName, leftBoundingValue, rightBoundingValue, lineType);
+  return _this.lexer->BoundedToken(tokenName, leftBoundingValue, rightBoundingValue, lineType);
 }
 
 void OSI_API_CALL OSIX::Parser::beginLanguage()

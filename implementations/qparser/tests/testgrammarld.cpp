@@ -46,14 +46,14 @@ ParseToken x = 0, y = 0, z = 0, w = 0;
 
 /*                                   TESTS                                  */
 // Build a left-recursive grammar with unbounded look-ahead (found at around page 23 of the draft)
-void BuildTestGrammar1(GrammarLD& grammar, ParserLD& parser)
+void BuildTestGrammar1(ParserLD& parser, Lexer& lexer, GrammarLD& grammar)
 {
   // Add lexical tokens
-  x = parser.GetLexer().CharToken("x", 'x');
-  y = parser.GetLexer().CharToken("y", 'y');
-  z = parser.GetLexer().CharToken("z", 'z');
-  w = parser.GetLexer().CharToken("w", 'w');
-  parser.GetLexer().Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
+  x = lexer.CharToken("x", 'x');
+  y = lexer.CharToken("y", 'y');
+  z = lexer.CharToken("z", 'z');
+  w = lexer.CharToken("w", 'w');
+  lexer.Build(QParser::Lexer::TOKENTYPE_LEX_WORD);
   
   cout << "Terminals:" << endl;
   cout << "  x = " << x << endl;
@@ -208,7 +208,8 @@ bool TestGrammar1()
   
   //// Build the parse table
   GrammarLD grammar(parser.GetTokenRegistry());
-  BuildTestGrammar1(grammar, parser);
+  Lexer lexer(parser.GetTokenRegistry());
+  BuildTestGrammar1(parser, lexer, grammar);
   parser.ConstructParser(&grammar);
   
   // Print out the parse table

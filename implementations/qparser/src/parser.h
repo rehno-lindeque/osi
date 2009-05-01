@@ -40,8 +40,8 @@ namespace QParser
     INLINE const TokenRegistry& GetTokenRegistry() const { return tokenRegistry; }
     
     // Lexing
-    INLINE Lexer& GetLexer() { return lexer; }
-    INLINE const Lexer& GetLexer() const { return lexer; }
+    //INLINE Lexer& GetLexer() { return lexer; }
+    //INLINE const Lexer& GetLexer() const { return lexer; }
 
     // Parsing
     virtual void Parse(ParseResult& parseResult) = 0;
@@ -64,7 +64,7 @@ namespace QParser
 
   protected:
     TokenRegistry tokenRegistry;  // A registry of the tokens used by both the parser and the lexer
-    Lexer lexer;                  // The lexer used to tokenize the incoming stream of characters
+    //Lexer lexer;                  // The lexer used to tokenize the incoming stream of characters
     
     // Streams for parser messages to be output
     std::ostream errorStream;
