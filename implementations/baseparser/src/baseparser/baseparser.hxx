@@ -5,15 +5,19 @@
 //
 //    BASEPARSER.HXX
 //
-//    Copyright � 2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 
 /*                              IMPLEMENTATION                              */
 namespace BaseParser
 {
-  template<class ObjectType> INLINE ObjectType* Parser::createObject()                  { ObjectType* obj = new ObjectType(); objects.push_front((Base::Object*)obj); return obj; }
-  template<class ObjectType> INLINE ObjectType* Parser::beginObject()                   { ObjectType* obj = createObject<ObjectType>(); activeObjects.push((Base::Object*)obj); return obj; }
+  template<class ObjectType, typename... ParamTypes> INLINE ObjectType* Parser::createObject(ParamTypes... params) 
+  { ObjectType* obj = new ObjectType(params...); objects.push_front((Base::Object*)obj); return obj; }
+  
+  template<class ObjectType, typename... ParamTypes> INLINE ObjectType* Parser::beginObject(ParamTypes... params)
+  { ObjectType* obj = createObject<ObjectType, ParamTypes...>(params...); activeObjects.push((Base::Object*)obj); return obj; }
+  
   template<class ObjectType> INLINE ObjectType* Parser::endObject()                     { ObjectType* obj = (ObjectType*)activeObjects.top(); activeObjects.pop(); return obj; }
   template<class ObjectType> INLINE ObjectType* Parser::openObject(OSobject object)     { ObjectType* obj = (ObjectType*)(Base::Object*)object; activeObjects.push((Base::Object*)obj); return obj; }
   template<class ObjectType> INLINE ObjectType* Parser::closeObject()                   { ObjectType* obj = (ObjectType*)activeObjects.top(); activeObjects.pop(); return obj; }

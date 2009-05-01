@@ -4,7 +4,7 @@
 #
 #     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
 #
-#     Version 0.03 (2009-04-19)
+#     Version 0.04 (2009-05-01)
 #
 #     (The versioning on this file is usefull because it may be copied often.
 #     Try and keep build scripts as up to date as possible. I.e. Always use
@@ -43,6 +43,13 @@ else:
     definitions.append('OSI_CPP_DYNAMIC_BUILD')
   else:
     definitions.append('OSI_CPP_STATIC_BUILD')
+
+# Compiler paths
+if ARGUMENTS.get('CXX', 0):
+  env.Replace(CXX = ARGUMENTS.get('CXX', 0))
+
+if ARGUMENTS.get('CC', 0):
+  env.Replace(CC = ARGUMENTS.get('CC', 0))
 
 # Compiler flags
 env.Append(CCFLAGS = user_flags)

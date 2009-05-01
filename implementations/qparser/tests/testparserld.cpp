@@ -162,7 +162,7 @@ bool TestGrammar1()
   TestParserLD parser;
   
   //// Build the parse table
-  GrammarLD grammar;
+  GrammarLD grammar(parser.GetTokenRegistry());
   BuildTestGrammar1(parser.TEST_GetBuilder());
   parser.ConstructParser(&grammar);
   

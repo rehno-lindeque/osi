@@ -25,10 +25,12 @@ user_definitions = [#'MSVC_BUILD',
 user_flags = '-std=c++0x'
 user_debugflags = '-g -D_DEBUG -Wall' # '-ggdb'
 
+env = Environment()
+
+
 execfile('CommonSConstruct', globals())
 
 
 #########################################################
 # Execute the unit tests build script
-
 SConscript('./SConscriptTests', build_dir=user_test_dir, duplicate=0)

@@ -60,7 +60,7 @@ namespace QParser
   {
   public:
     // Constructor
-    INLINE Grammar();
+    INLINE Grammar(TokenRegistry& tokenRegistry);
 
     //Destructor
     virtual ~Grammar();
@@ -87,16 +87,6 @@ namespace QParser
     // Tokens
     INLINE TokenRegistry& GetTokenRegistry() { return tokenRegistry; }
     INLINE const TokenRegistry& GetTokenRegistry() const { return tokenRegistry; }
-    
-    // Lexing
-    INLINE Lexer& GetLexer() { return lexer; }
-    INLINE const Lexer& GetLexer() const { return lexer; }
-
-    // Parsing
-    virtual void Parse(ParseResult& parseResult) = 0;
-
-    INLINE void ParseFile(const_cstring fileName, ParseResult& parseResult);
-    INLINE void ParseString(const_cstring stringBuffer, ParseResult& parseResult);
 
 /*#ifdef _DEBUG
     void DebugOutputTokens() const;
@@ -107,19 +97,9 @@ namespace QParser
     void DebugOutputParseResult(OSobject& parseResult) const;
 #endif*/
 
-    INLINE void SetErrorStream(FILE* stream);
-    INLINE void SetWarningStream(FILE* stream);
-    INLINE void SetInfoStream(FILE* stream);
-
   protected:
 
-    TokenRegistry tokenRegistry;  // A registry of the tokens used by both the parser and the lexer
-    Lexer lexer;                  // The lexer used to tokenize the incoming stream of characters
-    
-    // Streams for parser messages to be output
-    std::ostream errorStream;
-    std::ostream warnStream;
-    std::ostream infoStream;
+    TokenRegistry& tokenRegistry; // A registry of the tokens used by both the parser and the lexer
 
     //// Productions (non-terminals)
     struct Production

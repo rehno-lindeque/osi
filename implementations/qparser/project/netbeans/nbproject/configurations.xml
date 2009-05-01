@@ -1342,8 +1342,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons debug=1 ../..</buildCommand>
-          <cleanCommand>scons -c debug=1 ../..</cleanCommand>
+          <buildCommand>scons debug=1 CXX="/usr/local/bin/g++-4.4" ../..</buildCommand>
+          <cleanCommand>scons -c debug=1 CXX="/usr/local/bin/g++-4.4" ../..</cleanCommand>
           <executablePath>../../lib/libqparserd.a</executablePath>
           <cCompilerTool>
             <includeDirectories>

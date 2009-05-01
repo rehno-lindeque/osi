@@ -46,7 +46,7 @@ ParseToken x = 0, y = 0, z = 0, w = 0;
 
 /*                                   TESTS                                  */
 // Build a left-recursive grammar with unbounded look-ahead (found at around page 23 of the draft)
-void BuildTestGrammar1(ParserLD& parser)
+void BuildTestGrammar1(GrammarLD& grammar, ParserLD& parser)
 {
   // Add lexical tokens
   x = parser.GetLexer().CharToken("x", 'x');
@@ -60,61 +60,60 @@ void BuildTestGrammar1(ParserLD& parser)
   cout << "  y = " << y << endl;
   cout << "  z = " << z << endl;
   cout << "  w = " << w << endl;
-  
+
   // Add productions
   // 1.A -> x
-  parser.BeginProduction("A");
-    parser.ProductionToken("x");
-  parser.EndProduction();
+  grammar.BeginProduction("A");
+    grammar.ProductionToken("x");
+  grammar.EndProduction();
   
   // 2.B -> x
-  parser.BeginProduction("B");
-    parser.ProductionToken("x");
-  parser.EndProduction();
+  grammar.BeginProduction("B");
+    grammar.ProductionToken("x");
+  grammar.EndProduction();
   
   // 3.C -> y
-  parser.BeginProduction("C");
-    parser.ProductionToken("y");
-  parser.EndProduction();
+  grammar.BeginProduction("C");
+    grammar.ProductionToken("y");
+  grammar.EndProduction();
   
   // 4.D -> AC
-  parser.BeginProduction("D");
-    parser.ProductionToken("A");
-    parser.ProductionToken("C");
-  parser.EndProduction();
+  grammar.BeginProduction("D");
+    grammar.ProductionToken("A");
+    grammar.ProductionToken("C");
+  grammar.EndProduction();
   
   // 5.D -> DAC
-  parser.BeginProduction("D");
-    parser.ProductionToken("D");
-    parser.ProductionToken("A");
-    parser.ProductionToken("C");
-  parser.EndProduction();
+  grammar.BeginProduction("D");
+    grammar.ProductionToken("D");
+    grammar.ProductionToken("A");
+    grammar.ProductionToken("C");
+  grammar.EndProduction();
   
   // 6.E -> BC
-  parser.BeginProduction("E");
-    parser.ProductionToken("B");
-    parser.ProductionToken("C");
-  parser.EndProduction();
+  grammar.BeginProduction("E");
+    grammar.ProductionToken("B");
+    grammar.ProductionToken("C");
+  grammar.EndProduction();
   
   // 7.E -> EBC
-  parser.BeginProduction("E");
-    parser.ProductionToken("E");
-    parser.ProductionToken("B");
-    parser.ProductionToken("C");
-  parser.EndProduction();
+  grammar.BeginProduction("E");
+    grammar.ProductionToken("E");
+    grammar.ProductionToken("B");
+    grammar.ProductionToken("C");
+  grammar.EndProduction();
   
   // 8.S -> Dz
-  parser.BeginProduction("S");
-    parser.ProductionToken("D");
-    parser.ProductionToken("z");
-  parser.EndProduction();
+  grammar.BeginProduction("S");
+    grammar.ProductionToken("D");
+    grammar.ProductionToken("z");
+  grammar.EndProduction();
   
   // 9.S -> Ew
-  parser.BeginProduction("S");
-    parser.ProductionToken("E");
-    parser.ProductionToken("w");
-  parser.EndProduction();
-  
+  grammar.BeginProduction("S");
+    grammar.ProductionToken("E");
+    grammar.ProductionToken("w");
+  grammar.EndProduction();
   
   /* 
   // s(x), r(i), s(y), r(3), r(i), p{x > 1, z > 2, w > 3}, g{3 > 5}, rp(4), rp(1), r(8), accept
@@ -208,8 +207,8 @@ bool TestGrammar1()
   TestParserLD parser;
   
   //// Build the parse table
-  GrammarLD grammar;
-  BuildTestGrammar1(parser);
+  GrammarLD grammar(parser.GetTokenRegistry());
+  BuildTestGrammar1(grammar, parser);
   parser.ConstructParser(&grammar);
   
   // Print out the parse table

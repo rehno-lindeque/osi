@@ -106,7 +106,8 @@ namespace QParser
         OSI_DYNAMIC_METHOD void OSI_API_CALL debugOutputGrammar();
         OSI_DYNAMIC_METHOD void OSI_API_CALL debugOutputParseResult(OSobject parseResult);*/
 
-        INLINE Parser& getParser() { return *(Parser*)(((uint8*)this) - (uint8*)&(*(Parser*)null).parserDbg); }
+        //INLINE Parser& getParser() { return *(Parser*)(((uint8*)this) - (uint8*)&(*(Parser*)null).parserDbg); }
+        INLINE Parser& getParser() { return *(Parser*)(((uint8*)this) - offsetof(Parser, parserDbg)); }
       } parserDbg;
 #   endif
   };

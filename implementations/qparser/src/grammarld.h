@@ -51,21 +51,12 @@ namespace QParser
     typedef std::vector<ParseToken> ParseTokens;
     
     // Constructor
-    INLINE GrammarLD() {}
+    INLINE GrammarLD(TokenRegistry& tokenRegistry) : Grammar(tokenRegistry) {}
     INLINE ~GrammarLD();
     
-    // Construct productions
-    virtual void ConstructParser(Grammar* grammar);
-
-    // Parse
-    virtual void Parse(ParseResult& parseResult);
-      
   protected:
     BuilderLD builder;
     ParseTokens parseTable;
-    
-    // Perform the recognition pass
-    void RecognitionPass(ParseResult& parseResult, ParseTokens& rules);
   };
 }
 

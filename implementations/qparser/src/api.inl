@@ -21,7 +21,7 @@ OSobject OSI_API_CALL OSIX::Parser::beginGrammar()
   if(_this.parser != null)
     return 0; // error
 
-  QParser::ParserImplementation* parserObject = _this.parser = _this.beginObject<QParser::ParserLD>();
+  auto parserObject = _this.parser = _this.beginObject<QParser::ParserLD>();
   return cast_object(parserObject);
 }
 
@@ -94,7 +94,7 @@ OSid OSI_API_CALL OSIX::Parser::boundedToken(const OSchar* tokenName, const OSch
 
 void OSI_API_CALL OSIX::Parser::beginLanguage()
 {
-  _this.grammar = static_cast<QParser::Grammar*>(_this.beginObject<QParser::GrammarLD>());
+  _this.grammar = static_cast<QParser::Grammar*>(_this.beginObject<QParser::GrammarLD, QParser::TokenRegistry&>(_this->GetTokenRegistry()));
 }
 
 void OSI_API_CALL OSIX::Parser::endLanguage()

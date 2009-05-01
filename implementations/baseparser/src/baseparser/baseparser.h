@@ -57,13 +57,13 @@ namespace BaseParser
     std::list<Base::Object*> objects;
     std::stack<Base::Object*> activeObjects;
 
-    template<class ObjectType> INLINE ObjectType* createObject();
-    template<class ObjectType> INLINE ObjectType* beginObject();
+    template<class ObjectType, typename... ParamTypes> INLINE ObjectType* createObject(ParamTypes... params);
+    template<class ObjectType, typename... ParamTypes> INLINE ObjectType* beginObject(ParamTypes... params);  
     template<class ObjectType> INLINE ObjectType* endObject();
     template<class ObjectType> INLINE ObjectType* openObject(OSobject object);
     template<class ObjectType> INLINE ObjectType* closeObject();
     template<class ObjectType> INLINE ObjectType* getActiveObject();
-                               inline void delObject(Base::Object* object);
+                               INLINE void delObject(Base::Object* object);
     template<class ObjectType> static INLINE ObjectType* cast_id(OSobject object);
     template<class ObjectType> static INLINE OSobject cast_object(ObjectType* object);
                                INLINE void delAllObjects();

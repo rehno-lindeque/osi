@@ -24,6 +24,7 @@ namespace QParser
     
     // Construction
     INLINE TokenRegistry();
+    INLINE TokenRegistry(TokenRegistry&) = delete;
     
     // Look up the next available terminal token
     INLINE ParseToken GetNextAvailableTerminal() const;
