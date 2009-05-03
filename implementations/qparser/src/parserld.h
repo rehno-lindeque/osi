@@ -67,7 +67,6 @@ namespace QParser
     virtual void Parse(ParseResult& parseResult);
       
   protected:
-    BuilderLD builder;
     ParseTokens parseTable;
     
     // Perform the recognition pass

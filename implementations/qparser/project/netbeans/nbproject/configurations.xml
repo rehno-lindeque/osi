@@ -60,6 +60,8 @@
       <itemPath>../../src/grammar.inl</itemPath>
       <itemPath>../../src/grammarld.h</itemPath>
       <itemPath>../../src/grammarld.inl</itemPath>
+      <itemPath>../../src/grammarlr.h</itemPath>
+      <itemPath>../../src/grammarlr.inl</itemPath>
       <itemPath>../../src/lexer.h</itemPath>
       <itemPath>../../src/lexer.inl</itemPath>
       <itemPath>../../src/parser.h</itemPath>
@@ -273,6 +275,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/grammarld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -518,6 +526,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/grammarld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -766,6 +780,12 @@
       <item path="../../src/grammarld.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -1010,6 +1030,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/grammarld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">
@@ -1258,6 +1284,12 @@
       <item path="../../src/grammarld.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -1342,8 +1374,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons debug=1 CXX="/usr/local/bin/g++-4.4" ../..</buildCommand>
-          <cleanCommand>scons -c debug=1 CXX="/usr/local/bin/g++-4.4" ../..</cleanCommand>
+          <buildCommand>scons ../.. debug=1 CXX="/usr/local/bin/g++-4.4"</buildCommand>
+          <cleanCommand>scons -c ../.. debug=1 CXX="/usr/local/bin/g++-4.4"</cleanCommand>
           <executablePath>../../lib/libqparserd.a</executablePath>
           <cCompilerTool>
             <includeDirectories>
@@ -1504,6 +1536,12 @@
       <item path="../../src/grammarld.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -1588,8 +1626,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons ../../tests/testbuilderld debug=1</buildCommand>
-          <cleanCommand>scons -c debug=1</cleanCommand>
+          <buildCommand>scons ../../tests/testbuilderld debug=1 CXX="/usr/local/bin/g++-4.4"</buildCommand>
+          <cleanCommand>scons -c debug=1 CXX="/usr/local/bin/g++-4.4"</cleanCommand>
           <executablePath>../../tests/testbuilderld</executablePath>
           <cCompilerTool>
             <includeDirectories>
@@ -1750,6 +1788,12 @@
       <item path="../../src/grammarld.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -1834,8 +1878,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons ../../tests/testgrammarld debug=1</buildCommand>
-          <cleanCommand>scons -c debug=1</cleanCommand>
+          <buildCommand>scons ../../tests/testgrammarld debug=1 CXX="/usr/local/bin/g++-4.4"</buildCommand>
+          <cleanCommand>scons -c debug=1 CXX="/usr/local/bin/g++-4.4"</cleanCommand>
           <executablePath>../../tests/testgrammarld</executablePath>
           <cCompilerTool>
             <includeDirectories>
@@ -1996,6 +2040,12 @@
       <item path="../../src/grammarld.inl">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/lexer.h">
         <itemTool>3</itemTool>
       </item>
@@ -2080,8 +2130,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
-          <buildCommand>scons ../../tests/testparserld debug=1</buildCommand>
-          <cleanCommand>scons -c debug=1</cleanCommand>
+          <buildCommand>scons ../../tests/testparserld debug=1 CXX="/usr/local/bin/g++-4.4"</buildCommand>
+          <cleanCommand>scons -c debug=1 CXX="/usr/local/bin/g++-4.4"</cleanCommand>
           <executablePath>../../tests/testparserld</executablePath>
           <cCompilerTool>
             <includeDirectories>
@@ -2240,6 +2290,12 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/grammarld.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/grammarlr.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/lexer.h">

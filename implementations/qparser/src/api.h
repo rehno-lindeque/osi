@@ -81,6 +81,7 @@
 #include "parseresult.h"
 #include "lexer.h"
 #include "grammar.h"
+#include "grammarlr.h"
 #include "grammarld.h"
 #include "parser.h"
 #include "parserld.h"

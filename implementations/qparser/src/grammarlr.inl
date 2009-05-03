@@ -1,9 +1,9 @@
-#ifdef  __QPARSER_PARSERLR_H__
-#ifndef __QPARSER_PARSERLR_INL__
-#define __QPARSER_PARSERLR_INL__
+#ifdef  __QPARSER_GRAMMARLR_H__
+#ifndef __QPARSER_GRAMMARLR_INL__
+#define __QPARSER_GRAMMARLR_INL__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSERLR.INL
+//    GRAMMARLR.INL
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -11,19 +11,19 @@
 
 namespace QParser
 {
-/*  template<typename Item>
+  template<typename Item>
   GrammarLR<Item>::~GrammarLR()
   {
     // Clean up memory
-    for(typename vector<State*>::iterator i = states.begin(); i != states.end(); ++i)
+    for(typename States::iterator i = states.begin(); i != states.end(); ++i)
       delete *i;
   }
 
   template<typename Item>
-  void GrammarLR<Item>::getStartItems(OSid nonterminal, vector<Item> &items)
+  void GrammarLR<Item>::getStartItems(ParseToken nonterminal, Items &items)
   {
-    OSI_ASSERT(!isTerminal(nonterminal));
-    ProductionSet* productionSet = getProductionSet(nonterminal);
+    OSI_ASSERT(!TokenRegistry::IsTerminal(nonterminal));
+    ProductionSet* productionSet = GetProductionSet(nonterminal);
 
     Item item(nonterminal);
     for(uint cProduction = 0; cProduction < productionSet->productionsLength; ++cProduction)
@@ -32,7 +32,7 @@ namespace QParser
 
       // Add the item to the set if not already present
       // todo: (optimization) use some form of index for this... (unfortunately stl doesn't allow multiple indexes...)
-      typename vector<Item>::iterator i;
+      typename Items::iterator i;
       for(i = items.begin(); i != items.end(); ++i) if (*i == item) break;
       if(i == items.end())
         items.push_back(item);
@@ -40,16 +40,16 @@ namespace QParser
   }
   
   template<typename Item>
-  bool GrammarLR<Item>::getFirstTerminals(OSid id, set<OSid>& firstTerminals)
+  bool GrammarLR<Item>::getFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals)
   {
-    if(isTerminal(id))
+    if(TokenRegistry::IsTerminal(token))
     {
-      firstTerminals.insert(id);
+      firstTerminals.insert(token);
       return false;  // FIRST(id) is not nullable
     }
 
     // Initialize the nullable attribute
-    ProductionSet& productionSet = *getProductionSet(id);
+    ProductionSet& productionSet = *GetProductionSet(token);
     ++productionSet.visitedCount;
 
     if(productionSet.visitedCount > 1)
@@ -61,15 +61,15 @@ namespace QParser
       const Production& production = productions[productionSet.productionsOffset + c].first;
       bool productionNullable = true;
 
-      for(uint cSymbol = 0; cSymbol < production.symbolsLength; ++cSymbol)
+      for(uint cToken = 0; cToken < production.tokensLength; ++cToken)
       {
-        productionNullable &= getFirstTerminals(production.symbols[cSymbol].id, firstTerminals);
+        productionNullable &= getFirstTerminals(production.tokens[cToken], firstTerminals);
         if(!productionNullable)
           break;
       }
 
       // If the production set's nullity changes and the production set is recursive, we must restart the process with the new nullity value
-      if((productionNullable || production.symbolsLength == 0) && productionSet.nullable == false)
+      if((productionNullable || production.tokensLength == 0) && productionSet.nullable == false)
       {
         // Note: If getFirstTerminals is called on productionSet for the first time, its nullity MUST be false.
         //       It can change to true during evaluation of this function, but can never return to false.
@@ -81,7 +81,7 @@ namespace QParser
 
         productionSet.nullable = true;
         productionSet.visitedCount = 0;
-        return getFirstTerminals(id, firstTerminals);
+        return getFirstTerminals(token, firstTerminals);
       }
     }
 
@@ -92,12 +92,12 @@ namespace QParser
   }
   
   template<typename Item>
-  void GrammarLR<Item>::getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals)
+  void GrammarLR<Item>::getLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals)
   {
     const Production& production = productions[item.productionIndex].first;
-    for(uint cSymbol = item.inputPosition + 1; cSymbol < production.symbolsLength; ++cSymbol)
+    for(uint cToken = item.inputPosition + 1; cToken < production.tokensLength; ++cToken)
     {
-      if(!getFirstTerminals(production.symbols[cSymbol].id, lookaheadTerminals))
+      if(!getFirstTerminals(production.tokens[cToken], lookaheadTerminals))
         return; // The symbol (terminal / nonterminal) is not nullable, so we're done
     }
 
@@ -109,24 +109,29 @@ namespace QParser
   template<typename Item>
   int GrammarLR<Item>::findItemState(const Item& item)
   {
-    typename map<Item, uint>::iterator i = itemStateIndex.find(item);
-    if(i == itemStateIndex.end() || i->first != item)
+    typename ItemStateMap::iterator i = itemStateMap.find(item);
+    if(i == itemStateMap.end() || i->first != item)
       return -1;
     return i->second;
   }
 
 #ifdef _DEBUG
-  template<typename Item>
-  void GrammarLR<Item>::debugOutputEdge(typename State::Edges::const_reference edge) const
+  /*template<typename Item>
+  void GrammarLR<Item>::debugOutputEdge(typename Edges::const_reference edge) const
   {
-    cout << "--(";
+    using std::cout;
+    
+    std::cout << "--(";
     debugOutputSymbol(edge.first);
-    cout << ")--> " << edge.second;
+    std::cout << ")--> " << edge.second;
   }
 
   template<typename Item>
   void GrammarLR<Item>::debugOutputStates() const
   {
+    using std::cout;
+    using std::endl;
+    
     cout << endl;
     for(uint c = 0; c < states.size(); ++c)
     {
@@ -134,7 +139,7 @@ namespace QParser
       cout << "State " << c << endl;
       cout << "---------" << endl;
       cout << "Items:" << endl;
-      for(typename vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
+      for(typename Items::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
       {
         cout << ' ';
         debugOutputItem(*iItem);
@@ -142,7 +147,7 @@ namespace QParser
       }
 
       cout << "Edges:" << endl;
-      for(typename State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
+      for(typename Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
       {
         cout << ' ';
         debugOutputEdge(*iEdge);
@@ -151,8 +156,8 @@ namespace QParser
 
       cout << endl;
     }
-  }
-#endif*/
+  }*/
+#endif
 }
 
 #endif

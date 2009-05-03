@@ -131,7 +131,7 @@ void PrintRules(const ParseTokens& rules)
 class TestParserLD : public ParserLD
 {
 public:
-  BuilderLD& TEST_GetBuilder() { return builder; }
+  //BuilderLD& TEST_GetBuilder() { return builder; }
   void TEST_RecognitionPass(ParseResult& parseResult, ParseTokens& rules) { RecognitionPass(parseResult, rules); }
 };
 

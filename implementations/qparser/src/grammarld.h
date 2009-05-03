@@ -33,30 +33,50 @@
 namespace QParser
 {
 /*                                  CLASSES                                 */
-  /*struct LRItem
-  {
-    OSid productionId;
-    uint productionIndex;
-    uint inputPosition;
+  // An LD item (which is more or less identical to an LR(0) item)
+  struct LDItem : public LRItem
+  {    
+    INLINE LDItem(ParseToken nonterminal) : LRItem(nonterminal) {}
+    INLINE LDItem(const LDItem&) = default;
+    INLINE LDItem() = delete;
     
-    INLINE LRItem(OSid nonterminal) : productionId(nonterminal), productionIndex(0), inputPosition(0) {}
+    FORCE_INLINE bool operator < (const LDItem& item) const
+    { return nonterminal < item.nonterminal
+        || (nonterminal == item.nonterminal
+          && (nonterminal < item.nonterminal
+            || (productionIndex == item.productionIndex
+              && inputPosition < item.inputPosition))); }
+    FORCE_INLINE bool operator == (const LDItem& item) const { return nonterminal == item.nonterminal && productionIndex == item.productionIndex && inputPosition == item.inputPosition; }
+    FORCE_INLINE bool operator != (const LDItem& item) const { return !(*this == item); }
+  };
   
-  private:
-    INLINE LRItem() {}
-  };*/
-  
-  class GrammarLD : public Grammar
+  // LD Grammar
+  class GrammarLD : public GrammarLR<LDItem>
   {
-  public:
-    typedef std::vector<ParseToken> ParseTokens;
-    
+  public:    
     // Constructor
-    INLINE GrammarLD(TokenRegistry& tokenRegistry) : Grammar(tokenRegistry) {}
+    INLINE GrammarLD(TokenRegistry& tokenRegistry) : GrammarLR<LDItem>(tokenRegistry) {}
+    INLINE GrammarLD(const GrammarLD&) = delete;
+    INLINE GrammarLD() = delete;
+    
+    // Destructor
     INLINE ~GrammarLD();
     
+    // Parse table construction
+    INLINE void ConstructParseTable(ParseTokens& parseTable);
+    
   protected:
-    BuilderLD builder;
-    ParseTokens parseTable;
+    // Common types
+    typedef LDItem Item;
+    //typedef GrammarLR<LDItem>::States States;
+    
+    // Determine the closure of a set of items
+    INLINE void Closure(Items& items);
+    INLINE void Closure(Items& items, uint cBegin, uint cEnd);
+
+    // Determine the goto states, items and edges for an existing set of states
+    INLINE void GoTo(States& states);
+    INLINE void GoTo(States& states, uint cBegin, uint cEnd);
   };
 }
 

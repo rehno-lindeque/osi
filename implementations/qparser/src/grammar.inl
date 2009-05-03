@@ -14,7 +14,7 @@ namespace QParser
   Grammar::Grammar(TokenRegistry& tokenRegistry) :
     tokenRegistry(tokenRegistry),
     activeProduction(null),
-    startSymbol(-1)
+    rootNonterminal(-1)
   {
   }
 
@@ -116,12 +116,12 @@ namespace QParser
   void Grammar::EndProduction()
   {
     // Add symbols to production
-    if (activeProductionSymbols.size() > 0)
+    if (activeProductionTokens.size() > 0)
     {
-      activeProduction->symbols = new Production::Symbol[activeProductionSymbols.size()];
-      activeProduction->symbolsLength = activeProductionSymbols.size();
-      memcpy(activeProduction->symbols, &activeProductionSymbols[0], activeProductionSymbols.size() * sizeof(Production::Symbol));
-      activeProductionSymbols.clear();
+      activeProduction->tokens = new ParseToken[activeProductionTokens.size()];
+      activeProduction->tokensLength = activeProductionTokens.size();
+      memcpy(activeProduction->tokens, &activeProductionTokens[0], activeProductionTokens.size() * sizeof(ParseToken));
+      activeProductionTokens.clear();
     }
     activeProduction = null;
   }
@@ -129,7 +129,7 @@ namespace QParser
   void Grammar::ProductionToken(ParseToken token)
   {
     OSI_ASSERT(tokenRegistry.IsTemporaryToken(token) || tokenRegistry.IsTokenValid(token));
-    activeProductionSymbols.push_back(token);
+    activeProductionTokens.push_back(token);
   }
 
   ParseToken Grammar::ProductionToken(const_cstring tokenName)
@@ -149,7 +149,7 @@ namespace QParser
     return typeHash;*/
     
     // todo: BUSY HERE... (REWRITE)
-    activeProductionSymbols.push_back(TOKEN_TERMINAL_IDENTIFIER);
+    activeProductionTokens.push_back(TOKEN_TERMINAL_IDENTIFIER);
     return TOKEN_TERMINAL_IDENTIFIER;
   }
 
@@ -169,7 +169,7 @@ namespace QParser
     return typeHash;*/
     
     // todo: BUSY HERE... (REWRITE)
-    activeProductionSymbols.push_back(TOKEN_TERMINAL_IDENTIFIER);
+    activeProductionTokens.push_back(TOKEN_TERMINAL_IDENTIFIER);
     return TOKEN_TERMINAL_IDENTIFIER;
   }
 
@@ -195,7 +195,7 @@ namespace QParser
   void Grammar::GrammarStartSymbol(ParseToken nonterminal)
   {
     OSI_ASSERT(!TokenRegistry::IsTerminal(nonterminal));
-    startSymbol = nonterminal;
+    rootNonterminal = nonterminal;
   }
 
   bool Grammar::CheckForwardDeclarations() const
@@ -301,17 +301,17 @@ namespace QParser
     {
       Production& production = i->first;
       
-      for(uint c = 0; c < production.symbolsLength; ++c)
+      for(uint c = 0; c < production.tokensLength; ++c)
       {
-        if(production.symbols[c].token == oldToken)
-          production.symbols[c].token = newToken;
+        if(production.tokens[c] == oldToken)
+          production.tokens[c] = newToken;
       }
     }
   }
 
   bool Grammar::IsSilent(const Production& production) const
   {
-    return production.symbolsLength == 1 && !TokenRegistry::IsTerminal(production.symbols[0].token);
+    return production.tokensLength == 1 && !TokenRegistry::IsTerminal(production.tokens[0]);
   }
 
   bool Grammar::IsSilent(ParseToken token) const

@@ -47,8 +47,6 @@ namespace QParser
   class GrammarLR0 : public GrammarLR<LR0Item>
   {
   public:
-    typedef LR0Item Item;
-    
     // Constructor
     INLINE GrammarLR0() {}
     INLINE ~GrammarLR0();
@@ -58,6 +56,9 @@ namespace QParser
     virtual void ConstructParser(Grammar* grammar);
 
   protected:
+    // Common types
+    typedef LR0Item Item;
+    
     // Construct an LR(0) linear binary indexed parse table
     INLINE void constructParseTable();
 

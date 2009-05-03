@@ -1,8 +1,8 @@
-#ifndef __QPARSER_PARSERLR_H__
-#define __QPARSER_PARSERLR_H__
+#ifndef __QPARSER_GRAMMARLR_H__
+#define __QPARSER_GRAMMARLR_H__
 //////////////////////////////////////////////////////////////////////////////
 //
-//    PARSERLR.H
+//    GRAMMARLR.H
 //
 //    Copyright © 2007-2009, Rehno Lindeque. All rights reserved.
 //
@@ -27,92 +27,73 @@
 namespace QParser
 {
 /*                                  CLASSES                                 */
-/*  struct LRItem
+  // Base item structure to use LR-style grammars
+  struct LRItem
   {
-    OSid productionId;
+    ParseToken nonterminal;
     uint productionIndex;
     uint inputPosition;
     
-    INLINE LRItem(OSid nonterminal) : productionId(nonterminal), productionIndex(0), inputPosition(0) {}
-  
-  private:
-    INLINE LRItem() {}
+    INLINE LRItem(ParseToken nonterminal) : nonterminal(nonterminal), productionIndex(0), inputPosition(0) {}
+    INLINE LRItem(const LRItem&) = default;
+    INLINE LRItem() = delete;
   };
   
+  // LR Grammar base class
   template<typename Item>
-  class GrammarLR : public ParserImplementation
+  class GrammarLR : public Grammar
   {
   public:
     // Constructor
-    INLINE GrammarLR() {}
+    INLINE GrammarLR(TokenRegistry& tokenRegistry) : Grammar(tokenRegistry) {}
+    INLINE GrammarLR(const GrammarLR&) = delete;
+    INLINE GrammarLR() = delete;
+    
+    // Destructror
     INLINE ~GrammarLR();
     
   protected:
-
+    // Container types
+    struct State;
+    typedef std::vector<Item> Items;              // The set of items typically contained by a state
+    typedef std::map<ParseToken, int> Edges;      // An edge between states where the label = nonterminal/terminal token and the target = state index where -1 is an end state
+    typedef std::vector<State*> States;    // The set of states
+    typedef std::map<Item, uint> ItemStateMap;    // A mapping between items and the index of the state they belong to (in the states member variable)
+    
     // An LR state is a set of LR items
     struct State
     {
-      typedef map<OSid, int> Edges; // (edge label = symbol, target = state index where -1 is an end state)
-      vector<Item> items;
-      Edges edges;
+      Items items;  // A set of indexes contained by the state
+      Edges edges;  // A set of edges connecting this state to other states
     };
-
-    vector<State*> states;
-    map<Item, uint> itemStateIndex; // An index of what state each item maps to (for quick lookup)
-
-    // Binary Index Element for the parse table
-    #pragma pack(push)
-#pragma pack(0)
-  public:
-    struct BinaryIndexElement
-    {
-      //uint state;
-      OSid id;
-
-      // Note: 4 least significant bits indicates the action. 2 most significant bits
-      //       (128 & 64) are identifier additions (reference & declaration)
-      enum Action
-      {
-        LRACTION_SHIFT                = 0,
-        LRACTION_GOTO                 = 1,
-        LRACTION_REDUCE               = 2,
-        LRACTION_ACCEPT               = 3,
-        LRACTION_ERROR                = 4,
-
-        LRACTION_FLAG_SILENT          = 32,
-        LRACTION_FLAG_IDREF           = 64,
-        LRACTION_FLAG_IDDECL          = 128,
-      } action;
-      uint param;
-      uint largerIndex;
-    };
-  protected:
-#pragma pack(pop)
-
     
+    // Members
+    States states;              // The set of all of the states in the parsing table
+    ItemStateMap itemStateMap;  // A map of what state each item maps to (for quick lookup)
+
     // Get all initial items for productions that produce a certain non-terminal symbol
-    INLINE void getStartItems(OSid nonterminal, vector<Item>& items);
+    INLINE void getStartItems(ParseToken nonterminal, Items& items);
 
     // Get the first set of terminals for some token id. Returns true if the set is nullable.
     // todo: we'll remove the bool and instead just store nullable directly in the productionSet
-    INLINE bool getFirstTerminals(OSid id, set<OSid>& firstTerminals);
+    INLINE bool getFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals);
     
     // Get an item's lookahead terminal symbols (all possible terminals that can follow after the current input position)
     // including -1 if no terminal is a possibility (i.e. end-of-stream)
-    INLINE void getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals);
+    INLINE void getLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals);
 
     // Find the state (index) that an item belongs to. Returns -1 if the item does not exist yet.
     INLINE int findItemState(const Item& items);
 
 #ifdef _DEBUG
-    virtual void debugOutputItem(const Item& item) const = 0;
+    /*virtual void debugOutputItem(const Item& item) const = 0;
     INLINE void debugOutputEdge(typename State::Edges::const_reference edge) const;
-    virtual void debugOutputStates() const;
+    virtual void debugOutputStates() const;*/
 #endif
   };
-}*/
+}
 
 /*                                   INCLUDES                               */
-#include "parserlr.inl"
+#include "grammarlr.inl"
 
 #endif

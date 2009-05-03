@@ -41,14 +41,14 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS} 
-	cd ../scons && scons debug=1 CXX="/usr/local/bin/g++-4.4" ../..
+	cd ../scons && scons ../.. debug=1 CXX="/usr/local/bin/g++-4.4"
 
 # Subprojects
 .build-subprojects:
 
 # Clean Targets
 .clean-conf:
-	cd ../scons && scons -c debug=1 CXX="/usr/local/bin/g++-4.4" ../..
+	cd ../scons && scons -c ../.. debug=1 CXX="/usr/local/bin/g++-4.4"
 
 # Subprojects
 .clean-subprojects:

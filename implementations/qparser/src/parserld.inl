@@ -20,7 +20,9 @@ namespace QParser
   
   void ParserLD::ConstructParser(Grammar* grammar)
   {
-    builder.ConstructParseTable(parseTable);
+    GrammarLD *grammarLD = dynamic_cast<GrammarLD*>(grammar);
+    if (grammarLD)
+      grammarLD->ConstructParseTable(parseTable);
   }
 
   void ParserLD::Parse(ParseResult& parseResult)
