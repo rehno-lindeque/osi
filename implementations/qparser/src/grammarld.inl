@@ -37,7 +37,7 @@ namespace QParser
 
     // Initialize T to { Closure( { Start Production } ) }
     states.push_back(new State);
-    getStartItems(rootNonterminal, states[0]->items);
+    GetStartItems(rootNonterminal, states[0]->items);
     Closure(states[0]->items);
 
     // Evaluate each state until no new states are found
@@ -72,7 +72,7 @@ namespace QParser
 
       // Add the closure of the nonterminal at input position to the set
       // (but first construct a starting item set for the production)
-      getStartItems(token, items);
+      GetStartItems(token, items);
     }
 
     if(cEnd < items.size())
@@ -118,7 +118,7 @@ namespace QParser
           // (This is something that [modcomp] doesn't really mention in any detail - we should look for existing target states for
           // this item or we'll end up in an infinite loop for any recursive grammar. It's very possible that a different state
           // will have the same item leading to some existing state.)
-          targetStateIndex = findItemState(item);
+          targetStateIndex = FindItemState(item);
 
           if (targetStateIndex == -1)
           {

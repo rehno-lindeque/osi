@@ -247,26 +247,26 @@ void* OSI_API_CALL OSIX::Parser::debugInit()
 #ifdef _DEBUG
   void OSI_API_CALL OSIX::ParserDbg::debugOutputTokens()
   {
-    /*QParser::Grammar* grammarObject = static_cast<QParser::Parser::ParserDbg*>(this)->getParser().grammar;
+    /*QParser::Grammar* grammarObject = static_cast<QParser::Parser::ParserDbg*>(this)->GetParser().grammar;
     grammarObject->DebugOutputTokens();*/
   }
 
   void OSIX::ParserDbg::debugOutputProductions()
   {
-    /*QParser::Grammar* grammarObject = ((QParser::Parser::ParserDbg*)this)->getParser().grammar;
+    /*QParser::Grammar* grammarObject = ((QParser::Parser::ParserDbg*)this)->GetParser().grammar;
     grammarObject->DebugOutputProductions();*/
   }
 
   void OSIX::ParserDbg::debugOutputGrammar()
   {
-    /*QParser::Grammar* grammarObject = ((QParser::Parser::ParserDbg*)this)->getParser().grammar;
+    /*QParser::Grammar* grammarObject = ((QParser::Parser::ParserDbg*)this)->GetParser().grammar;
     grammarObject->DebugOutputStates();
     grammarObject->DebugOutputTable();*/
   }
 
   void OSIX::ParserDbg::debugOutputParseResult(OSobject parseResult)
   {
-    /*QParser::Grammar* grammarObject = static_cast<QParser::Parser::ParserDbg*>(this)->getParser().grammar;
+    /*QParser::Grammar* grammarObject = static_cast<QParser::Parser::ParserDbg*>(this)->GetParser().grammar;
     grammarObject->DebugOutputParseResult(parseResult);*/
   }
 #endif

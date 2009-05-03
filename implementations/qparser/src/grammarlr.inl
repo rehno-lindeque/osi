@@ -20,7 +20,7 @@ namespace QParser
   }
 
   template<typename Item>
-  void GrammarLR<Item>::getStartItems(ParseToken nonterminal, Items &items)
+  void GrammarLR<Item>::GetStartItems(ParseToken nonterminal, Items &items)
   {
     OSI_ASSERT(!TokenRegistry::IsTerminal(nonterminal));
     ProductionSet* productionSet = GetProductionSet(nonterminal);
@@ -40,7 +40,7 @@ namespace QParser
   }
   
   template<typename Item>
-  bool GrammarLR<Item>::getFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals)
+  bool GrammarLR<Item>::GetFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals)
   {
     if(TokenRegistry::IsTerminal(token))
     {
@@ -63,7 +63,7 @@ namespace QParser
 
       for(uint cToken = 0; cToken < production.tokensLength; ++cToken)
       {
-        productionNullable &= getFirstTerminals(production.tokens[cToken], firstTerminals);
+        productionNullable &= GetFirstTerminals(production.tokens[cToken], firstTerminals);
         if(!productionNullable)
           break;
       }
@@ -81,7 +81,7 @@ namespace QParser
 
         productionSet.nullable = true;
         productionSet.visitedCount = 0;
-        return getFirstTerminals(token, firstTerminals);
+        return GetFirstTerminals(token, firstTerminals);
       }
     }
 
@@ -92,12 +92,12 @@ namespace QParser
   }
   
   template<typename Item>
-  void GrammarLR<Item>::getLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals)
+  void GrammarLR<Item>::GetLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals)
   {
     const Production& production = productions[item.productionIndex].first;
     for(uint cToken = item.inputPosition + 1; cToken < production.tokensLength; ++cToken)
     {
-      if(!getFirstTerminals(production.tokens[cToken], lookaheadTerminals))
+      if(!GetFirstTerminals(production.tokens[cToken], lookaheadTerminals))
         return; // The symbol (terminal / nonterminal) is not nullable, so we're done
     }
 
@@ -107,7 +107,7 @@ namespace QParser
   }
 
   template<typename Item>
-  int GrammarLR<Item>::findItemState(const Item& item)
+  int GrammarLR<Item>::FindItemState(const Item& item)
   {
     typename ItemStateMap::iterator i = itemStateMap.find(item);
     if(i == itemStateMap.end() || i->first != item)
@@ -117,7 +117,7 @@ namespace QParser
 
 #ifdef _DEBUG
   /*template<typename Item>
-  void GrammarLR<Item>::debugOutputEdge(typename Edges::const_reference edge) const
+  void GrammarLR<Item>::DebugOutputEdge(typename Edges::const_reference edge) const
   {
     using std::cout;
     
@@ -127,7 +127,7 @@ namespace QParser
   }
 
   template<typename Item>
-  void GrammarLR<Item>::debugOutputStates() const
+  void GrammarLR<Item>::DebugOutputStates() const
   {
     using std::cout;
     using std::endl;
@@ -150,7 +150,7 @@ namespace QParser
       for(typename Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
       {
         cout << ' ';
-        debugOutputEdge(*iEdge);
+        DebugOutputEdge(*iEdge);
         cout << endl;
       }
 
