@@ -55,7 +55,7 @@ namespace QParser
     INLINE ActionTable& GetActionTable() { return actionTable; }
     INLINE const ActionTable& GetActionTable() const { return actionTable; }
     
-    // Construct the parse table
+    //// Construct the parse table
     void ConstructParseTable(ParseTokens& parseTable);
     
   protected:

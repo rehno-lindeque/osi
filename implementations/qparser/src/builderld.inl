@@ -29,7 +29,7 @@ namespace QParser
   {
     parseTable.clear();
     
-     // The final parse table that is output by the construction algorithm
+    // The final parse table that is output by the construction algorithm
     ParseTokens rowOffsets; // The offset of ever action row in the final parse table
     rowOffsets.reserve(actionTable.size()); // The offset of ever action row in the final parse table
     

@@ -26,9 +26,9 @@ namespace QParser
     ProductionSet* productionSet = GetProductionSet(nonterminal);
 
     Item item(nonterminal);
-    for(uint cProduction = 0; cProduction < productionSet->productionsLength; ++cProduction)
+    for(uint cProduction = 0; cProduction < productionSet->rulesLength; ++cProduction)
     {
-      item.productionIndex = productionSet->productionsOffset + cProduction;
+      item.ruleIndex = productionSet->rulesOffset + cProduction;
 
       // Add the item to the set if not already present
       // todo: (optimization) use some form of index for this... (unfortunately stl doesn't allow multiple indexes...)
@@ -56,20 +56,20 @@ namespace QParser
       return productionSet.nullable;
 
     // Get first items
-    for(uint c = 0; c < productionSet.productionsLength; ++c)
+    for(uint c = 0; c < productionSet.rulesLength; ++c)
     {
-      const Production& production = productions[productionSet.productionsOffset + c].first;
+      const ProductionRule& rule = rules[productionSet.rulesOffset + c].first;
       bool productionNullable = true;
 
-      for(uint cToken = 0; cToken < production.tokensLength; ++cToken)
+      for(uint cToken = 0; cToken < rule.tokensLength; ++cToken)
       {
-        productionNullable &= GetFirstTerminals(production.tokens[cToken], firstTerminals);
+        productionNullable &= GetFirstTerminals(rule.tokens[cToken], firstTerminals);
         if(!productionNullable)
           break;
       }
 
       // If the production set's nullity changes and the production set is recursive, we must restart the process with the new nullity value
-      if((productionNullable || production.tokensLength == 0) && productionSet.nullable == false)
+      if((productionNullable || rule.tokensLength == 0) && productionSet.nullable == false)
       {
         // Note: If getFirstTerminals is called on productionSet for the first time, its nullity MUST be false.
         //       It can change to true during evaluation of this function, but can never return to false.
@@ -94,10 +94,10 @@ namespace QParser
   template<typename Item>
   void GrammarLR<Item>::GetLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals)
   {
-    const Production& production = productions[item.productionIndex].first;
-    for(uint cToken = item.inputPosition + 1; cToken < production.tokensLength; ++cToken)
+    const ProductionRule& rule = rules[item.ruleIndex].first;
+    for(uint cToken = item.inputPosition + 1; cToken < rule.tokensLength; ++cToken)
     {
-      if(!GetFirstTerminals(production.tokens[cToken], lookaheadTerminals))
+      if(!GetFirstTerminals(rule.tokens[cToken], lookaheadTerminals))
         return; // The symbol (terminal / nonterminal) is not nullable, so we're done
     }
 

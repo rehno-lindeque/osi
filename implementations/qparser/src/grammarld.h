@@ -44,12 +44,13 @@ namespace QParser
     { return nonterminal < item.nonterminal
         || (nonterminal == item.nonterminal
           && (nonterminal < item.nonterminal
-            || (productionIndex == item.productionIndex
+            || (ruleIndex == item.ruleIndex
               && inputPosition < item.inputPosition))); }
-    FORCE_INLINE bool operator == (const LDItem& item) const { return nonterminal == item.nonterminal && productionIndex == item.productionIndex && inputPosition == item.inputPosition; }
+    FORCE_INLINE bool operator == (const LDItem& item) const { return nonterminal == item.nonterminal && ruleIndex == item.ruleIndex && inputPosition == item.inputPosition; }
     FORCE_INLINE bool operator != (const LDItem& item) const { return !(*this == item); }
   };
   
+    
   // LD Grammar
   class GrammarLD : public GrammarLR<LDItem>
   {
@@ -69,6 +70,12 @@ namespace QParser
     // Common types
     typedef LDItem Item;
     //typedef GrammarLR<LDItem>::States States;
+    
+    // Construct a state graph (recursively)
+    INLINE void ConstructStateGraph(State& state);
+    
+    // Resolve item tokens at the cursor to rules (if it is a nonterminal)
+    //INLINE void ResolveItemsActiveToken(Items);
     
     // Determine the closure of a set of items
     INLINE void Closure(Items& items);

@@ -13,7 +13,7 @@ namespace QParser
 {
   Grammar::Grammar(TokenRegistry& tokenRegistry) :
     tokenRegistry(tokenRegistry),
-    activeProduction(null),
+    activeRule(null),
     rootNonterminal(-1)
   {
   }
@@ -79,7 +79,7 @@ namespace QParser
     constructionTokens.clear();
   }*/
 
-  // Productions
+  // Rules
   ParseToken Grammar::BeginProduction(const_cstring productionName)
   {
     // Construct a nonterminal token for this production (if none exists)
@@ -93,21 +93,21 @@ namespace QParser
       {
         productionSet = new ProductionSet();
         productionSets[token] = productionSet;
-        productionSet->productionsOffset = productions.size();
-        productionSet->productionsLength = 1;
+        productionSet->rulesOffset = rules.size();
+        productionSet->rulesLength = 1;
       }
       else
       {
         productionSet = i->second;
-        ++productionSet->productionsLength;
+        ++productionSet->rulesLength;
       }
       OSI_ASSERT(productionSet != null);
     }
 
-    // Add production to set
+    // Add a rule to a production
     {
-      productions.push_back(std::make_pair(Production(), token));
-      activeProduction = &productions[productions.size()-1].first;
+      rules.push_back(std::make_pair(ProductionRule(), token));
+      activeRule = &rules[rules.size()-1].first;
     }
 
     return token;
@@ -115,15 +115,15 @@ namespace QParser
 
   void Grammar::EndProduction()
   {
-    // Add symbols to production
+    // Add symbols to production rule
     if (activeProductionTokens.size() > 0)
     {
-      activeProduction->tokens = new ParseToken[activeProductionTokens.size()];
-      activeProduction->tokensLength = activeProductionTokens.size();
-      memcpy(activeProduction->tokens, &activeProductionTokens[0], activeProductionTokens.size() * sizeof(ParseToken));
+      activeRule->tokens = new ParseToken[activeProductionTokens.size()];
+      activeRule->tokensLength = activeProductionTokens.size();
+      memcpy(activeRule->tokens, &activeProductionTokens[0], activeProductionTokens.size() * sizeof(ParseToken));
       activeProductionTokens.clear();
     }
-    activeProduction = null;
+    activeRule = null;
   }
 
   void Grammar::ProductionToken(ParseToken token)
@@ -145,7 +145,7 @@ namespace QParser
   {
     /*hash_set<const char*>::iterator i = identifierTypes.find(typeName);
     ParseToken typeHash = identifierTypes.hash_funct()(typeName);
-    activeProductionSymbols.push_back(Production::Symbol(ID_IDENTIFIER_DECL, typeHash));
+    activeProductionSymbols.push_back(ProductionRule::Symbol(ID_IDENTIFIER_DECL, typeHash));
     return typeHash;*/
     
     // todo: BUSY HERE... (REWRITE)
@@ -155,7 +155,7 @@ namespace QParser
 
   /*void Grammar::ProductionIdentifierRef(ParseToken type)
   {
-    activeProductionSymbols.push_back(Production::Symbol(ID_IDENTIFIER_REF, type));
+    activeProductionSymbols.push_back(ProductionRule::Symbol(ID_IDENTIFIER_REF, type));
     
     // todo: BUSY HERE... (REWRITE)
     activeProductionSymbols.push_back(TOKEN_TERMINAL_IDENTIFIER);
@@ -165,7 +165,7 @@ namespace QParser
   {
     /*hash_set<const char*>::iterator i = identifierTypes.find(typeName);
     OSid typeHash = identifierTypes.hash_funct()(typeName);
-    activeProductionSymbols.push_back(Production::Symbol(ID_IDENTIFIER_REF, typeHash));
+    activeProductionSymbols.push_back(ProductionRule::Symbol(ID_IDENTIFIER_REF, typeHash));
     return typeHash;*/
     
     // todo: BUSY HERE... (REWRITE)
@@ -297,21 +297,21 @@ namespace QParser
   
   void Grammar::ReplaceAllTokens(ParseToken oldToken, ParseToken newToken)
   {
-    for(std::vector< std::pair<Production, ParseToken> >::iterator i = productions.begin(); i != productions.end(); ++i)
+    for(std::vector< std::pair<ProductionRule, ParseToken> >::iterator i = rules.begin(); i != rules.end(); ++i)
     {
-      Production& production = i->first;
+      ProductionRule& rule = i->first;
       
-      for(uint c = 0; c < production.tokensLength; ++c)
+      for(uint c = 0; c < rule.tokensLength; ++c)
       {
-        if(production.tokens[c] == oldToken)
-          production.tokens[c] = newToken;
+        if(rule.tokens[c] == oldToken)
+          rule.tokens[c] = newToken;
       }
     }
   }
 
-  bool Grammar::IsSilent(const Production& production) const
+  bool Grammar::IsSilent(const ProductionRule& rule) const
   {
-    return production.tokensLength == 1 && !TokenRegistry::IsTerminal(production.tokens[0]);
+    return rule.tokensLength == 1 && !TokenRegistry::IsTerminal(rule.tokens[0]);
   }
 
   bool Grammar::IsSilent(ParseToken token) const
@@ -376,21 +376,21 @@ namespace QParser
         std::cout << ' ' << i->second << std::endl;
   }
 
-  void Grammar::DebugOutputProduction(const Production& production) const
+  void Grammar::DebugOutputProduction(const ProductionRule& rule) const
   {
-    for(uint c = 0; c < production.symbolsLength; ++c)
+    for(uint c = 0; c < rule.symbolsLength; ++c)
     {
-      debugOutputSymbol(production.symbols[c].token);
-      if(int(c) < production.symbolsLength-1)
+      debugOutputSymbol(rule.symbols[c].token);
+      if(int(c) < rule.symbolsLength-1)
         std::cout << ' ';
     }
   }
 
-  void Grammar::DebugOutputProduction(OSid id, const Production& production) const
+  void Grammar::DebugOutputProduction(OSid id, const ProductionRule& rule) const
   {
     debugOutputSymbol(id);
     std::cout << " -> ";
-    debugOutputProduction(production);
+    debugOutputProduction(rule);
   }
 
   void Grammar::DebugOutputProductions() const
@@ -402,10 +402,10 @@ namespace QParser
     {
       OSid productionId = i->first;
 
-      for(uint cProduction = 0; cProduction < i->second->productionsLength; ++cProduction)
+      for(uint cProduction = 0; cProduction < i->second->rulesLength; ++cProduction)
       {
-        const Production& production = productions[i->second->productionsOffset + cProduction].first;
-        debugOutputProduction(productionId, production);
+        const ProductionRule& rule = productions[i->second->rulesOffset + cProduction].first;
+        debugOutputProduction(productionId, rule);
         std::cout << std::endl;
       }
     }

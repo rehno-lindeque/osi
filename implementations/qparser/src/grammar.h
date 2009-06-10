@@ -99,40 +99,40 @@ namespace QParser
 #endif*/
 
   protected:
-    // Productions (which produce nonterminals)
-    struct Production
+    // Production rules (which produce nonterminals)
+    struct ProductionRule
     {
       ParseToken* tokens;
       uint8 tokensLength;
-      FORCE_INLINE Production() : tokens(null), tokensLength(0) {}
+      FORCE_INLINE ProductionRule() : tokens(null), tokensLength(0) {}
     };
 
     // A production set is the set of productions producing the same nonterminal token
     struct ProductionSet
     {
-      uint productionsOffset;   // Offset of the productions contained in this set in the grammar's list of productions
-      uint8 productionsLength;  // Number of production in this set
-      bool nullable;            // Flag indicating whether any of the productions in this set may be produced from an empty string
-      uint8 visitedCount;       // A counter used for when determining whether this set is nullable
+      uint rulesOffset;   // Offset of the rules contained matching this production
+      uint8 rulesLength;  // Number of rules matching this production
+      bool nullable;      // Flag indicating whether any of the rules matching this production may be produced from an empty string
+      uint8 visitedCount; // A counter used for when determining whether this set is nullable
       FORCE_INLINE ProductionSet() : 
-        productionsOffset(0), 
-        productionsLength(0), 
+        rulesOffset(0), 
+        rulesLength(0), 
         nullable(false), 
         visitedCount(0) {}
     };
     
     // Container types
-    typedef std::vector<ParseToken> ParseTokens;                          // A list of parse tokens
-    typedef std::map<ParseToken, ProductionSet*> ProductionSets;          // A grouping of productions mapped to the nonterminals that they produce
-    typedef std::vector< std::pair<Production, ParseToken> > Productions; // A list of productions together with the nonterminal that each produces
-    typedef std::multimap<ParseToken, ParseToken> PrecedenceMap;          // A map which indicates how shift-reduce errors should be resolved (by giving one of the two tokens precedence)
-    typedef std::set<ParseToken> ParseTokenSet;                           // A unique set of tokens
+    typedef std::vector<ParseToken> ParseTokens;                                  // A list of parse tokens
+    typedef std::map<ParseToken, ProductionSet*> ProductionSets;                  // A grouping of productions mapped to the nonterminals that they produce
+    typedef std::vector< std::pair<ProductionRule, ParseToken> > ProductionRules; // A list of production rules together with the nonterminal that each produces
+    typedef std::multimap<ParseToken, ParseToken> PrecedenceMap;                  // A map which indicates how shift-reduce errors should be resolved (by giving one of the two tokens precedence)
+    typedef std::set<ParseToken> ParseTokenSet;                                   // A unique set of tokens
     
     // Members
     TokenRegistry& tokenRegistry;       // A registry of the tokens used by both the parser and the lexer
     ProductionSets productionSets;      // A mapping of all production sets from the nonterminal they produce
-    Productions productions;            // All productions in the grammar
-    Production* activeProduction;       // A reference to the production that is currently being used (or constructed)
+    ProductionRules rules;              // All production rules in the grammar
+    ProductionRule* activeRule;         // A reference to the production rule that is currently being used (or constructed)
     ParseTokens activeProductionTokens; // A list of the tokens inside a production which is currently being used
     PrecedenceMap precedenceMap;        // A map which indicates how shift-reduce errors should be resolved (by giving one of the two tokens precedence)
     ParseTokenSet silentTerminals;      // Terminals which should not be output by the parser (or Lexer?? todo: resolve)
@@ -146,7 +146,7 @@ namespace QParser
     INLINE void ReplaceAllTokens(ParseToken oldToken, ParseToken newToken);
 
     // Test whether a production is silent
-    INLINE bool IsSilent(const Production& production) const;
+    INLINE bool IsSilent(const ProductionRule& rule) const;
 
     // Test whether a lexical token is silent
     INLINE bool IsSilent(ParseToken token) const;

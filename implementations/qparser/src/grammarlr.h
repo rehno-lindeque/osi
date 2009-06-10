@@ -30,13 +30,13 @@ namespace QParser
   // Base item structure to use LR-style grammars
   struct LRItem
   {
-    ParseToken nonterminal;   // Nonterminal produced by this item's production
-    uint productionIndex;     // Index of the production that this item represents
-    uint inputPosition;       // Position in the input tokens of the production which this item represents
+    ParseToken nonterminal; // Nonterminal produced by this item's production
+    uint ruleIndex;         // Index of the production rule that this item represents
+    uint inputPosition;     // Position in the input tokens of the production which this item represents
     
     INLINE LRItem(ParseToken nonterminal) : 
       nonterminal(nonterminal), 
-      productionIndex(0), 
+      ruleIndex(0), 
       inputPosition(0) {}
     INLINE LRItem(const LRItem&) = default;
     INLINE LRItem() = delete;

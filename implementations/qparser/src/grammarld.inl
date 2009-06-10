@@ -30,22 +30,21 @@ namespace QParser
         rootNonterminal = tokenRegistry.GetNextAvailableNonterminal() - 1; // Use the last defined nonterminal our root nonterminal
     }
     
-    // Construct the states graph for the parser
-    // Algorithm: This algorithm was derived primarily from the LR parsing algorithm from [modern compiler implementation in Java (ISBN 0-521-82060-X)]
-    //            states represents the set of states listed as T which is the set of states seen so far
-    //            State::edges represents the set of edges listed as E which is the set of shift or goto edges found so far
-
-    // Initialize T to { Closure( { Start Production } ) }
+    // Construct the the parser
+    // Get the start items
     states.push_back(new State);
     GetStartItems(rootNonterminal, states[0]->items);
-    Closure(states[0]->items);
-
-    // Evaluate each state until no new states are found
-    GoTo(states);
+    
+    // Construct the state graph recursively until we are done
     
     // Use the builder to construct the final parse table
     BuilderLD builder;
     builder.ConstructParseTable(parseTable);
+  }
+  
+  INLINE void GrammarLD::ConstructStateGraph(State& state)
+  {
+    
   }
   
   void GrammarLD::Closure(Items& items)
@@ -58,13 +57,13 @@ namespace QParser
     for(uint c = cBegin; c < cEnd; ++c)
     {
       auto& item = items[c];
-      const auto& production = productions[item.productionIndex].first;
+      const auto& rule = rules[item.ruleIndex].first;
 
       // Check whether the last symbol has been passed
-      if(item.inputPosition >= production.tokensLength)
+      if(item.inputPosition >= rule.tokensLength)
         continue;
 
-      ParseToken token = production.tokens[item.inputPosition];
+      ParseToken token = rule.tokens[item.inputPosition];
 
       // Check whether the symbol at input position is a terminal symbol
       if(TokenRegistry::IsTerminal(token))
@@ -95,13 +94,13 @@ namespace QParser
       for(uint cItem = 0; cItem < state.items.size(); ++cItem)
       {
         const auto& item = state.items[cItem];
-        const auto& production = productions[item.productionIndex].first;
+        const auto& rule = rules[item.ruleIndex].first;
 
         // Check whether the last symbol has already been passed
-        if(item.inputPosition >= production.tokensLength)
+        if(item.inputPosition >= rule.tokensLength)
           continue;
 
-        ParseToken token = production.tokens[item.inputPosition];
+        ParseToken token = rule.tokens[item.inputPosition];
 
         // Construct goto item
         Item goToItem = item;
