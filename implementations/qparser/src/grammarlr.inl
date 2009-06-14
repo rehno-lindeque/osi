@@ -119,7 +119,7 @@ namespace QParser
   template<typename Item>
   INLINE bool GrammarLR<Item>::IsItemComplete(const Item& item) const
   {
-    return item.inputPositionRule == GetRule(item.ruleIndex).tokensLength;
+    return item.inputPosition == GetRule(item.ruleIndex).tokensLength;
   }
 
 #ifdef _DEBUG
