@@ -44,6 +44,9 @@ namespace QParser
     // Add a new temporary token to the registry
     INLINE ParseToken GenerateTemporaryToken(const_cstring nonterminalName);
     
+    // Resolve a temporary token with a nonterminal token and replace the references to it in the token registry
+    INLINE ParseToken ResolveTemporaryToken(const_cstring nonterminalName);
+    
     // Get a token by the name used to identify it
     INLINE ParseToken GetToken(const_cstring tokenName) const;
     
@@ -62,6 +65,9 @@ namespace QParser
     
     // Test whether a token is a terminal token (as opposed to a non-terminal)
     static INLINE bool IsTerminal(ParseToken token);
+    
+    // Test whether a token is a nonterminal token (as opposed to a terminal)
+    static INLINE bool IsNonterminal(ParseToken token);
     
     // Test whether a token is a temporary token
     INLINE bool IsTemporaryToken(ParseToken token);

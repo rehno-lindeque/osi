@@ -59,31 +59,31 @@ namespace QParser
   {
   public:
     // Constructor
-    INLINE Grammar(TokenRegistry& tokenRegistry);
-    INLINE Grammar(const Grammar&) = delete;
-    INLINE Grammar() = delete;
+    Grammar(TokenRegistry& tokenRegistry);
+    Grammar(const Grammar&) = delete;
+    Grammar() = delete;
 
     //Destructor
     virtual ~Grammar();
 
     // Productions
-    INLINE ParseToken BeginProduction(const_cstring productionName);
-    INLINE void EndProduction();
+    ParseToken BeginProduction(const_cstring productionName);
+    void EndProduction();
 
-    INLINE void ProductionToken(ParseToken token);
-    INLINE ParseToken ProductionToken(const_cstring tokenName);
-    INLINE ParseToken ProductionIdentifierDecl(const_cstring typeName);
-    //INLINE void ProductionIdentifierRef(OSid type);
-    INLINE ParseToken ProductionIdentifierRef(const_cstring typeName);
+    void ProductionToken(ParseToken token);
+    ParseToken ProductionToken(const_cstring tokenName);
+    ParseToken ProductionIdentifierDecl(const_cstring typeName);
+    //void ProductionIdentifierRef(OSid type);
+    ParseToken ProductionIdentifierRef(const_cstring typeName);
 
-    INLINE ParseToken DeclareProduction(const_cstring productionName);
+    ParseToken DeclareProduction(const_cstring productionName);
 
-    INLINE void Precedence(const_cstring token1Name, const_cstring token2Name);
-    INLINE void Precedence(ParseToken token1, ParseToken token2);
+    void Precedence(const_cstring token1Name, const_cstring token2Name);
+    void Precedence(ParseToken token1, ParseToken token2);
 
-    INLINE void GrammarStartSymbol(ParseToken nonterminal);
+    void GrammarStartSymbol(ParseToken nonterminal);
 
-    INLINE bool CheckForwardDeclarations() const;
+    bool CheckForwardDeclarations() const;
     
     // Tokens
     INLINE TokenRegistry& GetTokenRegistry() { return tokenRegistry; }
@@ -140,23 +140,28 @@ namespace QParser
 
     // Grammar construction operations  
     // Construct a non-terminal token
-    INLINE ParseToken ConstructNonterminal(const_cstring tokenName);
+    ParseToken ConstructNonterminal(const_cstring tokenName);
     
     // Replace all tokens 
-    INLINE void ReplaceAllTokens(ParseToken oldToken, ParseToken newToken);
+    void ReplaceAllTokens(ParseToken oldToken, ParseToken newToken);
 
     // Test whether a production is silent
-    INLINE bool IsSilent(const ProductionRule& rule) const;
+    bool IsSilent(const ProductionRule& rule) const;
 
     // Test whether a lexical token is silent
-    INLINE bool IsSilent(ParseToken token) const;
+    bool IsSilent(ParseToken token) const;
     
     // Find a precedence directive for token1 < token2
     PrecedenceMap::const_iterator FindPrecedenceDirective(ParseToken token1, ParseToken token2) const;
 
     //// Accessors
-    INLINE const ProductionSet* GetProductionSet(ParseToken nonterminal) const;
-    INLINE       ProductionSet* GetProductionSet(ParseToken nonterminal);
+    // Get the production corresponding to the given nonterminal token
+    const ProductionSet* GetProductionSet(ParseToken nonterminal) const;
+          ProductionSet* GetProductionSet(ParseToken nonterminal);
+    
+    // Get the production rule identified by its index
+    const ProductionRule& GetRule(uint index) const;
+          ProductionRule& GetRule(uint index);
     
     //// Miscelaneous    
 /*#ifdef _DEBUG

@@ -38,6 +38,10 @@ namespace QParser
       nonterminal(nonterminal), 
       ruleIndex(0), 
       inputPosition(0) {}
+    INLINE LRItem(ParseToken nonterminal, uint ruleIndex) : 
+      nonterminal(nonterminal), 
+      ruleIndex(ruleIndex), 
+      inputPosition(0) {}
     INLINE LRItem(const LRItem&) = default;
     INLINE LRItem() = delete;
   };
@@ -49,11 +53,11 @@ namespace QParser
   public:
     // Constructor
     INLINE GrammarLR(TokenRegistry& tokenRegistry) : Grammar(tokenRegistry) {}
-    INLINE GrammarLR(const GrammarLR&) = delete;
-    INLINE GrammarLR() = delete;
+    GrammarLR(const GrammarLR&) = delete;
+    GrammarLR() = delete;
     
     // Destructror
-    INLINE ~GrammarLR();
+    ~GrammarLR();
     
   protected:
     // Container types
@@ -70,23 +74,25 @@ namespace QParser
       Edges edges;    // A set of edges connecting this state to other states
     };
     
-    // Members
     States states;              // The set of all of the states in the parsing table
     ItemStateMap itemStateMap;  // A map of what state each item maps to (for quick lookup)
 
     // Get all initial items for productions that produce a certain non-terminal symbol
-    INLINE void GetStartItems(ParseToken nonterminal, Items& items);
+    void GetStartItems(ParseToken nonterminal, Items& items);
 
     // Get the first set of terminals for some token id. Returns true if the set is nullable.
     // todo: we'll remove the bool and instead just store nullable directly in the productionSet
-    INLINE bool GetFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals);
+    bool GetFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals);
     
     // Get an item's lookahead terminal symbols (all possible terminals that can follow after the current input position)
     // including -1 if no terminal is a possibility (i.e. end-of-stream)
-    INLINE void GetLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals);
+    void GetLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals);
 
     // Find the state (index) that an item belongs to. Returns -1 if the item does not exist yet.
-    INLINE int FindItemState(const Item& items);
+    int FindItemState(const Item& items);
+    
+    // Check whether an item is complete
+    bool IsItemComplete(const Item& item) const;
 
 #ifdef _DEBUG
     /*virtual void DebugOutputItem(const Item& item) const = 0;

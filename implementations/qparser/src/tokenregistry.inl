@@ -43,17 +43,32 @@ namespace QParser
     // Generate a new token for this terminal
     ParseToken token = nextTerminalToken;
     ++nextTerminalToken;
+    
+    // Insert the terminal into the token name registries
+    terminalTokens[terminalName] = token;
+    terminalNames[token] = terminalName;
+    
     return token;
   }
 
   INLINE ParseToken TokenRegistry::GenerateNonterminal(const_cstring nonterminalName)
   {
+    // Try to find an existing terminal token with this name
+    TokenValues::const_iterator i = nonterminalTokens.find(nonterminalName);
+    if(i != nonterminalTokens.end() && !IsTemporaryToken(i->second))
+      return i->second;
+    
+    // Generate a new token for this nonterminal
     ParseToken token = nextNonterminalToken;
     ++nextNonterminalToken;
     
     // If token is in the range of dummy tokens, this will not work. 
     // (Then we've run out of token values to use for forward declarations and we'll need to think of a new strategy...)
     OSI_ASSERT(token <= nextTemporaryToken);
+    
+    // Insert the nonterminal into the token name registries
+    nonterminalTokens[nonterminalName] = token;
+    nonterminalNames[token] = nonterminalName;
     
     return token;
   }
@@ -66,8 +81,19 @@ namespace QParser
     // If the temporary token is in the range of valid nonterminal tokens, this will not work. 
     // (Then we've run out of token values to use for forward declarations and we'll need to think of a new strategy...)
     OSI_ASSERT(token >= nextNonterminalToken);
-              
+    
+    // Insert the nonterminal into the token name registries
+    // (don't add it to the nonterminalNames yet: it will be added when the token is resolved to a nonterminal)
+    nonterminalTokens[nonterminalName] = token;    
+                  
     return token;
+  }
+  
+  INLINE ParseToken TokenRegistry::ResolveTemporaryToken(const_cstring nonterminalName)
+  {
+    // Generate a new nonterminal corresponding to the temporary token's name
+    // This automatically replaces its entries in the registry (see GenerateTemporaryToken, GenerateNonterminal)
+    return GenerateNonterminal(nonterminalName);
   }
   
   INLINE ParseToken TokenRegistry::GetToken(const_cstring tokenName) const
@@ -126,7 +152,6 @@ namespace QParser
       case TOKEN_SPECIAL_EOF:         return tokenEOF;
       //case ID_IDENTIFIER_DECL:      return tokenIdentifierDecl;
       //case ID_IDENTIFIER_REF:       return tokenIdentifierRef;
-      default:                        return tokenUnknownTerminal;
       }
 
       TokenNames::const_iterator i = terminalNames.find(token);
@@ -154,7 +179,6 @@ namespace QParser
     {
       // Generate a temporary token value for this non-terminal
       token = GenerateTemporaryToken(nonterminalName);
-      nonterminalTokens[nonterminalName] = token;
     }
     else
     {
@@ -168,6 +192,11 @@ namespace QParser
   INLINE bool TokenRegistry::IsTerminal(ParseToken token)
   {
     return (token & TOKEN_FLAG_SHIFT) == TOKEN_FLAG_SHIFT;
+  }
+  
+  INLINE bool TokenRegistry::IsNonterminal(ParseToken token)
+  {
+    return !IsTerminal(token);
   }
   
   INLINE bool TokenRegistry::IsTemporaryToken(ParseToken token)

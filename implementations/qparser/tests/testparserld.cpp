@@ -20,6 +20,9 @@ using namespace QParser;
 // QParser unit tests
 #include "testcommon.h"
 
+/*                                DEFINITIONS                               */
+#define TESTPARSERLD_DEBUG_INFO
+
 /*                                  ALIASES                                 */
 typedef BuilderLD::ActionRow ActionRow;
 typedef BuilderLD::PivotSet PivotSet;
@@ -128,7 +131,13 @@ void PrintRules(const ParseTokens& rules)
 class TestParserLD : public ParserLD
 {
 public:
-  //BuilderLD& TEST_GetBuilder() { return builder; }
+  // Build the grammar from an external builder object rather than doing it internaly
+  void TEST_ConstructParser(BuilderLD& builder)
+  {
+    builder.ConstructParseTable(parseTable);
+  }
+  
+  // Test the recognition pass
   void TEST_RecognitionPass(ParseResult& parseResult, ParseTokens& rules) { RecognitionPass(parseResult, rules); }
 };
 
@@ -139,8 +148,8 @@ bool TestGrammar1()
   //// Build the parse table
   GrammarLD grammar(parser.GetTokenRegistry());
   BuilderLD builder;
-  BuildTestGrammar1();
-  parser.ConstructParser(&grammar);
+  BuildTestGrammar1(builder);
+  parser.TEST_ConstructParser(builder);
   
   //// Construct some test input (lexical) streams along with their expected results (rules)  
   // Stream 1: xyxyxyz (Correct input)
@@ -170,7 +179,9 @@ bool TestGrammar1()
   
   PackParseResult(parseResult, lexStream1, lexStream1 + sizeof(lexStream1)/sizeof(ParseToken));
   parser.TEST_RecognitionPass(parseResult, rules);
+#ifdef TESTPARSERLD_DEBUG_INFO
   PrintRules(rules);
+#endif
   for(uint c = 0; c < rules.size(); ++c)
   {
     if(rules[c] != correctOutput1[c])
@@ -182,7 +193,9 @@ bool TestGrammar1()
   
   PackParseResult(parseResult, lexStream2, lexStream2 + sizeof(lexStream2)/sizeof(ParseToken));
   parser.TEST_RecognitionPass(parseResult, rules);
+#ifdef TESTPARSERLD_DEBUG_INFO
   PrintRules(rules);
+#endif
   for(uint c = 0; c < rules.size(); ++c)
   {
     if(rules[c] != correctOutput2[c])
@@ -194,7 +207,9 @@ bool TestGrammar1()
   
   PackParseResult(parseResult, lexStream3, lexStream3 + sizeof(lexStream3)/sizeof(ParseToken));
   parser.TEST_RecognitionPass(parseResult, rules);
+#ifdef TESTPARSERLD_DEBUG_INFO
   PrintRules(rules);
+#endif
   for(uint c = 0; c < rules.size(); ++c)
   {
     if(rules[c] != correctOutput3[c])

@@ -283,7 +283,7 @@ namespace QParser
     // value
     if(tokenRegistry.IsTemporaryToken(token))
     {
-      ParseToken newToken = tokenRegistry.GenerateNonterminal(tokenName);
+      ParseToken newToken = tokenRegistry.ResolveTemporaryToken(tokenName);
       ReplaceAllTokens(token, newToken);
       return newToken;
     }
@@ -295,7 +295,7 @@ namespace QParser
     return token;    
   }
   
-  void Grammar::ReplaceAllTokens(ParseToken oldToken, ParseToken newToken)
+  INLINE void Grammar::ReplaceAllTokens(ParseToken oldToken, ParseToken newToken)
   {
     for(std::vector< std::pair<ProductionRule, ParseToken> >::iterator i = rules.begin(); i != rules.end(); ++i)
     {
@@ -309,33 +309,17 @@ namespace QParser
     }
   }
 
-  bool Grammar::IsSilent(const ProductionRule& rule) const
+  INLINE bool Grammar::IsSilent(const ProductionRule& rule) const
   {
     return rule.tokensLength == 1 && !TokenRegistry::IsTerminal(rule.tokens[0]);
   }
 
-  bool Grammar::IsSilent(ParseToken token) const
+  INLINE bool Grammar::IsSilent(ParseToken token) const
   {
     return TokenRegistry::IsTerminal(token) && silentTerminals.find(token) != silentTerminals.end();
   }
 
-  const Grammar::ProductionSet* Grammar::GetProductionSet(ParseToken nonterminal) const
-  {
-    std::map<ParseToken, ProductionSet*>::const_iterator i = productionSets.find(nonterminal);
-    if(i == productionSets.end() || i->first != nonterminal)
-      return null;
-    return i->second;
-  }
-
-  Grammar::ProductionSet* Grammar::GetProductionSet(ParseToken nonterminal)
-  {
-    std::map<ParseToken, ProductionSet*>::iterator i = productionSets.find(nonterminal);
-    if(i == productionSets.end() || i->first != nonterminal)
-      return null;
-    return i->second;
-  }
-
-  std::multimap<ParseToken, ParseToken>::const_iterator Grammar::FindPrecedenceDirective(ParseToken token1, ParseToken token2) const
+  INLINE std::multimap<ParseToken, ParseToken>::const_iterator Grammar::FindPrecedenceDirective(ParseToken token1, ParseToken token2) const
   {
     std::multimap<ParseToken, ParseToken>::const_iterator i = precedenceMap.lower_bound(token1);
     while(i != precedenceMap.end() && i->first == token1)
@@ -345,6 +329,32 @@ namespace QParser
       ++i;
     }
     return precedenceMap.end();
+  }
+  
+  INLINE const Grammar::ProductionSet* Grammar::GetProductionSet(ParseToken nonterminal) const
+  {
+    std::map<ParseToken, ProductionSet*>::const_iterator i = productionSets.find(nonterminal);
+    if(i == productionSets.end() || i->first != nonterminal)
+      return null;
+    return i->second;
+  }
+
+  INLINE Grammar::ProductionSet* Grammar::GetProductionSet(ParseToken nonterminal)
+  {
+    std::map<ParseToken, ProductionSet*>::iterator i = productionSets.find(nonterminal);
+    if(i == productionSets.end() || i->first != nonterminal)
+      return null;
+    return i->second;
+  }
+  
+  INLINE const Grammar::ProductionRule& Grammar::GetRule(uint index) const
+  {
+    return rules[index].first;
+  }
+  
+  INLINE Grammar::ProductionRule& Grammar::GetRule(uint index)
+  {
+    return rules[index].first;
   }
 
 /*#ifdef _DEBUG

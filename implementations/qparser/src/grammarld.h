@@ -36,20 +36,24 @@ namespace QParser
   // An LD item (which is more or less identical to an LR(0) item)
   struct LDItem : public LRItem
   {    
-    INLINE LDItem(ParseToken nonterminal) : LRItem(nonterminal) {}
+    uint inputPositionRule;   // The rule index for the token currently being referenced to by the input position (cursor). This is uint(-1) if the token is a terminal token.
+    
+    INLINE LDItem(ParseToken nonterminal) : LRItem(nonterminal), inputPositionRule(-1) {}
+    INLINE LDItem(ParseToken nonterminal, uint ruleIndex) : LRItem(nonterminal, ruleIndex), inputPositionRule(-1) {}
     INLINE LDItem(const LDItem&) = default;
     INLINE LDItem() = delete;
     
     FORCE_INLINE bool operator < (const LDItem& item) const
     { return nonterminal < item.nonterminal
         || (nonterminal == item.nonterminal
-          && (nonterminal < item.nonterminal
+          && (ruleIndex < item.ruleIndex
             || (ruleIndex == item.ruleIndex
-              && inputPosition < item.inputPosition))); }
-    FORCE_INLINE bool operator == (const LDItem& item) const { return nonterminal == item.nonterminal && ruleIndex == item.ruleIndex && inputPosition == item.inputPosition; }
+              && inputPosition < item.inputPosition)
+                || (inputPosition == item.inputPosition
+                    && inputPositionRule < item.inputPositionRule))); }
+    FORCE_INLINE bool operator == (const LDItem& item) const { return nonterminal == item.nonterminal && ruleIndex == item.ruleIndex && inputPosition == item.inputPosition /*&& inputPositionRule == item.inputPositionRule*/; }
     FORCE_INLINE bool operator != (const LDItem& item) const { return !(*this == item); }
   };
-  
     
   // LD Grammar
   class GrammarLD : public GrammarLR<LDItem>
@@ -72,10 +76,20 @@ namespace QParser
     //typedef GrammarLR<LDItem>::States States;
     
     // Construct a state graph (recursively)
-    INLINE void ConstructStateGraph(State& state);
+    INLINE void ConstructStateGraph(BuilderLD& builder, State& state);
     
     // Resolve item tokens at the cursor to rules (if it is a nonterminal)
-    //INLINE void ResolveItemsActiveToken(Items);
+    //INLINE void ResolveItemsActiveToken(Items& items, Items::const_iterator iBegin);
+    
+    // Expand the set of items recursively until we reach a point where they cannot be expanded further
+    INLINE void ExpandItemSet(State& state);
+    INLINE void ExpandItemSet(State& state, uint cBegin, uint cEnd);
+    
+    // Get the set of terminal tokens at the input positions of items and step over them
+    INLINE void StepOverTerminals(ParseTokenSet& terminals, Items& items) const;
+    
+    // Complete all rules that have no more tokens left after the input position
+    INLINE void CompleteRules(State& state) const;
     
     // Determine the closure of a set of items
     INLINE void Closure(Items& items);

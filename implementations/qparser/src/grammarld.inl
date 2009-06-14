@@ -12,11 +12,7 @@
 namespace QParser
 {
   GrammarLD::~GrammarLD()
-  {
-    /*// Clean up memory
-    for(typename States::iterator i = states.begin(); i != states.end(); ++i)
-      delete *i;*/
-  }
+  {}
   
   void GrammarLD::ConstructParseTable(ParseTokens& parseTable)
   {
@@ -36,23 +32,195 @@ namespace QParser
     GetStartItems(rootNonterminal, states[0]->items);
     
     // Construct the state graph recursively until we are done
+    BuilderLD builder;
+    ConstructStateGraph(builder, *states[0]);
     
     // Use the builder to construct the final parse table
-    BuilderLD builder;
     builder.ConstructParseTable(parseTable);
   }
   
-  INLINE void GrammarLD::ConstructStateGraph(State& state)
+  INLINE void GrammarLD::ConstructStateGraph(BuilderLD& builder, State& state)
+  { 
+    // Add a row to the parse table for this state sequence
+    auto& row = builder.AddActionRow();
+    
+    while(true)
+    {
+      // Expand items in the state
+      ExpandItemSet(state);
+
+      // Get the set of terminals (at the input positions) that can be stepped over
+      ParseTokenSet terminals;
+      StepOverTerminals(terminals, state.items);
+      if(terminals.size() == 1)
+      {
+        // Generate a shift action
+        row.AddActionShift(*terminals.begin());
+        
+        // Complete all rules that are left over
+        bool allRulesComplete = false;
+        CompleteRules(state);
+        
+        // Stop
+        if(allRulesComplete)
+          break; // No rules left to complete
+      }
+      else
+      {
+        // Pre-condition: There will always be terminals left after the state has been expanded
+        //                because there are no rules allowed to have 0 symbols.
+        OSI_ASSERT(terminals.size() > 1);
+        
+        // Generate a pivot
+        
+        
+        // Copy the state
+        // todo...
+        
+    
+        
+      }
+      
+      break;
+    }
+  }
+  
+  /*INLINE void GrammarLD::ResolveItemsActiveToken(Items& items, uint cBegin)
   {
+    
+  }*/
+  
+  INLINE void GrammarLD::ExpandItemSet(State& state)
+  {
+    // Expand all items in the set
+    ExpandItemSet(state, 0, state.items.size());
+  }
+  
+  INLINE void GrammarLD::ExpandItemSet(State& state, uint cBegin, uint cEnd)
+  {
+    // Check whether there are any items left to expand
+    if (cEnd <= cBegin+1)
+      return;
+    
+    // Expand each item in the given range
+    for (uint c = cBegin; c != cEnd; ++c)
+    {
+      auto& item = state.items[c];
+      const ProductionRule& rule = GetRule(item.ruleIndex);
+      
+      // Check whether this item has already been resolved
+      if(item.inputPositionRule != uint(-1))
+        continue; 
+      
+      // Check whether the rule is complete: We cannot expand the rule further if it is complete
+      if(IsItemComplete(item))
+        continue;
+      
+      // Check whether the token at the input position is a terminal: We cannot expand a terminal token
+      auto inputToken = rule.tokens[item.inputPosition];
+      if(TokenRegistry::IsTerminal(inputToken))
+        continue;
+        
+      // Resolve the input position token to rule(s)
+      auto& inputProduction = *GetProductionSet(inputToken);
+      
+      for(auto cRuleIndex = inputProduction.rulesOffset; cRuleIndex < inputProduction.rulesOffset + inputProduction.rulesLength; ++cRuleIndex)
+      {
+        // Get the item again (because calling push_back may invalidate our previous reference!)
+        auto& item = state.items[c];
+        
+        // Resolve the originating item's input position rule
+        // (Note: the first time we'll merely set the input position rule, but there-after
+        // the item must be duplicated for every possible input rule corresponding to the nonterminal)
+        if(item.inputPositionRule == uint(-1))
+        {
+          item.inputPositionRule = cRuleIndex;
+        }
+        else
+        {
+          state.items.push_back(item);
+          state.items.back().inputPositionRule = cRuleIndex;
+        }
+        
+        // Generate a new item for the rule
+        // Check whether a similar item already exists...
+        Item newItem(inputToken, cRuleIndex);
+        auto i = std::find(state.items.begin(), state.items.end(), newItem);
+        if(i != state.items.end())
+          continue; // The item already exists in the list
+        
+        // Add the new item to the state
+        state.items.push_back(newItem);
+      }
+    }
+    
+    // Expand the newly added items
+    ExpandItemSet(state, cEnd, state.items.size());
+  }
+  
+  INLINE void GrammarLD::StepOverTerminals(ParseTokenSet& terminals, Items& items) const
+  {
+    for(auto i = items.begin(); i != items.end(); ++i)
+    {
+      const auto& rule = GetRule(i->ruleIndex);
+      
+      // Ignore items that are complete      
+      if(IsItemComplete(*i))
+        continue;
+      
+      if(TokenRegistry::IsTerminal(rule.tokens[i->inputPosition]))
+      {
+        // Add terminal token to the set
+        terminals.insert(rule.tokens[i->inputPosition]);
+        
+        // Step over terminal and reset the input position rule
+        ++i->inputPosition;
+        i->inputPositionRule = uint(-1);
+      }
+    }
+  }
+  
+  INLINE void GrammarLD::CompleteRules(State& state) const
+  {
+    // Find all rules corresponding with complete items
+    std::set<uint> completeRules;
+    for(uint c = 0; c < state.items.size(); ++c)
+    {
+      if(IsItemComplete(state.items[c]))
+      {
+        completeRules.insert(state.items[c].ruleIndex);
+        std::cout  << state.items[c].ruleIndex << std::endl;
+      }
+    }
+    
+    // Remove complete items from the state
+    for(uint c = 0; c < state.items.size(); ++c)
+    {
+      if(completeRules.find(state.items[c].ruleIndex) != completeRules.end())
+      {
+        //state.items.erase(state.items.begin()+c);
+        std::cout  << ' ' << c << std::endl;
+      }
+    }
+    
+    // Step over complete rules in the remaining incomplete items
+    for(uint c = 0; c < state.items.size(); ++c)
+    {
+      //if()
+    }
+    
+    
+    // Repeat the process until all rules are complete or all rules remain incomplete
+    // todo....
     
   }
   
-  void GrammarLD::Closure(Items& items)
+  INLINE void GrammarLD::Closure(Items& items)
   {
     Closure(items, 0, items.size());
   }
 
-  void GrammarLD::Closure(Items& items, uint cBegin, uint cEnd)
+  INLINE void GrammarLD::Closure(Items& items, uint cBegin, uint cEnd)
   {
     for(uint c = cBegin; c < cEnd; ++c)
     {
@@ -78,12 +246,12 @@ namespace QParser
       Closure(items, cEnd, items.size());
   }
 
-  void GrammarLD::GoTo(States& states)
+  INLINE void GrammarLD::GoTo(States& states)
   {
     GoTo(states, 0, states.size());
   }
 
-  void GrammarLD::GoTo(States& states, uint cBegin, uint cEnd)
+  INLINE void GrammarLD::GoTo(States& states, uint cBegin, uint cEnd)
   {
     using std::pair;
     

@@ -99,8 +99,6 @@ void PrintParseTable(const ParseTokens& parseTable)
     else
       cout << "reduce(" << token <<") ";
   }
-  cout << endl;
-  cout.flush();
 }
 
 /*                                   TESTS                                  */
@@ -192,6 +190,7 @@ void TestGrammar1()
   // Print out the constructed parse table
 #ifdef TESTBUILDERLD_DEBUG_INFO
   PrintParseTable(parseTable);
+  cout << endl;
 #endif
 }
 
