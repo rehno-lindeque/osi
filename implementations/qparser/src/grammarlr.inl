@@ -11,8 +11,8 @@
 
 namespace QParser
 {
-  template<typename Item>
-  INLINE GrammarLR<Item>::~GrammarLR()
+  template<typename Item, typename State>
+  INLINE GrammarLR<Item, State>::~GrammarLR()
   {
     // Clean up memory
     for(auto i = states.begin(); i != states.end(); ++i)
@@ -20,8 +20,8 @@ namespace QParser
     states.clear();
   }
 
-  template<typename Item>
-  INLINE void GrammarLR<Item>::GetStartItems(ParseToken nonterminal, Items &items)
+  template<typename Item, typename State>
+  INLINE void GrammarLR<Item, State>::GetStartItems(ParseToken nonterminal, Items &items)
   {
     OSI_ASSERT(!TokenRegistry::IsTerminal(nonterminal));
     ProductionSet* productionSet = GetProductionSet(nonterminal);
@@ -39,9 +39,9 @@ namespace QParser
         items.push_back(item);
     }
   }
-  
-  template<typename Item>
-  INLINE bool GrammarLR<Item>::GetFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals)
+
+  template<typename Item, typename State>
+  INLINE bool GrammarLR<Item, State>::GetFirstTerminals(ParseToken token, ParseTokenSet& firstTerminals)
   {
     if(TokenRegistry::IsTerminal(token))
     {
@@ -91,9 +91,9 @@ namespace QParser
 
     return productionSet.nullable;
   }
-  
-  template<typename Item>
-  INLINE void GrammarLR<Item>::GetLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals)
+
+  template<typename Item, typename State>
+  INLINE void GrammarLR<Item, State>::GetLookaheadTerminals(const Item& item, ParseTokenSet& lookaheadTerminals)
   {
     const ProductionRule& rule = rules[item.ruleIndex].first;
     for(uint cToken = item.inputPosition + 1; cToken < rule.tokensLength; ++cToken)
@@ -107,24 +107,24 @@ namespace QParser
     lookaheadTerminals.insert(item.lookaheadSymbol);
   }
 
-  template<typename Item>
-  INLINE int GrammarLR<Item>::FindItemState(const Item& item)
+  template<typename Item, typename State>
+  INLINE int GrammarLR<Item, State>::FindItemState(const Item& item)
   {
     typename ItemStateMap::iterator i = itemStateMap.find(item);
     if(i == itemStateMap.end() || i->first != item)
       return -1;
     return i->second;
   }
-  
-  template<typename Item>
-  INLINE bool GrammarLR<Item>::IsItemComplete(const Item& item) const
+
+  template<typename Item, typename State>
+  INLINE bool GrammarLR<Item, State>::IsItemComplete(const Item& item) const
   {
     return item.inputPosition == GetRule(item.ruleIndex).tokensLength;
   }
 
 #ifdef _DEBUG
-  /*template<typename Item>
-  void GrammarLR<Item>::DebugOutputEdge(typename Edges::const_reference edge) const
+  /*template<typename Item, typename State>
+  void GrammarLR<Item, State>::DebugOutputEdge(typename Edges::const_reference edge) const
   {
     using std::cout;
     
@@ -133,7 +133,7 @@ namespace QParser
     std::cout << ")--> " << edge.second;
   }
 
-  template<typename Item>
+  template<typename Item, typename State>
   void GrammarLR<Item>::DebugOutputStates() const
   {
     using std::cout;

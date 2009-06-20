@@ -356,6 +356,11 @@ namespace QParser
   {
     return rules[index].first;
   }
+  
+  INLINE ParseToken Grammar::GetRuleToken(uint ruleIndex, uint tokenIndex) const
+  {
+    return rules[ruleIndex].first.tokens[tokenIndex];
+  }
 
 /*#ifdef _DEBUG
   void Grammar::OutputStatementMatch(ParseResult& result, uint index) const

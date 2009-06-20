@@ -28,22 +28,19 @@ namespace QParser
     
     // Construct the the parser
     // Get the start items
-    states.push_back(new State);
+    BuilderLD builder;
+    states.push_back(new State(builder.AddActionRow()));
     GetStartItems(rootNonterminal, states[0]->items);
     
     // Construct the state graph recursively until we are done
-    BuilderLD builder;
     ConstructStateGraph(builder, *states[0]);
     
-    // Use the builder to construct the final parse table
+    // Use the builder to construct the final parse tablecid
     builder.ConstructParseTable(parseTable);
   }
   
   INLINE void GrammarLD::ConstructStateGraph(BuilderLD& builder, State& state)
-  { 
-    // Add a row to the parse table for this state sequence
-    auto& row = builder.AddActionRow();
-    
+  {
     while(true)
     {
       // Expand items in the state
@@ -55,41 +52,44 @@ namespace QParser
       if(terminals.size() == 1)
       {
         // Generate a shift action
-        row.AddActionShift(*terminals.begin());
+        state.row.AddActionShift(*terminals.begin());
         
         // Complete all rules that are left over
-        bool allRulesComplete = false;
-        CompleteRules(state);
+        bool allItemsComplete = CompleteItems(state);
         
-        // Stop
-        if(allRulesComplete)
-          break; // No rules left to complete
+        // Stop if there are no more items in this state to complete
+        if(allItemsComplete)
+          return; // No items left to complete
       }
       else
       {
         // Pre-condition: There will always be terminals left after the state has been expanded
         //                because there are no rules allowed to have 0 symbols.
-        OSI_ASSERT(terminals.size() > 1);
+        //todo: OSI_ASSERT(terminals.size() > 1);
+        if(terminals.size() == 0)
+          return;
         
         // Generate a pivot
+        auto& pivots = state.row.AddActionPivot();
+        for(auto i = terminals.begin(); i != terminals.end(); ++i)
+        {
+          // Copy the state and generate a new line in the action table to couple with it
+          states.push_back(new State(pivots.AddPivot(*i)));
+          auto& targetState = *states.back();
+          CopyStateUsingPivot(state, targetState, *i);
+          
+          // Construct the new state and its children
+          ConstructStateGraph(builder, state);
+          
+          // Evaluate delayed reductions
+          // todo...
+        }
         
-        
-        // Copy the state
-        // todo...
-        
-    
-        
+        return;
       }
-      
-      break;
     }
   }
-  
-  /*INLINE void GrammarLD::ResolveItemsActiveToken(Items& items, uint cBegin)
-  {
     
-  }*/
-  
   INLINE void GrammarLD::ExpandItemSet(State& state)
   {
     // Expand all items in the set
@@ -180,42 +180,141 @@ namespace QParser
     }
   }
   
-  INLINE void GrammarLD::CompleteRules(State& state) const
+  INLINE bool GrammarLD::CompleteItems(State& state) const
   {
+    Items& items = state.items; // Alias for the items
+    
     // Find all rules corresponding with complete items
+    bool allItemsComplete = true;     // Flag indicating that all items in the state have been completed
+    bool waitingShiftActions = false; // Flag indicating that some items in the state have their input position in front of terminal tokens
+    
     std::set<uint> completeRules;
-    for(uint c = 0; c < state.items.size(); ++c)
+    for(uint c = 0; c < items.size(); ++c)
     {
-      if(IsItemComplete(state.items[c]))
+      if(IsItemComplete(items[c]))
       {
-        completeRules.insert(state.items[c].ruleIndex);
-        std::cout  << state.items[c].ruleIndex << std::endl;
+        completeRules.insert(items[c].ruleIndex);
+        std::cout  << items[c].ruleIndex << std::endl;
+      }
+      else
+      {
+        allItemsComplete = false;
+        
+        if(TokenRegistry::IsTerminal(GetRuleToken(items[c].ruleIndex, items[c].inputPosition)))
+          waitingShiftActions = true;
       }
     }
     
-    // Remove complete items from the state
-    for(uint c = 0; c < state.items.size(); ++c)
+    // If no more complete items could be found: All items are complete or all remaining items are incomplete
+    if(completeRules.empty())
+      return false;
+    
+    // If all items are complete, store the set of complete rules in the state
+    if (allItemsComplete)
     {
-      if(completeRules.find(state.items[c].ruleIndex) != completeRules.end())
+      // todo...
+    }
+    else
+    {
+      // Remove complete items from the state
+      for(uint c = 0; c < items.size(); ++c)
       {
-        //state.items.erase(state.items.begin()+c);
-        std::cout  << ' ' << c << std::endl;
+        if(completeRules.find(items[c].ruleIndex) != completeRules.end())
+        {
+          items.erase(items.begin()+c);
+          std::cout  << ' ' << c << std::endl;
+        }
+      }
+
+      // Step over complete rules in the remaining incomplete items
+      for(uint c = 0; c < items.size(); ++c)
+      {
+        // Check whether the token at the input position corresponds to a complete rule
+        // (All complete items have been removed so we do not need to check for a valid input position here)
+        if(completeRules.find(items[c].inputPositionRule) != completeRules.end())
+        {
+          // Step over the token
+          ++items[c].inputPosition;
+          items[c].inputPositionRule = uint(-1);
+        }
       }
     }
     
-    // Step over complete rules in the remaining incomplete items
-    for(uint c = 0; c < state.items.size(); ++c)
+    // If there are multiple rules add a delayed reduce action
+    if(completeRules.size() > 1 || waitingShiftActions)
     {
-      //if()
+      state.row.AddActionReduce(TOKEN_SPECIAL_IGNORE);
+      
+      // Also push the possible reduce tokens onto the state's delayed stack
+      // todo...
+      
+      // Todo: What happens here if all items in the state is complete?
+      //       (i.e. allItemsComplete == true)
+      //       Does this mean that the grammar is ambiguous?
+    }
+    // If there is only one rule, add a reduce action 
+    {
+      state.row.AddActionReduce(*completeRules.begin());
     }
     
+    //
     
-    // Repeat the process until all rules are complete or all rules remain incomplete
-    // todo....
-    
+    // Repeat the process (until all items are complete or all rules remain incomplete)
+    return CompleteItems(state);
   }
   
-  INLINE void GrammarLD::Closure(Items& items)
+  INLINE void GrammarLD::CopyStateUsingPivot(const State& state, State& targetState, ParseToken pivotTerminal) const
+  {
+    std::vector<bool> copyItemsSubset(state.items.size()); // A vector indicating which items should be copied (which items are relevant)
+    std::set<uint> copyRuleIndexes;                        // The set of all rule indexes that are produced by the algorithm
+    
+    // Get the set of rules that have the pivot terminal as their previous token and fill the set of next rules in order 
+    // to perform quick updates
+    for(uint c = 0; c < state.items.size(); ++c)
+    {
+      const auto& item = state.items[c];
+      if(item.inputPosition > 0 && GetRuleToken(item.ruleIndex, item.inputPosition-1) == pivotTerminal)
+      {
+        copyItemsSubset[c] = true;
+        copyRuleIndexes.insert(item.ruleIndex);
+      }
+      else
+        copyItemsSubset[c] = false;
+    }
+    OSI_ASSERT(!rules.empty()); // Post-condition: at least one rule must reference the pivot terminal
+    
+    // Include items in the copy subset if their input position rule refers to any of the rules already in the subset
+    bool copySubsetChanged; // A flag indicating that the copy subset changed (grew during this iteration). The loop is terminated once it can no longer grow.
+    do
+    {
+      // Reset the termination flag
+      copySubsetChanged = false;
+              
+      for(uint c = 0; c < state.items.size(); ++c)
+      {
+        const auto& item = state.items[c];
+        
+        // Ignore items that are already in the copy subset
+        if(copyItemsSubset[c])
+          continue; // The rule is already in the set
+        
+        // Test whether this rule should be included
+        if(copyRuleIndexes.find(item.inputPositionRule) == copyRuleIndexes.end())
+          continue; // The rule should not be included (yet)
+        
+        copyRuleIndexes.insert(item.ruleIndex);
+        copyItemsSubset[c] = true;
+        copySubsetChanged = true;
+      }
+    } while(copySubsetChanged);
+    
+    // Copy the resulting subset of items to the new state
+    for(uint c = 0; c < state.items.size(); ++c)
+      if(copyItemsSubset[c])
+        targetState.items.push_back(state.items[c]);
+  }
+  
+  /*INLINE void GrammarLD::Closure(Items& items)
   {
     Closure(items, 0, items.size());
   }
@@ -326,7 +425,7 @@ namespace QParser
 
     if(cEnd < states.size())
       GoTo(states, cEnd, states.size());
-  }
+  }*/
 }
 
 #endif

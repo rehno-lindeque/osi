@@ -54,13 +54,26 @@ namespace QParser
     FORCE_INLINE bool operator == (const LDItem& item) const { return nonterminal == item.nonterminal && ruleIndex == item.ruleIndex && inputPosition == item.inputPosition /*&& inputPositionRule == item.inputPositionRule*/; }
     FORCE_INLINE bool operator != (const LDItem& item) const { return !(*this == item); }
   };
+  
+  // LD state is a collection of LD items along with additional grammar building information such as a delayed reduction stack
+  struct LDState : public LRState<LDItem>
+  {
+    // todo: this may not be the most efficient layout... Investigate alternatives
+    typedef std::map<uint, uint> DelayedRuleMap;             // A mapping between rules where the key is the parent rule and the value is a rule which has been delayed for reduction
+    typedef std::stack<DelayedRuleMap> DelayedRuleStack;     // A stack of delayed rule maps
+    BuilderLD::ActionRow& row;              // The parse table row corresponding to this (deterministic) state
+    DelayedRuleStack delayedReductions;     // A stack of all the reductions that had to be delayed
+    
+    // Constructor
+    INLINE LDState(BuilderLD::ActionRow& row) : row(row) {}
+  };
     
   // LD Grammar
-  class GrammarLD : public GrammarLR<LDItem>
+  class GrammarLD : public GrammarLR<LDItem, LDState>
   {
   public:    
     // Constructor
-    INLINE GrammarLD(TokenRegistry& tokenRegistry) : GrammarLR<LDItem>(tokenRegistry) {}
+    INLINE GrammarLD(TokenRegistry& tokenRegistry) : GrammarLR<LDItem, LDState>(tokenRegistry) {}
     INLINE GrammarLD(const GrammarLD&) = delete;
     INLINE GrammarLD() = delete;
     
@@ -73,7 +86,7 @@ namespace QParser
   protected:
     // Common types
     typedef LDItem Item;
-    //typedef GrammarLR<LDItem>::States States;
+    typedef LDState State;
     
     // Construct a state graph (recursively)
     INLINE void ConstructStateGraph(BuilderLD& builder, State& state);
@@ -88,16 +101,20 @@ namespace QParser
     // Get the set of terminal tokens at the input positions of items and step over them
     INLINE void StepOverTerminals(ParseTokenSet& terminals, Items& items) const;
     
-    // Complete all rules that have no more tokens left after the input position
-    INLINE void CompleteRules(State& state) const;
+    // Complete all items that have no more tokens left after the input position 
+    // returns true if all items in the state are complete
+    INLINE bool CompleteItems(State& state) const;
     
-    // Determine the closure of a set of items
+    // Copy a state using the given pivot terminal to eliminate all items that are not applicable
+    INLINE void CopyStateUsingPivot(const State& state, State& targetState, ParseToken pivotTerminal) const;
+    
+    /*// Determine the closure of a set of items
     INLINE void Closure(Items& items);
     INLINE void Closure(Items& items, uint cBegin, uint cEnd);
 
     // Determine the goto states, items and edges for an existing set of states
     INLINE void GoTo(States& states);
-    INLINE void GoTo(States& states, uint cBegin, uint cEnd);
+    INLINE void GoTo(States& states, uint cBegin, uint cEnd);*/
   };
 }
 

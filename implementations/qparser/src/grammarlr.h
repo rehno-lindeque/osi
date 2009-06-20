@@ -46,8 +46,18 @@ namespace QParser
     INLINE LRItem() = delete;
   };
   
-  // LR Grammar base class
+  // Base LR state is a set of LR items for LR-style grammars
   template<typename Item>
+  struct LRState
+  {
+    typedef std::vector<Item> Items;          // The set of items typically contained by a state
+    typedef std::map<ParseToken, int> Edges;  // An edge between states where the label = nonterminal/terminal token and the target = state index where -1 is an end state
+    Items items;    // A set of indexes contained by the state
+    Edges edges;    // A set of edges connecting this state to other states
+  };
+  
+  // LR Grammar base class
+  template<typename Item, typename State>
   class GrammarLR : public Grammar
   {
   public:
@@ -61,18 +71,10 @@ namespace QParser
     
   protected:
     // Container types
-    struct State;
-    typedef std::vector<Item> Items;              // The set of items typically contained by a state
-    typedef std::map<ParseToken, int> Edges;      // An edge between states where the label = nonterminal/terminal token and the target = state index where -1 is an end state
-    typedef std::vector<State*> States;           // The set of states
-    typedef std::map<Item, uint> ItemStateMap;    // A mapping between items and the index of the state they belong to (in the states member variable)
-    
-    // An LR state is a set of LR items
-    struct State
-    {
-      Items items;    // A set of indexes contained by the state
-      Edges edges;    // A set of edges connecting this state to other states
-    };
+    typedef typename State::Items Items;        // The set of items typically contained by a state
+    typedef typename State::Edges Edges;        // An edge between states where the label = nonterminal/terminal token and the target = state index where -1 is an end state
+    typedef std::vector<State*> States;         // The set of states
+    typedef std::map<Item, uint> ItemStateMap;  // A mapping between items and the index of the state they belong to (in the states member variable)
     
     States states;              // The set of all of the states in the parsing table
     ItemStateMap itemStateMap;  // A map of what state each item maps to (for quick lookup)

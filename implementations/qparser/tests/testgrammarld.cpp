@@ -254,7 +254,7 @@ public:
     //cout << "Items: ";
     for(auto i = items.begin(); i != items.end(); ++i)
     {
-      cout << i->ruleIndex << ". " << tokenRegistry.GetTokenName(i->nonterminal) << " ->";
+      cout << tokenRegistry.GetTokenName(i->nonterminal) << '(' << i->ruleIndex << ") ->";
       const auto& rule = GetRule(i->ruleIndex);
       for(uint c = 0; c < rule.tokensLength; ++c)
       {

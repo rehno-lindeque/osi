@@ -162,6 +162,9 @@ namespace QParser
     // Get the production rule identified by its index
     const ProductionRule& GetRule(uint index) const;
           ProductionRule& GetRule(uint index);
+          
+    // Get a token in a production rule identified by the rule index and the token index
+    ParseToken GetRuleToken(uint ruleIndex, uint tokenIndex) const;
     
     //// Miscelaneous    
 /*#ifdef _DEBUG
