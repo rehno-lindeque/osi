@@ -217,13 +217,17 @@ namespace QParser
     else
     {
       // Remove complete items from the state
-      for(uint c = 0; c < items.size(); ++c)
+      uint c = 0;
+      while(c < items.size())
       {
         if(completeRules.find(items[c].ruleIndex) != completeRules.end())
         {
           items.erase(items.begin()+c);
           std::cout  << ' ' << c << std::endl;
+          continue;
         }
+        
+        ++c;
       }
 
       // Step over complete rules in the remaining incomplete items
