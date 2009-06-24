@@ -203,9 +203,13 @@ namespace QParser
     bool waitingShiftActions = false; // Flag indicating that some items in the state have their input position in front of terminal tokens
     
     std::set<uint> completeRules;           // The set of all rules that have been completed
+    std::set<uint> incompleteRules;         // The set of all rules that are incomplete
     std::vector<uint> completeItemIndexes;  // A list of indexes to the items that were completed
     for(uint c = 0; c < items.size(); ++c)
     {
+      // If items are complete add them to a list of complete items and complete rules, otherwise add them to a set of incomplete rules
+      // Note that the same rule may exist as both an incomplete and a complete item in the state. Hence one rule may be added to both the
+      // sets 'completeRules' and 'incompleteRules'
       if(IsItemComplete(items[c]))
       {
         completeRules.insert(items[c].ruleIndex);
@@ -215,7 +219,7 @@ namespace QParser
       else
       {
         allItemsComplete = false;
-        
+        incompleteRules.insert(items[c].ruleIndex);        
         if(TokenRegistry::IsTerminal(GetRuleToken(items[c].ruleIndex, items[c].inputPosition)))
           waitingShiftActions = true;
       }
@@ -298,12 +302,17 @@ namespace QParser
     }
 
     // Step over complete rules in the remaining incomplete items
-    for(uint c = 0; c < items.size(); ++c)
+    uint nItems = items.size();
+    for(uint c = 0; c < nItems; ++c)
     {
       // Check whether the token at the input position corresponds to a complete rule
       // (All complete items have been removed so we do not need to check for a valid input position here)
       if(completeRules.find(items[c].inputPositionRule) != completeRules.end())
       {
+        // If the completed item's rule also exists as an incomplete item in the state then make a clone of this item before stepping over the token
+        if(incompleteRules.find(items[c].inputPositionRule) != incompleteRules.end())
+          items.push_back(items[c]);
+        
         // Step over the token
         ++items[c].inputPosition;
         items[c].inputPositionRule = uint(-1);
