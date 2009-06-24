@@ -96,15 +96,7 @@ namespace QParser
     // Common types
     typedef LDItem Item;
     typedef LDState State;
-    
-    /*struct ResolutionEnvironment
-    {
-      const State* leafState;     // The leaf state that preceded this delayed resolution
-      bool ambiguous;             // A flag indicating that the leaf state is a ambiguous (it completes multiple rules)
-      
-      INLINE ResolutionEnvironment() : leafState(null), ambiguous(false) {}
-    } resolutionEnvironment;*/
-    
+        
     // Construct a state graph (recursively)
     void ConstructStateGraph(BuilderLD& builder, State& state);
     
@@ -129,13 +121,12 @@ namespace QParser
     void ResolveDelays(BuilderLD& builder, State& leafState, uint leafRule);
     void ResolveDelays(BuilderLD& builder, State& leafState, ParseToken leafRowIndex, State& currentState, std::stack<uint>& ruleResolutionStack);
     
-    /*// Determine the closure of a set of items
-    INLINE void Closure(Items& items);
-    INLINE void Closure(Items& items, uint cBegin, uint cEnd);
-
-    // Determine the goto states, items and edges for an existing set of states
-    INLINE void GoTo(States& states);
-    INLINE void GoTo(States& states, uint cBegin, uint cEnd);*/
+    // Try to generate a cyclic pivot for the given end-state. If such a cycle exists, then the function returns true,
+    // otherwise it returns false and a normal pivot should be generated
+    bool GenerateCyclicPivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals);
+    
+    // Generate a (non-cyclic) pivot for the given end-state
+    void GeneratePivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals);
   };
 }
 

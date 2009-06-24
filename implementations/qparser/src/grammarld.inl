@@ -73,27 +73,14 @@ namespace QParser
           return;*/
         
         // Generate a pivot
-        auto& pivots = state.row.AddActionPivot();
-        for(auto i = terminals.begin(); i != terminals.end(); ++i)
+        // Try to find an existing end-state that corresponds with this end-state in the states leading up to this one.
+        // If such a state exists, we've found a cycle. Otherwise we must generate new states for the pivots.
+        if(GenerateCyclicPivot(builder, state, terminals))
         {
-          // Copy the state and generate a new line in the action table to couple with it
-          states.push_back(new State(pivots.AddPivot(*i)));
-          auto& targetState = *states.back();
-          CopyStateUsingPivot(state, targetState, *i);
-          
-          // Add the edge to both states
-          state.outgoingPivots.insert(std::make_pair(&targetState, *i));
-          targetState.incomingPivots.insert(std::make_pair(&state, *i));
-          
-          // Complete all rules that are now finished (in the target state)
-          bool allItemsComplete = CompleteItems(builder, targetState);
-
-          // Stop if there are no more items in this state to complete
-          if(allItemsComplete)
-            continue; // No items left to complete
-          
-          /*// Recursively construct the new state and all of its children
-          ConstructStateGraph(builder, targetState);*/
+        }
+        else
+        {
+          GeneratePivot(builder, state, terminals);
         }
         
         // Since we've reached a pivot, this row is now complete (only one decision (pivot) is allowed per row).
@@ -383,52 +370,7 @@ namespace QParser
     // Start with the leaf rule that was reduced last
     std::stack<uint> ruleResolutionStack; // A stack of the last reduced rules (used to determine the next delayed rule to reduce)
     ruleResolutionStack.push(leafRule);
-    
-    /*// Get all edges leading to this state
-    for(auto iState = leafState.leadingEdges.begin(); iState != leafState.leadingEdges.end(); ++iState)
-    {
-      auto& edgeState = *iState->first;      // The state leading to the current state
-      //auto edgeTerminal = iState->second;   // The terminal token of the edge leading to the current state
-      
-      // Add a new row for the goto action in the parent state
-      auto& gotoRow = builder.AddActionRow();
-      auto gotoRowIndex = builder.GetRowIndex(gotoRow);
-      OSI_ASSERT(gotoRowIndex != ParseToken(-1));
-      edgeState.row.AddActionGoto(leafRowIndex, gotoRowIndex);
-
-      // Resolve each reduction in the state using the leaf state row
-      for(auto i = edgeState.delayedReductions.rbegin(); i != edgeState.delayedReductions.rend(); ++i)
-      {
-        const auto& delayedRuleMap = *i; // The delayed rule map at currently
-
-        // Find the last rule in the rule resolution stack that corresponds to the parent of a delayed reduction
-        while(true)
-        {
-          // If the rule resolution stack has run out of elements a new leaf state will need to be found for any remaining reductions
-          if(ruleResolutionStack.empty())
-            return;
-
-          // If the rule in the stack doesn't correspond with any delayed reductions, pop it off of the stack and then try it with the next one
-          auto iDelayedRule = delayedRuleMap.find(ruleResolutionStack.top());
-          if(iDelayedRule == delayedRuleMap.end())
-          {
-            ruleResolutionStack.pop();
-            continue;
-          }
-
-          // The delayed rule can be resolved (add a reduce previous action)
-          gotoRow.AddActionReducePrev(iDelayedRule->second);
-        }
-      }
-      
-      // Add a return action to the goto row to end it (todo: when should we add an accept action?)
-      gotoRow.AddActionReturn();
-      
-      // Resolve the delayed actions of this state's parents
-      
-      // todo....
-    }*/
-    
+        
     // Resolve the delayed actions of this state's parents
     for(auto i = leafState.incomingPivots.begin(); i != leafState.incomingPivots.end(); ++i)
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
@@ -480,118 +422,37 @@ namespace QParser
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
   }
   
-  /*INLINE void GrammarLD::Closure(Items& items)
+  INLINE bool GrammarLD::GenerateCyclicPivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals)
   {
-    Closure(items, 0, items.size());
+    // todo: implementation
+    return false;
   }
-
-  INLINE void GrammarLD::Closure(Items& items, uint cBegin, uint cEnd)
+  
+  INLINE void GrammarLD::GeneratePivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals)
   {
-    for(uint c = cBegin; c < cEnd; ++c)
-    {
-      auto& item = items[c];
-      const auto& rule = rules[item.ruleIndex].first;
+    auto& pivots = state.row.AddActionPivot();
+    for(auto i = terminals.begin(); i != terminals.end(); ++i)
+    {          
+      // Copy the state and generate a new line in the action table to couple with it
+      states.push_back(new State(pivots.AddPivot(*i)));
+      auto& targetState = *states.back();
+      CopyStateUsingPivot(state, targetState, *i);
 
-      // Check whether the last symbol has been passed
-      if(item.inputPosition >= rule.tokensLength)
-        continue;
+      // Add the edge to both states
+      state.outgoingPivots.insert(std::make_pair(&targetState, *i));
+      targetState.incomingPivots.insert(std::make_pair(&state, *i));
 
-      ParseToken token = rule.tokens[item.inputPosition];
+      // Complete all rules that are now finished (in the target state)
+      bool allItemsComplete = CompleteItems(builder, targetState);
 
-      // Check whether the symbol at input position is a terminal symbol
-      if(TokenRegistry::IsTerminal(token))
-        continue;
+      // Stop if there are no more items in this state to complete
+      if(allItemsComplete)
+        continue; // No items left to complete
 
-      // Add the closure of the nonterminal at input position to the set
-      // (but first construct a starting item set for the production)
-      GetStartItems(token, items);
+      /*// Recursively construct the new state and all of its children
+      ConstructStateGraph(builder, targetState);*/
     }
-
-    if(cEnd < items.size())
-      Closure(items, cEnd, items.size());
   }
-
-  INLINE void GrammarLD::GoTo(States& states)
-  {
-    GoTo(states, 0, states.size());
-  }
-
-  INLINE void GrammarLD::GoTo(States& states, uint cBegin, uint cEnd)
-  {
-    using std::pair;
-    
-    for(uint cState = cBegin; cState < cEnd; ++cState)
-    {
-      auto& state = *states[cState];
-
-      for(uint cItem = 0; cItem < state.items.size(); ++cItem)
-      {
-        const auto& item = state.items[cItem];
-        const auto& rule = rules[item.ruleIndex].first;
-
-        // Check whether the last symbol has already been passed
-        if(item.inputPosition >= rule.tokensLength)
-          continue;
-
-        ParseToken token = rule.tokens[item.inputPosition];
-
-        // Construct goto item
-        Item goToItem = item;
-        goToItem.inputPosition = item.inputPosition + 1;
-
-        // Check whether there's already an edge for this symbol in the current state
-        // Note: This is not legal for LR(0) grammars! However, SLR grammars can sometimes handle this)
-        auto iEdge = state.edges.find(token);
-        int targetStateIndex;
-
-        if(iEdge == state.edges.end() || iEdge->first != token)
-        {
-          // Check whether there's already a state defined for this goto item
-          // (This is something that [modcomp] doesn't really mention in any detail - we should look for existing target states for
-          // this item or we'll end up in an infinite loop for any recursive grammar. It's very possible that a different state
-          // will have the same item leading to some existing state.)
-          targetStateIndex = FindItemState(item);
-
-          if (targetStateIndex == -1)
-          {
-            // Create a target state and a shift/goto edge
-            states.push_back(new State);
-            targetStateIndex = states.size() - 1;
-            state.edges.insert(pair<ParseToken, int>(token, targetStateIndex));
-            itemStateMap.insert(pair<Item, uint>(item, targetStateIndex));
-          }
-          else
-          {
-            state.edges.insert(pair<ParseToken, int>(token, targetStateIndex));
-            continue; // we can continue since the item is already in the target state (i.e. there's no need to add it a second time)
-          }
-        }
-        else
-        {
-          // (Since there's already an edge for this symbol it follows that the target state also already exists...)
-          targetStateIndex = iEdge->second;
-        }
-
-        auto& targetState = *states[targetStateIndex];
-
-        // Add goto item to set (J) (the target state)
-
-        // Note: we still have to check whether the state already contains the goto item since it could have
-        // been added by the closure of another item in the state
-        Items::iterator i;
-        for(i = targetState.items.begin(); i != targetState.items.end(); ++i) if(*i == goToItem) break;
-        if(i != targetState.items.end()) continue;
-
-        targetState.items.push_back(goToItem);
-
-        // Add closure of goto item to the set (Note that the last item added to the targetState is the goto item we're refering to)
-        Closure(targetState.items, targetState.items.size()-1, targetState.items.size());
-      }
-    }
-
-    if(cEnd < states.size())
-      GoTo(states, cEnd, states.size());
-  }*/
 }
 
 #endif
