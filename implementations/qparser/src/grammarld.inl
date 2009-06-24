@@ -424,7 +424,60 @@ namespace QParser
   
   INLINE bool GrammarLD::GenerateCyclicPivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals)
   {
-    // todo: implementation
+    // Try to find an state with a path to this state that has identical end-state.
+    // For this we only take the remaining tokens in items into account that have not been stepped over
+    
+    State* prevState = DetectCycle(state);
+    if(prevState == null)
+      return false;
+    
+    // Generate the cyclic pivot 
+    
+    // todo: BUSY HERE.............
+    
+    
+    return true;
+  }
+  
+  INLINE LDState* GrammarLD::DetectCycle(State& lastState)
+  {
+    // Check whether any of the states leading to this state forms a cycle 
+    for(auto i = lastState.incomingPivots.begin(); i != lastState.incomingPivots.end(); ++i)
+    {
+      State* prevState = DetectCycle(*i->first, lastState);
+      if(prevState)
+        return prevState;  // cycle found
+    }
+    
+    // No candidates could be found
+    return null;
+  }
+  
+  INLINE LDState* GrammarLD::DetectCycle(State& currentState, const State& lastState)
+  {
+    // Check whether the current state is compatible with the last state. If so we may form a cycle
+    if(CompareEndStates(currentState, lastState))
+      return &currentState;
+    
+    // If there are no more states leading to this state, then no cycle could be found
+    if(currentState.incomingPivots.empty())
+      return null;
+    
+    // Check whether any of the states leading to this state forms a cycle 
+    for(auto i = currentState.incomingPivots.begin(); i != currentState.incomingPivots.end(); ++i)
+    {
+      State* prevState = DetectCycle(*i->first, lastState);
+      if(prevState)
+        return prevState;  // cycle found
+    }
+    
+    // No candidates could be found
+    return null;
+  }
+    
+  INLINE bool GrammarLD::CompareEndStates(const State& state1, const State& state2) const
+  {
+    //todo: BUSY HERE....
     return false;
   }
   

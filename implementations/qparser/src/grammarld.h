@@ -125,6 +125,13 @@ namespace QParser
     // otherwise it returns false and a normal pivot should be generated
     bool GenerateCyclicPivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals);
     
+    // Try to find a previous state corresponding with the last state so that a cycle can be formed
+    State* DetectCycle(State& lastState);
+    State* DetectCycle(State& currentState, const State& lastState);
+    
+    // Compare two end-state to see if they have the same pivots and remaining actions. Returns true if they are compatible (i.e. a cycle may be formed)
+    bool CompareEndStates(const State& state1, const State& state2) const;
+    
     // Generate a (non-cyclic) pivot for the given end-state
     void GeneratePivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals);
   };
