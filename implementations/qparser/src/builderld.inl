@@ -13,6 +13,10 @@ namespace QParser
 {    
   ////////////////////////////////////////////////////////////////////////////
   // BuilderLD
+  INLINE BuilderLD::~BuilderLD()
+  {
+    std::for_each(actionTable.begin(), actionTable.end(), DeleteFunctor<ActionRow>());
+  }
   
   INLINE BuilderLD::ActionRow& BuilderLD::AddActionRow()
   {
@@ -20,11 +24,13 @@ namespace QParser
     return *actionTable.back();
   }
   
-  INLINE BuilderLD::~BuilderLD()
-  {
-    std::for_each(actionTable.begin(), actionTable.end(), DeleteFunctor<ActionRow>());
+  INLINE ParseToken BuilderLD::GetRowIndex(const ActionRow& row) const 
+  { 
+    // todo: Optimize. Possibly speed this query up by storing the row index in every row instead of searching the entire set of rows.
+    ParseToken index = std::find(actionTable.begin(), actionTable.end(), &row) - actionTable.begin();
+    return index < actionTable.size()? index : ParseToken(-1);
   }
-  
+          
   INLINE void BuilderLD::ConstructParseTable(ParseTokens& parseTable)
   {
     parseTable.clear();

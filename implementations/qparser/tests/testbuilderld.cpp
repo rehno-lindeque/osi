@@ -81,6 +81,7 @@ void PrintParseTable(const ParseTokens& parseTable)
       ParseToken targetOffset = parseTable[++cToken];
         
       cout << "goto(" << lookaheadOffset << "->" << targetOffset << ") ";
+      printNewLine = true;
     }
     else if(token == TOKEN_ACTION_RETURN)
     {

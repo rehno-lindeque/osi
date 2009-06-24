@@ -59,15 +59,21 @@ namespace QParser
   struct LDState : public LRState<LDItem>
   {
     // todo: this may not be the most efficient layout... Investigate alternatives
-    typedef std::map<uint, uint> DelayedRuleMap;             // A mapping between rules where the key is the parent rule and the value is a rule which has been delayed for reduction
-    typedef std::stack<DelayedRuleMap> DelayedRuleStack;     // A stack of delayed rule maps
-    BuilderLD::ActionRow& row;              // The parse table row corresponding to this (deterministic) state
-    DelayedRuleStack delayedReductions;     // A stack of all the reductions that had to be delayed
+    typedef std::map<uint, uint> DelayedRuleMap;            // A mapping between rules where the key is the parent rule and the value is a rule which has been delayed for reduction
+    typedef std::vector<DelayedRuleMap> DelayedRuleStack;   // A stack of delayed rule maps
+    typedef std::map<LDState*, ParseToken> Edges;           // A set of state transitions and the terminal token with which the edge is associated
+    typedef Edges::value_type Edge;                         // A single edge in the state graph
+    BuilderLD::ActionRow& row;                              // The parse table row corresponding to this (deterministic) state
+    DelayedRuleStack delayedReductions;                     // A stack of all the reductions that had to be delayed
+    Edges leadingEdges;                                     // The set of edges leading TO this state
+    Edges forwardEdges;                                     // The set of edges leading FROM this state
+    //std::set<uint> completeRules;                       // The set of completed rules of the final (complete) state
+    //bool ambiguous;                                     // A flag indicating that this state is an ambiguous leaf node
     
     // Constructor
     INLINE LDState(BuilderLD::ActionRow& row) : row(row) {}
   };
-    
+  
   // LD Grammar
   class GrammarLD : public GrammarLR<LDItem, LDState>
   {
@@ -88,25 +94,37 @@ namespace QParser
     typedef LDItem Item;
     typedef LDState State;
     
+    /*struct ResolutionEnvironment
+    {
+      const State* leafState;     // The leaf state that preceded this delayed resolution
+      bool ambiguous;             // A flag indicating that the leaf state is a ambiguous (it completes multiple rules)
+      
+      INLINE ResolutionEnvironment() : leafState(null), ambiguous(false) {}
+    } resolutionEnvironment;*/
+    
     // Construct a state graph (recursively)
-    INLINE void ConstructStateGraph(BuilderLD& builder, State& state);
+    void ConstructStateGraph(BuilderLD& builder, State& state);
     
     // Resolve item tokens at the cursor to rules (if it is a nonterminal)
     //INLINE void ResolveItemsActiveToken(Items& items, Items::const_iterator iBegin);
     
     // Expand the set of items recursively until we reach a point where they cannot be expanded further
-    INLINE void ExpandItemSet(State& state);
-    INLINE void ExpandItemSet(State& state, uint cBegin, uint cEnd);
+    void ExpandItemSet(State& state);
+    void ExpandItemSet(State& state, uint cBegin, uint cEnd);
     
     // Get the set of terminal tokens at the input positions of items and step over them
-    INLINE void StepOverTerminals(ParseTokenSet& terminals, Items& items) const;
+    void StepOverTerminals(ParseTokenSet& terminals, Items& items) const;
     
     // Complete all items that have no more tokens left after the input position 
     // returns true if all items in the state are complete
-    INLINE bool CompleteItems(State& state) const;
+    bool CompleteItems(BuilderLD& builder, State& state);
     
     // Copy a state using the given pivot terminal to eliminate all items that are not applicable
-    INLINE void CopyStateUsingPivot(const State& state, State& targetState, ParseToken pivotTerminal) const;
+    void CopyStateUsingPivot(const State& state, State& targetState, ParseToken pivotTerminal) const;
+    
+    // Resolve all delayed reductions related to the given leaf state
+    void ResolveDelays(BuilderLD& builder, State& leafState, uint leafRule);
+    void ResolveDelays(BuilderLD& builder, State& leafState, ParseToken leafRowIndex, State& currentState, std::stack<uint>& ruleResolutionStack);
     
     /*// Determine the closure of a set of items
     INLINE void Closure(Items& items);

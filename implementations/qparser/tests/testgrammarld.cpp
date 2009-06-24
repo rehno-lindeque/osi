@@ -85,6 +85,7 @@ void PrintParseTable(const ParseTokens& parseTable)
       ParseToken targetOffset = parseTable[++cToken];
         
       cout << "goto(" << lookaheadOffset << "->" << targetOffset << ") ";
+      printNewLine = true;
     }
     else if(token == TOKEN_ACTION_RETURN)
     {
@@ -254,7 +255,7 @@ public:
     //cout << "Items: ";
     for(auto i = items.begin(); i != items.end(); ++i)
     {
-      cout << tokenRegistry.GetTokenName(i->nonterminal) << '(' << i->ruleIndex << ") ->";
+      cout << '\t' << tokenRegistry.GetTokenName(i->nonterminal) << '(' << i->ruleIndex << ") ->";
       const auto& rule = GetRule(i->ruleIndex);
       for(uint c = 0; c < rule.tokensLength; ++c)
       {

@@ -41,15 +41,18 @@ namespace QParser
     typedef std::vector<PivotSet*> PivotSets;
     
     // Construction / Destruction
-    INLINE ~BuilderLD();
+    ~BuilderLD();
         
     // Returns the index to an action row
-    INLINE ActionRow& AddActionRow();
+    ActionRow& AddActionRow();
     
     //// Accessors
     // Get an action row at a specific index
     INLINE ActionRow& GetActionRow(ParseToken rowIndex) { return *actionTable[rowIndex]; }
     INLINE const ActionRow& GetActionRow(ParseToken rowIndex) const { return *actionTable[rowIndex]; }
+    
+    // Get the index of an action row
+    ParseToken GetRowIndex(const ActionRow& row) const;
     
     // Get the entire action table
     INLINE ActionTable& GetActionTable() { return actionTable; }
@@ -71,33 +74,33 @@ namespace QParser
 
     // Construction / Destruction
     //INLINE ActionRow() : builder(null));
-    INLINE ActionRow(BuilderLD& builder);
-    //INLINE ActionRow(const ActionRow& row);
+    ActionRow(BuilderLD& builder);
+    //ActionRow(const ActionRow& row);
     
-    INLINE ~ActionRow();
+    ~ActionRow();
     
     //// Actions
     // Add a shift action to the row
-    INLINE void AddActionShift(ParseToken terminal);
+    void AddActionShift(ParseToken terminal);
 
     // Add a pivot action to the row
-    INLINE PivotSet& AddActionPivot();
+    PivotSet& AddActionPivot();
 
     // Add a reduce action to the table
-    INLINE void AddActionReduce(ParseToken rule);
+    void AddActionReduce(ParseToken rule);
     
     // Add a reduce previous action to the table
-    INLINE void AddActionReducePrev(ParseToken rule);
+    void AddActionReducePrev(ParseToken rule);
 
     // Add a goto action to the row
-    //INLINE ActionRow& AddActionGoto();
-    INLINE void AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow);
+    //ActionRow& AddActionGoto();
+    void AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow);
     
     // Add a return action to the table
-    INLINE void AddActionReturn();
+    void AddActionReturn();
     
     // Add an accept action to the table
-    INLINE void AddActionAccept();
+    void AddActionAccept();
     
     //// Accessors
     INLINE BuilderLD& GetBuilder() { return builder; }
