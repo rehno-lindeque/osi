@@ -61,12 +61,15 @@ namespace QParser
     // todo: this may not be the most efficient layout... Investigate alternatives
     typedef std::map<uint, uint> DelayedRuleMap;            // A mapping between rules where the key is the parent rule and the value is a rule which has been delayed for reduction
     typedef std::vector<DelayedRuleMap> DelayedRuleStack;   // A stack of delayed rule maps
-    typedef std::map<LDState*, ParseToken> Edges;           // A set of state transitions and the terminal token with which the edge is associated
+    typedef std::map<LDState*, ParseToken> PivotEdges;      // A set of state transitions and the terminal token with which the edge is associated
+    typedef std::map<LDState*, LDState*> GotoEdges;         // A set of state transitions as well as a reference to the leaf state which is used for the goto action
     typedef Edges::value_type Edge;                         // A single edge in the state graph
     BuilderLD::ActionRow& row;                              // The parse table row corresponding to this (deterministic) state
     DelayedRuleStack delayedReductions;                     // A stack of all the reductions that had to be delayed
-    Edges leadingEdges;                                     // The set of edges leading TO this state
-    Edges forwardEdges;                                     // The set of edges leading FROM this state
+    PivotEdges incomingPivots;                              // The set of edges leading TO this state through pivot actions
+    GotoEdges incomingGotos;                                // The set of edges leading TO this state through goto actions
+    PivotEdges outgoingPivots;                               // The set of edges leading FROM this state through pivot actions
+    GotoEdges outgoingGotos;                               // The set of edges leading FROM this state through goto actions
     //std::set<uint> completeRules;                       // The set of completed rules of the final (complete) state
     //bool ambiguous;                                     // A flag indicating that this state is an ambiguous leaf node
     

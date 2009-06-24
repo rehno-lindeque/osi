@@ -82,8 +82,8 @@ namespace QParser
           CopyStateUsingPivot(state, targetState, *i);
           
           // Add the edge to both states
-          state.forwardEdges.insert(std::make_pair(&targetState, *i));
-          targetState.leadingEdges.insert(std::make_pair(&state, *i));
+          state.outgoingPivots.insert(std::make_pair(&targetState, *i));
+          targetState.incomingPivots.insert(std::make_pair(&state, *i));
           
           // Complete all rules that are now finished (in the target state)
           bool allItemsComplete = CompleteItems(builder, targetState);
@@ -421,7 +421,7 @@ namespace QParser
     }*/
     
     // Resolve the delayed actions of this state's parents
-    for(auto i = leafState.leadingEdges.begin(); i != leafState.leadingEdges.end(); ++i)
+    for(auto i = leafState.incomingPivots.begin(); i != leafState.incomingPivots.end(); ++i)
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
   }
   
@@ -467,7 +467,7 @@ namespace QParser
     gotoRow.AddActionReturn();
 
     // Resolve the delayed actions of this state's parents
-    for(auto i = currentState.leadingEdges.begin(); i != currentState.leadingEdges.end(); ++i)
+    for(auto i = currentState.incomingPivots.begin(); i != currentState.incomingPivots.end(); ++i)
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
   }
   
