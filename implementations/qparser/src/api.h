@@ -75,6 +75,9 @@
 // CLib
 #include <memory.h>
 
+// Boost
+#include <boost/bimap.hpp>
+
 // QParser
 #include "token.h"
 #include "tokenregistry.h"

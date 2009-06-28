@@ -244,7 +244,10 @@ public:
     int cState = 0;
     for(auto i = states.begin(); i != states.end(); ++i, ++cState)
     {
-      cout << "State #" << cState << ':' << endl;
+      cout << "State #" << cState << ':';
+      if((*i)->cyclic)
+        cout << " (cyclic)";
+      cout << endl;
       TEST_PrintItems((*i)->items);
     }
   }

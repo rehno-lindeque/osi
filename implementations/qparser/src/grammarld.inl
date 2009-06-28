@@ -216,7 +216,7 @@ namespace QParser
     if(completeRules.empty())
       return false;
     
-    // TODO: This is probably not the best way of doing things. We can probably improve the algorithm by reducing previous delays
+    /// TODO: This is probably not the best way of doing things. We can probably improve the algorithm by reducing previous delays
     //       once we have exactly 1 path left, regardless of whether the items are complete or not,
     //       However, this means that we must then continue the parsing of those items in the parent node (and take into account gotos as well)
     //       Actually 
@@ -243,7 +243,7 @@ namespace QParser
       return true;
     }
 
-    // Add a reduce / reduce prev action
+    // Add a reduce / delayed reduce action
     if(completeRules.size() > 1 || waitingShiftActions)
     {
       // If there are multiple completed rules, add a delayed reduce action
@@ -372,7 +372,7 @@ namespace QParser
     ruleResolutionStack.push(leafRule);
         
     // Resolve the delayed actions of this state's parents
-    for(auto i = leafState.incomingPivots.begin(); i != leafState.incomingPivots.end(); ++i)
+    for(auto i = leafState.incomingPivots.left.begin(); i != leafState.incomingPivots.left.end(); ++i)
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
   }
   
@@ -398,7 +398,8 @@ namespace QParser
       {
         // If the rule resolution stack has run out of elements a new leaf state will need to be found for any remaining reductions
         if(ruleResolutionStack.empty())
-          return;
+          // return;
+          break;
 
         // If the rule in the stack doesn't correspond with any delayed reductions, pop it off of the stack and then try it with the next one
         auto iDelayedRule = delayedRuleMap.find(ruleResolutionStack.top());
@@ -418,7 +419,7 @@ namespace QParser
     gotoRow.AddActionReturn();
 
     // Resolve the delayed actions of this state's parents
-    for(auto i = currentState.incomingPivots.begin(); i != currentState.incomingPivots.end(); ++i)
+    for(auto i = currentState.incomingPivots.left.begin(); i != currentState.incomingPivots.left.end(); ++i)
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
   }
   
@@ -432,9 +433,19 @@ namespace QParser
       return false;
     
     // Generate the cyclic pivot 
-    
-    // todo: BUSY HERE.............
-    
+    auto& pivots = state.row.AddActionPivot();
+    for(auto i = terminals.begin(); i != terminals.end(); ++i)
+    {
+      auto& targetState = *prevState->outgoingPivots.right.at(*i);
+      
+      // Add the edge to both states
+      state.outgoingPivots.insert(LDState::PivotEdge(&targetState, *i));
+      targetState.incomingPivots.insert(LDState::PivotEdge(&state, *i));
+
+      // Add pivot the pivot to the parse table
+      ParseToken targetRow = builder.GetRowIndex(targetState.row);
+      pivots.AddPivot(*i, targetRow); 
+    }
     
     return true;
   }
@@ -442,11 +453,16 @@ namespace QParser
   INLINE LDState* GrammarLD::DetectCycle(State& lastState)
   {
     // Check whether any of the states leading to this state forms a cycle 
-    for(auto i = lastState.incomingPivots.begin(); i != lastState.incomingPivots.end(); ++i)
+    for(auto i = lastState.incomingPivots.left.begin(); i != lastState.incomingPivots.left.end(); ++i)
     {
       State* prevState = DetectCycle(*i->first, lastState);
       if(prevState)
+      {
+        // Cycle found
+        prevState->cyclic = true;
+        lastState.cyclic = true;
         return prevState;  // cycle found
+      }
     }
     
     // No candidates could be found
@@ -464,11 +480,15 @@ namespace QParser
       return null;
     
     // Check whether any of the states leading to this state forms a cycle 
-    for(auto i = currentState.incomingPivots.begin(); i != currentState.incomingPivots.end(); ++i)
+    for(auto i = currentState.incomingPivots.left.begin(); i != currentState.incomingPivots.left.end(); ++i)
     {
       State* prevState = DetectCycle(*i->first, lastState);
       if(prevState)
-        return prevState;  // cycle found
+      {
+        // Cycle found
+        prevState->cyclic = true;
+        return prevState;
+      }
     }
     
     // No candidates could be found
@@ -477,8 +497,27 @@ namespace QParser
     
   INLINE bool GrammarLD::CompareEndStates(const State& state1, const State& state2) const
   {
-    //todo: BUSY HERE....
-    return false;
+    // Compare the remaining items in the two states to see whether they have exactly the same end-state.
+    // TODO: This algorithm isn't very optimized for the case where many items are similar
+    //       It might be possible to use some form of hashing in the future for speeding up this comparison.
+    for(auto i1 = state1.items.begin(); i1 != state1.items.end(); ++i1)
+    {
+      bool itemFound = false;
+      for(auto i2 = state2.items.begin(); i2 != state2.items.end(); ++i2)
+      {
+        if(i1->ruleIndex == i2->ruleIndex
+          && i1->inputPosition == i2->inputPosition
+          && i1->inputPositionRule == i2->inputPositionRule)
+        {
+          itemFound = true;
+          break;
+        }
+      }
+      
+      if(!itemFound)
+        return false;  // The two end-states are not identical
+    }
+    return true; // The two end-states are identical
   }
   
   INLINE void GrammarLD::GeneratePivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals)
@@ -492,8 +531,8 @@ namespace QParser
       CopyStateUsingPivot(state, targetState, *i);
 
       // Add the edge to both states
-      state.outgoingPivots.insert(std::make_pair(&targetState, *i));
-      targetState.incomingPivots.insert(std::make_pair(&state, *i));
+      state.outgoingPivots.insert(LDState::PivotEdge(&targetState, *i));
+      targetState.incomingPivots.insert(LDState::PivotEdge(&state, *i));
 
       // Complete all rules that are now finished (in the target state)
       bool allItemsComplete = CompleteItems(builder, targetState);
@@ -502,8 +541,8 @@ namespace QParser
       if(allItemsComplete)
         continue; // No items left to complete
 
-      /*// Recursively construct the new state and all of its children
-      ConstructStateGraph(builder, targetState);*/
+      // Recursively construct the new state and all of its children
+      ConstructStateGraph(builder, targetState);
     }
   }
 }
