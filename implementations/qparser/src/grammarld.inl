@@ -33,7 +33,11 @@ namespace QParser
     GetStartItems(rootNonterminal, states[0]->items);
     
     // Construct the state graph recursively until we are done
-    ConstructStateGraph(builder, *states[0]);
+    std::map<LDState*, uint> resolvedRules;
+    ConstructStateGraph(builder, *states[0]/*, resolvedRules*/);
+    
+    // Resolve all delayed reductions
+    ResolveDelays(builder, *states[0]);
     
     // Use the builder to construct the final parse table
     builder.ConstructParseTable(parseTable);
@@ -75,10 +79,7 @@ namespace QParser
         // Generate a pivot
         // Try to find an existing end-state that corresponds with this end-state in the states leading up to this one.
         // If such a state exists, we've found a cycle. Otherwise we must generate new states for the pivots.
-        if(GenerateCyclicPivot(builder, state, terminals))
-        {
-        }
-        else
+        if(!GenerateCyclicPivot(builder, state, terminals))
         {
           GeneratePivot(builder, state, terminals);
         }
@@ -216,7 +217,7 @@ namespace QParser
     if(completeRules.empty())
       return false;
     
-    /// TODO: This is probably not the best way of doing things. We can probably improve the algorithm by reducing previous delays
+    /*/// TODO: This is probably not the best way of doing things. We can probably improve the algorithm by reducing previous delays
     //       once we have exactly 1 path left, regardless of whether the items are complete or not,
     //       However, this means that we must then continue the parsing of those items in the parent node (and take into account gotos as well)
     //       Actually 
@@ -241,7 +242,7 @@ namespace QParser
         ResolveDelays(builder, state, *completeRules.begin());
       }
       return true;
-    }
+    }*/
 
     // Add a reduce / delayed reduce action
     if(completeRules.size() > 1 || waitingShiftActions)
@@ -279,14 +280,25 @@ namespace QParser
     uint c = 0;
     while(c < items.size())
     {
-      if(completeRules.find(items[c].ruleIndex) != completeRules.end())
+      //if(completeRules.find(items[c].ruleIndex) != completeRules.end())    // TODO: THIS IS WRONG!!!!!!!!!!
+      if(IsItemComplete(items[c])) 
       {
         items.erase(items.begin()+c);
         continue;
       }
-
       ++c;
     }
+    
+    ///////////////////////// TEMPORARY
+    std::cout << "complete:";
+    for(auto i = completeRules.begin(); i != completeRules.end(); ++i)
+      std::cout << ' ' << *i;
+    std::cout << std::endl;
+    std::cout << "incomplete:";
+    for(auto i = incompleteRules.begin(); i != incompleteRules.end(); ++i)
+      std::cout << ' ' << *i;
+    std::cout << std::endl;
+    ///////////////////////// TEMPORARY
 
     // Step over complete rules in the remaining incomplete items
     uint nItems = items.size();
@@ -298,12 +310,28 @@ namespace QParser
       {
         // If the completed item's rule also exists as an incomplete item in the state then make a clone of this item before stepping over the token
         if(incompleteRules.find(items[c].inputPositionRule) != incompleteRules.end())
+        {
           items.push_back(items[c]);
+          ///////////////////////// TEMPORARY
+          std::cout << "copy " << items[c].ruleIndex << std::endl;
+          ///////////////////////// TEMPORARY
+        }
         
         // Step over the token
         ++items[c].inputPosition;
         items[c].inputPositionRule = uint(-1);
       }
+    }
+    
+    // OLD: Resolve any delays on the stack that may be possible due to the number of rules being reduced
+    //ResolveDelays(builder, state);
+    
+    // Check whether all items are complete, and finish off this branch
+    if (allItemsComplete)
+    {
+      // todo: additional work to do here?
+      state.row.AddActionAccept();
+      return true;
     }
     
     // Repeat the process (until all items are complete or all rules remain incomplete)
@@ -361,7 +389,7 @@ namespace QParser
         targetState.items.push_back(state.items[c]);
   }
   
-  INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, State& leafState, uint leafRule)
+  /*INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, State& leafState, uint leafRule)
   {
     // Determine the index of the leaf state's row in the parse table
     auto leafRowIndex = builder.GetRowIndex(leafState.row);
@@ -380,7 +408,7 @@ namespace QParser
   {
     // Determine the index of the current state's row in the parse table
     /*auto rowIndex = builder.GetRowIndex(currentState.row);
-    OSI_ASSERT(rowIndex != ParseToken(-1));*/
+    OSI_ASSERT(rowIndex != ParseToken(-1));* /
     
     // Add a new row for the coming goto action in this state
     auto& gotoRow = builder.AddActionRow();
@@ -421,7 +449,78 @@ namespace QParser
     // Resolve the delayed actions of this state's parents
     for(auto i = currentState.incomingPivots.left.begin(); i != currentState.incomingPivots.left.end(); ++i)
       ResolveDelays(builder, leafState, leafRowIndex, *i->first, ruleResolutionStack);
+  }*/
+  
+  /*INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, ResolvedRules& resolvedRules)
+  {
+    // Determine the index of the leaf state's row in the parse table
+    auto leafRowIndex = builder.GetRowIndex(leafState->row);
+    OSI_ASSERT(leafRowIndex != ParseToken(-1));
+    
+    // Add all remaining rules in the leaf state to the stack
+    std::stack< std::set<uint> > ruleResolutionStack;
+    ruleResolutionStack.push(std::set<uint>());
+    for(auto i = leafState.items.begin(); i != leafState.items.end(); ++i)
+    {
+      ruleResolutionStack.top().insert(i->ruleIndex);
+    }
+    
+    /* Start with the leaf rule that was reduced last
+    std::stack<uint> ruleResolutionStack; // A stack of the last reduced rules (used to determine the next delayed rule to reduce)
+    ruleResolutionStack.push(leafRule);* /
+        
+    // Resolve the delayed actions of this state's parents
+    for(auto i = leafState.incomingPivots.left.begin(); i != leafState.incomingPivots.left.end(); ++i)
+      ResolveDelays(builder, leafRowIndex, *i->first, ruleResolutionStack);
   }
+  
+  INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, ResolvedRules& resolvedRules, ParseToken leafRowIndex, State& currentState)
+  {
+    // Determine the index of the current state's row in the parse table
+    /*auto rowIndex = builder.GetRowIndex(currentState.row);
+    OSI_ASSERT(rowIndex != ParseToken(-1));* /
+    
+    // Add a new row for the coming goto action in this state
+    auto& gotoRow = builder.AddActionRow();
+    auto gotoRowIndex = builder.GetRowIndex(gotoRow);
+    OSI_ASSERT(gotoRowIndex != ParseToken(-1));
+    currentState.row.AddActionGoto(leafRowIndex, gotoRowIndex);
+
+    // Resolve each reduction in the state using the leaf state row
+    bool matchedAllRules = true;    // Flag indicating that all the rules on the rule resolution stack could be matched
+    for(auto i = currentState.delayedReductions.rbegin(); i != currentState.delayedReductions.rend(); ++i)
+    {
+      const auto& delayedRuleMap = *i; // The delayed rule map at the current 
+
+      // Find the last rule in the rule resolution stack that corresponds to the parent of a delayed reduction
+      while(true)
+      {
+        // If the rule resolution stack has run out of elements a new leaf state will need to be found for any remaining reductions
+        if(ruleResolutionStack.empty())
+          // return;
+          break;
+
+        // If the rule in the stack doesn't correspond with any delayed reductions, pop it off of the stack and then try it with the next one
+        auto iDelayedRule = delayedRuleMap.find(ruleResolutionStack.top());
+        if(iDelayedRule == delayedRuleMap.end())
+        {
+          ruleResolutionStack.pop();
+          continue;
+        }
+
+        // The delayed rule can be resolved (add a reduce previous action and continue to the next delayed rule)
+        gotoRow.AddActionReducePrev(iDelayedRule->second);
+        break;
+      }
+    }
+
+    // Add a return action to the goto row to end it (todo: when should we add an accept action?)
+    gotoRow.AddActionReturn();
+
+    // Resolve the delayed actions of this state's parents
+    for(auto i = currentState.incomingPivots.left.begin(); i != currentState.incomingPivots.left.end(); ++i)
+      ResolveDelays(builder, leafRowIndex, *i->first, ruleResolutionStack);
+  }*/
   
   INLINE bool GrammarLD::GenerateCyclicPivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals)
   {
@@ -436,6 +535,14 @@ namespace QParser
     auto& pivots = state.row.AddActionPivot();
     for(auto i = terminals.begin(); i != terminals.end(); ++i)
     {
+      ////////////////////////////// TEMPORARY
+      //std::cout << "in state: " << builder.GetRowIndex(prevState->row) << std::endl;
+      //std::cout << "terminal: " << *i << std:: endl;
+      //std::cout << "all terminals: ";
+      //for(auto iTerminal = prevState->outgoingPivots.right.begin(); iTerminal !=prevState->outgoingPivots.right.end(); ++iTerminal)
+      //  std::cout << iTerminal->first;
+      //std::cout << std::endl;
+      ////////////////////////////// TEMPORARY
       auto& targetState = *prevState->outgoingPivots.right.at(*i);
       
       // Add the edge to both states
@@ -459,8 +566,8 @@ namespace QParser
       if(prevState)
       {
         // Cycle found
-        prevState->cyclic = true;
-        lastState.cyclic = true;
+        ++prevState->cyclicNestingDepth;
+        ++lastState.cyclicNestingDepth;
         return prevState;  // cycle found
       }
     }
@@ -486,7 +593,7 @@ namespace QParser
       if(prevState)
       {
         // Cycle found
-        prevState->cyclic = true;
+        ++prevState->cyclicNestingDepth;
         return prevState;
       }
     }
@@ -520,8 +627,9 @@ namespace QParser
     return true; // The two end-states are identical
   }
   
-  INLINE void GrammarLD::GeneratePivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals)
+  INLINE void GrammarLD::GeneratePivot(BuilderLD& builder, State& state/*, ResolvedRules& resolvedRules*/, const ParseTokenSet& terminals)
   {
+    // Generate a pivot for each state
     auto& pivots = state.row.AddActionPivot();
     for(auto i = terminals.begin(); i != terminals.end(); ++i)
     {          
@@ -533,17 +641,34 @@ namespace QParser
       // Add the edge to both states
       state.outgoingPivots.insert(LDState::PivotEdge(&targetState, *i));
       targetState.incomingPivots.insert(LDState::PivotEdge(&state, *i));
-
+    }
+      
+    // Continue building each state graph starting from the pivot
+    for(auto i = state.outgoingPivots.begin(); i != state.outgoingPivots.end(); ++i)
+    {
+      auto& targetState = *i->left;
+              
       // Complete all rules that are now finished (in the target state)
       bool allItemsComplete = CompleteItems(builder, targetState);
-
+      
       // Stop if there are no more items in this state to complete
       if(allItemsComplete)
         continue; // No items left to complete
-
-      // Recursively construct the new state and all of its children
+      
+      /* Since we've reached a decision point:
+      // Resolve all delays that are possible and set the new state as the current leaf node
+      leafTarget = &targetState;      
+      if(ResolveDelays(builder, state, resolvedRules))
+        return;*/
+      
+      // Recursively build state graph for this new state
       ConstructStateGraph(builder, targetState);
     }
+  }
+  
+  INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, State& rootState)
+  {
+    //for(auto i = rootState.delayedRuleStack.rbegin(); i != rootState.delayedRuleStack.rend(); ++i)
   }
 }
 

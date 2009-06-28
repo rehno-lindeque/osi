@@ -245,8 +245,8 @@ public:
     for(auto i = states.begin(); i != states.end(); ++i, ++cState)
     {
       cout << "State #" << cState << ':';
-      if((*i)->cyclic)
-        cout << " (cyclic)";
+      if((*i)->cyclicNestingDepth)
+        cout << " (cyclic depth: " << (*i)->cyclicNestingDepth << ")";
       cout << endl;
       TEST_PrintItems((*i)->items);
     }
