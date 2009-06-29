@@ -175,7 +175,8 @@ namespace QParser
   
   INLINE void BuilderLD::ActionRow::AddActionReducePrev(ParseToken rule)
   {
-    actions.push_back(rule | TOKEN_FLAG_REDUCEPREV);      
+    // We always prepend reduce prev actions since they reduce actions in previous states
+    actions.insert(actions.begin(), rule | TOKEN_FLAG_REDUCEPREV);      
   }
 
   /*INLINE BuilderLD::ActionRow& BuilderLD::ActionRow::AddActionGoto()

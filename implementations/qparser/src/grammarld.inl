@@ -202,7 +202,9 @@ namespace QParser
       {
         completeRules.insert(items[c].ruleIndex);
         completeItemIndexes.push_back(c);
-        std::cout  << items[c].ruleIndex << std::endl;
+        /////////////////////////////////// TEMPORARY
+        //std::cout  << items[c].ruleIndex << std::endl;
+        /////////////////////////////////// TEMPORARY
       }
       else
       {
@@ -276,6 +278,14 @@ namespace QParser
       state.row.AddActionReduce(*completeRules.begin());
     }
     
+    // Check whether all items are complete, and finish off this branch
+    if (allItemsComplete)
+    {
+      // todo: additional work to do here?
+      state.row.AddActionAccept();
+      return true;
+    }
+    
     // Remove complete items from the state
     uint c = 0;
     while(c < items.size())
@@ -290,14 +300,14 @@ namespace QParser
     }
     
     ///////////////////////// TEMPORARY
-    std::cout << "complete:";
-    for(auto i = completeRules.begin(); i != completeRules.end(); ++i)
-      std::cout << ' ' << *i;
-    std::cout << std::endl;
-    std::cout << "incomplete:";
-    for(auto i = incompleteRules.begin(); i != incompleteRules.end(); ++i)
-      std::cout << ' ' << *i;
-    std::cout << std::endl;
+    //std::cout << "complete:";
+    //for(auto i = completeRules.begin(); i != completeRules.end(); ++i)
+    //  std::cout << ' ' << *i;
+    //std::cout << std::endl;
+    //std::cout << "incomplete:";
+    //for(auto i = incompleteRules.begin(); i != incompleteRules.end(); ++i)
+    //  std::cout << ' ' << *i;
+    //std::cout << std::endl;
     ///////////////////////// TEMPORARY
 
     // Step over complete rules in the remaining incomplete items
@@ -325,14 +335,6 @@ namespace QParser
     
     // OLD: Resolve any delays on the stack that may be possible due to the number of rules being reduced
     //ResolveDelays(builder, state);
-    
-    // Check whether all items are complete, and finish off this branch
-    if (allItemsComplete)
-    {
-      // todo: additional work to do here?
-      state.row.AddActionAccept();
-      return true;
-    }
     
     // Repeat the process (until all items are complete or all rules remain incomplete)
     return CompleteItems(builder, state);
@@ -668,7 +670,99 @@ namespace QParser
   
   INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, State& rootState)
   {
-    //for(auto i = rootState.delayedRuleStack.rbegin(); i != rootState.delayedRuleStack.rend(); ++i)
+    // todo: it might be possible to optimize this slightly by moving forward gotos up to just before the pivot where the cyclic nesting depth
+    // changes (in at least one of the outgoing states) ... we'll leave this for the future..
+    
+    // Set the delays checked flag (to terminate loops that would be infinite)
+    if(rootState.delaysChecked)
+      return;
+    rootState.delaysChecked = true;
+    
+    // Resolve the delays in this state
+    for(auto i = rootState.delayedReductions.rbegin(); i != rootState.delayedReductions.rend(); ++i)
+    {
+      for(auto iPivotEdge = rootState.outgoingPivots.begin(); iPivotEdge != rootState.outgoingPivots.end(); ++iPivotEdge)
+      {
+        std::stack<uint> ruleResolutionStack; // A stack of rule indices
+        ResolveDelayedReduction(builder, rootState, *iPivotEdge->left, i, ruleResolutionStack);
+      }
+    }
+    
+    // Resolve all the delays of the child states
+    for(auto iPivotEdge = rootState.outgoingPivots.begin(); iPivotEdge != rootState.outgoingPivots.end(); ++iPivotEdge)
+      ResolveDelays(builder, *iPivotEdge->left);
+    
+    // Reset the delays checked flag
+    rootState.delaysChecked = false;
+  }
+  
+  INLINE void GrammarLD::ResolveDelayedReduction(BuilderLD& builder, State& rootState, State& state, DelayedRuleStack::const_reverse_iterator iDelayedRules, std::stack<uint>& ruleResolutionStack)
+  {
+    // Set the delays checked flag (to terminate loops that would be infinite)
+    if(state.delaysChecked)
+      return;
+    state.delaysChecked = true;
+    
+    // Test whether the end-state can resolve the current set of delayed rules
+    const auto& delayedRules = *iDelayedRules;
+    std::set<uint> validReductions;  // The reductions that are possible for this set of rules
+    bool ruleNotPresent = false;     // Flag indicating that a rule in the end-state is not present in the rule map, hence 
+    for(auto i = state.items.begin(); i != state.items.end(); ++ i)
+    {
+      auto iDelay = delayedRules.find(i->ruleIndex);
+      if(iDelay == delayedRules.end())
+      {
+        ruleNotPresent = true;
+        break;
+      }
+      
+      // Add the reduction to the set of reductions that can be resolved from this state
+      validReductions.insert(iDelay->second);
+    }
+     
+    
+    if(ruleNotPresent || validReductions.size() != 1)
+    {
+      ////////////////////////////// TEMPORARY
+      std::cout << "Could not resolve reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
+      std::cout << "  Rules:";
+      for(auto i = state.items.begin(); i != state.items.end(); ++ i)
+        std::cout << ' ' << i->ruleIndex;
+      std::cout << std::endl;
+      std::cout << "  Delays:";
+      for(auto i = delayedRules.begin(); i != delayedRules.end(); ++i)
+        std::cout << ' ' << i->first << "->" << i->second;
+      std::cout << std::endl;
+      std::cout << "  Valid reductions:";
+      for(auto i = validReductions.begin(); i != validReductions.end(); ++i)
+        std::cout << ' ' << *i;
+      std::cout << std::endl;
+      ////////////////////////////// TEMPORARY
+      
+      // Could not resolve the reduction, continue using the next pivots
+      for(auto iPivotEdge = state.outgoingPivots.begin(); iPivotEdge != state.outgoingPivots.end(); ++iPivotEdge)
+        ResolveDelayedReduction(builder, rootState, *iPivotEdge->left, iDelayedRules, ruleResolutionStack);
+    }
+    else
+    {
+      ////////////////////////////// TEMPORARY
+      std::cout << "Resolved reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
+      ////////////////////////////// TEMPORARY
+      
+      /*todo: try this:
+      // The reduction can be resolved
+      std::stack<uint> ruleResolutionStack;
+      ruleResolutionStack.push(*validReductions.begin());
+      
+      // If the root state and the leaf state are in different cycles, then we must generate goto action to resolve states
+      if()*/
+      
+      state.row.AddActionReducePrev(*validReductions.begin());
+    }
+    
+    // Reset the delays checked flag
+    state.delaysChecked = false;
+
   }
 }
 

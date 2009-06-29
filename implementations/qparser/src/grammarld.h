@@ -70,14 +70,15 @@ namespace QParser
     PivotEdges incomingPivots;                              // The set of edges leading TO this state through pivot actions
     GotoEdges incomingGotos;                                // The set of edges leading TO this state through goto actions
     PivotEdges outgoingPivots;                              // The set of edges leading FROM this state through pivot actions
-    GotoEdges outgoingGotos;                               // The set of edges leading FROM this state through goto actions
+    GotoEdges outgoingGotos;                                // The set of edges leading FROM this state through goto actions
     //bool cyclic;                                            // A flag indicating that this state is in a cycle in the grammar (and hence delays should be resolved using goto actions)
     uint cyclicNestingDepth;                                // An integer indicating how many nested cycles this state is involved in
-    //std::set<uint> completeRules;                       // The set of completed rules of the final (complete) state
-    //bool ambiguous;                                     // A flag indicating that this state is an ambiguous leaf node
+    bool delaysChecked;                                     // A flag indicating that the state has been checked for delays and should not be checked again (this is used to avoid infinite loops in the delay resolution pass)
+    //std::set<uint> completeRules;                           // The set of completed rules of the final (complete) state
+    //bool ambiguous;                                         // A flag indicating that this state is an ambiguous leaf node
     
     // Constructor
-    INLINE LDState(BuilderLD::ActionRow& row) : row(row), cyclicNestingDepth(0) /*, cyclic(false)*/ {}
+    INLINE LDState(BuilderLD::ActionRow& row) : row(row), cyclicNestingDepth(0), delaysChecked(false) /*, cyclic(false)*/ {}
   };
   
   // LD Grammar
@@ -100,6 +101,8 @@ namespace QParser
     typedef LDItem Item;
     typedef LDState State;
     //typedef std::map<LDState*, uint> ResolvedRules;   // State, number of rules resolved (starting from the right side)
+    typedef State::DelayedRuleStack DelayedRuleStack;
+    typedef State::DelayedRuleMap DelayedRuleMap;
     
     //todo: The current leaf state
     //LDState* leafState;
@@ -128,9 +131,6 @@ namespace QParser
     //void ResolveDelays(BuilderLD& builder, ResolvedRules& resolvedRules);
     //void ResolveDelays(BuilderLD& builder, ResolvedRules& resolvedRules, ParseToken leafRowIndex, State& currentState);
     
-    // Resolve all delayed rules starting from the root state
-    void ResolveDelays(BuilderLD& builder, State& rootState);
-    
     // Try to generate a cyclic pivot for the given end-state. If such a cycle exists, then the function returns true,
     // otherwise it returns false and a normal pivot should be generated
     bool GenerateCyclicPivot(BuilderLD& builder, State& state, const ParseTokenSet& terminals);
@@ -144,6 +144,12 @@ namespace QParser
     
     // Generate a (non-cyclic) pivot for the given end-state
     void GeneratePivot(BuilderLD& builder, State& state, /*ResolvedRules& resolvedRules,*/ const ParseTokenSet& terminals);
+    
+    // Resolve all delayed rules starting from the root state
+    void ResolveDelays(BuilderLD& builder, State& rootState);
+    
+    // Resolve a specific delayed reduction
+    void ResolveDelayedReduction(BuilderLD& builder, State& rootState, State& state, DelayedRuleStack::const_reverse_iterator iDelayedRules, std::stack<uint>& ruleResolutionStack);
   };
 }
 
