@@ -67,10 +67,12 @@ namespace QParser
     typedef GotoEdges::value_type GotoEdge;                 // A state transition originating from a goto action
     BuilderLD::ActionRow& row;                              // The parse table row corresponding to this (deterministic) state
     DelayedRuleStack delayedReductions;                     // A stack of all the reductions that had to be delayed
-    PivotEdges incomingPivots;                              // The set of edges leading TO this state through pivot actions
-    GotoEdges incomingGotos;                                // The set of edges leading TO this state through goto actions
+    //PivotEdges incomingPivots;                              // The set of edges leading TO this state through pivot actions
+    std::set<LDState*> incomingPivots;                              // The set of edges leading TO this state through pivot actions
+    //GotoEdges incomingGotos;                                // The set of edges leading TO this state through goto actions
     PivotEdges outgoingPivots;                              // The set of edges leading FROM this state through pivot actions
     GotoEdges outgoingGotos;                                // The set of edges leading FROM this state through goto actions
+    std::vector<uint> completedRules;                       // List of rules that are completed by this state
     //bool cyclic;                                            // A flag indicating that this state is in a cycle in the grammar (and hence delays should be resolved using goto actions)
     uint cyclicNestingDepth;                                // An integer indicating how many nested cycles this state is involved in
     bool delaysChecked;                                     // A flag indicating that the state has been checked for delays and should not be checked again (this is used to avoid infinite loops in the delay resolution pass)
@@ -149,7 +151,14 @@ namespace QParser
     void ResolveDelays(BuilderLD& builder, State& rootState);
     
     // Resolve a specific delayed reduction
-    void ResolveDelayedReduction(BuilderLD& builder, State& rootState, State& state, DelayedRuleStack::const_reverse_iterator iDelayedRules, std::stack<uint>& ruleResolutionStack);
+    // minLookaheadCyclicDepth is the least cyclic depth that was reached during the recursive resolution. A leaf state is always generated in a state with cyclic depth <= the minimum cyclic depth in the lookahead
+    void ResolveDelayedReduction(BuilderLD& builder, State& rootState, State& prevState, State& state, DelayedRuleStack::const_reverse_iterator iDelayedRules, std::stack<uint>& ruleResolutionStack, uint minLookaheadCyclicDepth);
+    
+    // Find a suitable leaf node to use for delayed goto actions
+    void FindDelayLeafState(State& state, State*& prevState, State*& nextState);
+    
+    // Generate branch actions in the parse table (return, goto, pivot, accept)
+    void GenerateBranchActions(BuilderLD& builder);
   };
 }
 

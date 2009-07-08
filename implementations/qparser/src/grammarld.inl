@@ -33,11 +33,14 @@ namespace QParser
     GetStartItems(rootNonterminal, states[0]->items);
     
     // Construct the state graph recursively until we are done
-    std::map<LDState*, uint> resolvedRules;
+    //std::map<LDState*, uint> resolvedRules;
     ConstructStateGraph(builder, *states[0]/*, resolvedRules*/);
     
     // Resolve all delayed reductions
     ResolveDelays(builder, *states[0]);
+    
+    // Generate all branching actions in the parse table (return, pivot, goto, accept)
+    GenerateBranchActions(builder); 
     
     // Use the builder to construct the final parse table
     builder.ConstructParseTable(parseTable);
@@ -274,15 +277,16 @@ namespace QParser
     }
     else
     {
-      // If there is only one rule, add a reduce action 
+      // If there is only one rule, add a reduce action (and add it to the state's set of completed rules)
       state.row.AddActionReduce(*completeRules.begin());
+      state.completedRules.push_back(*completeRules.begin());
     }
     
     // Check whether all items are complete, and finish off this branch
     if (allItemsComplete)
     {
       // todo: additional work to do here?
-      state.row.AddActionAccept();
+      //state.row.AddActionAccept();
       return true;
     }
     
@@ -323,7 +327,7 @@ namespace QParser
         {
           items.push_back(items[c]);
           ///////////////////////// TEMPORARY
-          std::cout << "copy " << items[c].ruleIndex << std::endl;
+          //std::cout << "copy " << items[c].ruleIndex << std::endl;
           ///////////////////////// TEMPORARY
         }
         
@@ -534,7 +538,7 @@ namespace QParser
       return false;
     
     // Generate the cyclic pivot 
-    auto& pivots = state.row.AddActionPivot();
+    //auto& pivots = state.row.AddActionPivot();
     for(auto i = terminals.begin(); i != terminals.end(); ++i)
     {
       ////////////////////////////// TEMPORARY
@@ -549,11 +553,11 @@ namespace QParser
       
       // Add the edge to both states
       state.outgoingPivots.insert(LDState::PivotEdge(&targetState, *i));
-      targetState.incomingPivots.insert(LDState::PivotEdge(&state, *i));
+      //OLD: targetState.incomingPivots.insert(LDState::PivotEdge(&state, *i));
+      targetState.incomingPivots.insert(&state);
 
       // Add pivot the pivot to the parse table
-      ParseToken targetRow = builder.GetRowIndex(targetState.row);
-      pivots.AddPivot(*i, targetRow); 
+      //pivots.AddPivot(*i, targetState.row); 
     }
     
     return true;
@@ -562,9 +566,9 @@ namespace QParser
   INLINE LDState* GrammarLD::DetectCycle(State& lastState)
   {
     // Check whether any of the states leading to this state forms a cycle 
-    for(auto i = lastState.incomingPivots.left.begin(); i != lastState.incomingPivots.left.end(); ++i)
+    for(auto i = lastState.incomingPivots.begin(); i != lastState.incomingPivots.end(); ++i)
     {
-      State* prevState = DetectCycle(*i->first, lastState);
+      State* prevState = DetectCycle(**i, lastState);
       if(prevState)
       {
         // Cycle found
@@ -589,9 +593,9 @@ namespace QParser
       return null;
     
     // Check whether any of the states leading to this state forms a cycle 
-    for(auto i = currentState.incomingPivots.left.begin(); i != currentState.incomingPivots.left.end(); ++i)
+    for(auto i = currentState.incomingPivots.begin(); i != currentState.incomingPivots.end(); ++i)
     {
-      State* prevState = DetectCycle(*i->first, lastState);
+      State* prevState = DetectCycle(**i, lastState);
       if(prevState)
       {
         // Cycle found
@@ -642,7 +646,7 @@ namespace QParser
 
       // Add the edge to both states
       state.outgoingPivots.insert(LDState::PivotEdge(&targetState, *i));
-      targetState.incomingPivots.insert(LDState::PivotEdge(&state, *i));
+      targetState.incomingPivots.insert(&state);
     }
       
     // Continue building each state graph starting from the pivot
@@ -684,7 +688,7 @@ namespace QParser
       for(auto iPivotEdge = rootState.outgoingPivots.begin(); iPivotEdge != rootState.outgoingPivots.end(); ++iPivotEdge)
       {
         std::stack<uint> ruleResolutionStack; // A stack of rule indices
-        ResolveDelayedReduction(builder, rootState, *iPivotEdge->left, i, ruleResolutionStack);
+        ResolveDelayedReduction(builder, rootState, rootState, *iPivotEdge->left, i, ruleResolutionStack, rootState.cyclicNestingDepth);
       }
     }
     
@@ -696,17 +700,22 @@ namespace QParser
     rootState.delaysChecked = false;
   }
   
-  INLINE void GrammarLD::ResolveDelayedReduction(BuilderLD& builder, State& rootState, State& state, DelayedRuleStack::const_reverse_iterator iDelayedRules, std::stack<uint>& ruleResolutionStack)
+  INLINE void GrammarLD::ResolveDelayedReduction(BuilderLD& builder, State& rootState, State& prevState, State& state, DelayedRuleStack::const_reverse_iterator iDelayedRules, std::stack<uint>& ruleResolutionStack, uint minLookaheadCyclicDepth)
   {
     // Set the delays checked flag (to terminate loops that would be infinite)
     if(state.delaysChecked)
       return;
     state.delaysChecked = true;
     
-    // Test whether the end-state can resolve the current set of delayed rules
+    minLookaheadCyclicDepth = std::min(minLookaheadCyclicDepth, state.cyclicNestingDepth);
+    
+    
+    
+    /* OLD: Test whether the end-state can resolve the current set of delayed rules
+    // (THIS WOULD NOT WORK CORRECTLY. THERE WILL BE RULES THAT DO NOT CORRESPOND WITH THE RULE MAP)
     const auto& delayedRules = *iDelayedRules;
     std::set<uint> validReductions;  // The reductions that are possible for this set of rules
-    bool ruleNotPresent = false;     // Flag indicating that a rule in the end-state is not present in the rule map, hence 
+    bool ruleNotPresent = false;     // Flag indicating that a rule in the end-state is not present in the rule map, hence we cannot resolve just yet
     for(auto i = state.items.begin(); i != state.items.end(); ++ i)
     {
       auto iDelay = delayedRules.find(i->ruleIndex);
@@ -718,30 +727,46 @@ namespace QParser
       
       // Add the reduction to the set of reductions that can be resolved from this state
       validReductions.insert(iDelay->second);
+    }//*/
+    
+    //* NEW: we test whether all of the *completed* rules in the end-state that correspond to parent rules in the delayed rule stack 
+    //  resolve only a single delayed reduce action
+    const auto& delayedRules = *iDelayedRules;
+    std::set<uint> validReductions;  // The reductions that are possible for this set of rules
+    for(auto i = state.completedRules.begin(); i != state.completedRules.end(); ++ i)
+    {
+      auto iDelay = delayedRules.find(*i);
+      if(iDelay == delayedRules.end())
+        continue;
+      
+      // Add the reduction to the set of reductions that can be resolved from this state
+      validReductions.insert(iDelay->second);
     }
+    //*/
      
     
-    if(ruleNotPresent || validReductions.size() != 1)
+    //OLD: if(ruleNotPresent || validReductions.size() != 1) (*BUG*)
+    if(validReductions.size() != 1)
     {
       ////////////////////////////// TEMPORARY
-      std::cout << "Could not resolve reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
-      std::cout << "  Rules:";
-      for(auto i = state.items.begin(); i != state.items.end(); ++ i)
-        std::cout << ' ' << i->ruleIndex;
-      std::cout << std::endl;
-      std::cout << "  Delays:";
-      for(auto i = delayedRules.begin(); i != delayedRules.end(); ++i)
-        std::cout << ' ' << i->first << "->" << i->second;
-      std::cout << std::endl;
-      std::cout << "  Valid reductions:";
-      for(auto i = validReductions.begin(); i != validReductions.end(); ++i)
-        std::cout << ' ' << *i;
-      std::cout << std::endl;
+      //std::cout << "Could not resolve reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
+      //std::cout << "  Rules:";
+      //for(auto i = state.items.begin(); i != state.items.end(); ++ i)
+      //  std::cout << ' ' << i->ruleIndex;
+      //std::cout << std::endl;
+      //std::cout << "  Delays:";
+      //for(auto i = delayedRules.begin(); i != delayedRules.end(); ++i)
+      //  std::cout << ' ' << i->first << "->" << i->second;
+      //std::cout << std::endl;
+      //std::cout << "  Valid reductions:";
+      //for(auto i = validReductions.begin(); i != validReductions.end(); ++i)
+      //  std::cout << ' ' << *i;
+      //std::cout << std::endl;
       ////////////////////////////// TEMPORARY
       
       // Could not resolve the reduction, continue using the next pivots
       for(auto iPivotEdge = state.outgoingPivots.begin(); iPivotEdge != state.outgoingPivots.end(); ++iPivotEdge)
-        ResolveDelayedReduction(builder, rootState, *iPivotEdge->left, iDelayedRules, ruleResolutionStack);
+        ResolveDelayedReduction(builder, rootState, state, *iPivotEdge->left, iDelayedRules, ruleResolutionStack, minLookaheadCyclicDepth);
     }
     else
     {
@@ -749,20 +774,94 @@ namespace QParser
       std::cout << "Resolved reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
       ////////////////////////////// TEMPORARY
       
-      /*todo: try this:
       // The reduction can be resolved
       std::stack<uint> ruleResolutionStack;
       ruleResolutionStack.push(*validReductions.begin());
       
-      // If the root state and the leaf state are in different cycles, then we must generate goto action to resolve states
-      if()*/
+      State* gotoState = null;
       
-      state.row.AddActionReducePrev(*validReductions.begin());
+      // If the root state and the leaf state are in different cycles, then we must generate goto action to resolve states
+      // todo: Prove that the root state and leaf state cannot be in separate cycles at the same nesting depth....!!
+      if(rootState.cyclicNestingDepth != state.cyclicNestingDepth)
+      {
+        // If the state is already a leaf state (i.e. it has no pivots), then we can just generate a new goto state
+        // (The state may have already been replaced by a goto action)
+        if(state.outgoingPivots.size() == 0)        
+        {
+          auto& newGotoRow = builder.AddActionRow();
+          gotoState = new State(newGotoRow);
+          states.push_back(gotoState); 
+          rootState.outgoingGotos.insert(std::make_pair(&state, gotoState));
+          //gotoState->incomingGotos.insert(std::make_pair(&state, gotoState));
+        }
+        else
+        {
+          // Generate a new state to replace the previous pivot targetState
+          gotoState = &state;
+          auto& newPivotRow = builder.AddActionRow();
+          states.push_back(new State(newPivotRow));
+          states.back()->cyclicNestingDepth = state.cyclicNestingDepth;
+          rootState.outgoingGotos.insert(std::make_pair(states.back(), &state));
+          //gotoState->incomingGotos.insert(std::make_pair(states.back(), &state));
+          
+          // Replace the pivot with the new pivot state
+          auto terminal = prevState.outgoingPivots.left.find(&state)->second;
+          prevState.outgoingPivots.insert(LDState::PivotEdge(states.back(), terminal));
+          //states.back()->incomingPivots.insert(LDState::PivotEdge(states.back(), terminal));
+          states.back()->incomingPivots.insert(states.back());
+          //state.incomingPivots.clear(state.incomingPivots.find(&state));
+          state.incomingPivots.erase(&state);
+        }
+      }
+      
+      gotoState->row.AddActionReducePrev(*validReductions.begin());
     }
     
     // Reset the delays checked flag
     state.delaysChecked = false;
 
+  }
+  
+  void GrammarLD::FindDelayLeafState(State& state, State*& prevState, State*& nextState)
+  {
+    /*prevState = &state;
+    
+    for(auto i = state.outgoingPivots.begin(); i != state.outgoingPivots.end(); ++i)
+    {
+      nextState = 
+    }*/
+  }
+  
+  void GrammarLD::GenerateBranchActions(BuilderLD& builder)
+  {
+    for(auto iState = states.begin(); iState != states.end(); ++iState)
+    {
+      auto& state = **iState;
+      
+      // Generate pivot actions
+      if(!state.outgoingPivots.empty())
+      {
+        auto& pivotSet = state.row.AddActionPivot();
+        for(auto i = state.outgoingPivots.begin(); i != state.outgoingPivots.end(); ++i)
+          pivotSet.AddPivot(i->right, i->left->row);
+      }
+      
+      // Generate goto actions
+      if(!state.outgoingGotos.empty())
+      {
+        auto& gotoSet = state.row.AddActionGoto();
+        for(auto i = state.outgoingGotos.begin(); i != state.outgoingGotos.end(); ++i)
+          gotoSet.AddGoto(i->first->row, i->second->row);
+      }
+      // Generate return / accept actions
+      else
+      {
+        if(state.items.empty() && !state.completedRules.empty())
+          state.row.AddActionAccept();
+        else
+          state.row.AddActionReturn();
+      }
+    }
   }
 }
 

@@ -23,8 +23,6 @@ using namespace QParser;
 #define TESTGRAMMARLD_DEBUG_INFO
 
 /*                                  ALIASES                                 */
-//typedef BuilderLD::ActionRow ActionRow;
-//typedef BuilderLD::PivotSet PivotSet;
 typedef ParserLD::ParseTokens ParseTokens;
 
 /*                                 TEST DATA                                */
@@ -85,7 +83,9 @@ void PrintParseTable(const ParseTokens& parseTable)
       ParseToken targetOffset = parseTable[++cToken];
         
       cout << "goto(" << lookaheadOffset << "->" << targetOffset << ") ";
-      printNewLine = true;
+      
+      // Check whether the next token is also a goto
+      printNewLine = parseTable[cToken+1] != TOKEN_ACTION_GOTO;
     }
     else if(token == TOKEN_ACTION_RETURN)
     {

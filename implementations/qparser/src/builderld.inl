@@ -46,6 +46,9 @@ namespace QParser
       // Store the final offset of this row in the parse table
       rowOffsets.push_back(ParseToken(parseTable.size()));
       
+      // First output all ReducePrev actions in this row
+      std::copy(actionRow.resolvedReductions.begin(), actionRow.resolvedReductions.end(), std::back_inserter(parseTable));
+      
       // Get an iterator into the pivot sets associated with this action row
       PivotSets::const_iterator iPivotSet = actionRow.pivotSets.begin();
       
@@ -68,7 +71,7 @@ namespace QParser
             
             // Push the index of the target row for this pivot
             // (to be replaced by a parse table offset later)
-            parseTable.push_back(pivotSet.targetRows[cPivot]);
+            parseTable.push_back(GetRowIndex(*pivotSet.targetRows[cPivot]));
           }
           
           // Move the pivot set iterator to the next pivot set associated this action row (if any)
@@ -79,7 +82,22 @@ namespace QParser
         // Process a goto action
         if(*iToken == TOKEN_ACTION_GOTO)
         {
-          // Push the goto action
+          const GotoSet::GotoEdges& gotoEdges = actionRow.gotoSet.gotoEdges;
+          for(uint cGoto = 0; cGoto < gotoEdges.size(); ++cGoto)
+          {
+            // Push a goto action
+            parseTable.push_back(TOKEN_ACTION_GOTO);
+            
+            // Push the index of the lookahead row for this goto action
+            // (to be replaced by a parse table offset later)
+            parseTable.push_back(GetRowIndex(*gotoEdges[cGoto].first));
+            
+            // Push the index of the lookahead row for this goto action
+            // (to be replaced by a parse table offset later)
+            parseTable.push_back(GetRowIndex(*gotoEdges[cGoto].second));
+          }
+            
+          /*// Push the goto action
           parseTable.push_back(TOKEN_ACTION_GOTO);
           
           // Push the index of the lookahead row for this goto action
@@ -88,11 +106,11 @@ namespace QParser
           OSI_ASSERT(iToken != actionRow.actions.end());
           parseTable.push_back(*iToken);
           
-          // Push the index of the target row for this goto action
+          // Push the index of the lookahead row for this goto action
           // (to be replaced by a parse table offset later)
           ++iToken;
           OSI_ASSERT(iToken != actionRow.actions.end());
-          parseTable.push_back(*iToken);
+          parseTable.push_back(*iToken);*/
           continue;
         }
         
@@ -101,9 +119,6 @@ namespace QParser
           parseTable.push_back(*iToken);
         }
       }
-      
-      // Push a return statement onto the parse table
-      // todo?...
     }
     
     // Replace all row indexes with parse table offsets
@@ -145,7 +160,7 @@ namespace QParser
   ////////////////////////////////////////////////////////////////////////////
   // ActionRow
   
-  INLINE BuilderLD::ActionRow::ActionRow(BuilderLD& builder) : builder(builder) 
+  INLINE BuilderLD::ActionRow::ActionRow(BuilderLD& builder) : gotoSet(builder, *this), gotoActionAdded(false), builder(builder)
   {}
   
   //INLINE BuilderLD::ActionRow::ActionRow(const ActionRow& row) : builder(row.builder)
@@ -175,23 +190,25 @@ namespace QParser
   
   INLINE void BuilderLD::ActionRow::AddActionReducePrev(ParseToken rule)
   {
-    // We always prepend reduce prev actions since they reduce actions in previous states
-    actions.insert(actions.begin(), rule | TOKEN_FLAG_REDUCEPREV);      
+    // Add the action to the list of resolved (delayed) reductions
+    resolvedReductions.push_back(rule | TOKEN_FLAG_REDUCEPREV);      
   }
-
-  /*INLINE BuilderLD::ActionRow& BuilderLD::ActionRow::AddActionGoto()
-  {
-    actions.push_back(TOKEN_GOTO);
-    actions.push_back(GetBuilder().GetActionTable().size());
-    return GetBuilder().AddActionRow();
-  }*/
   
-  INLINE void BuilderLD::ActionRow::AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow)
+  /*INLINE void BuilderLD::ActionRow::AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow)
   {
     actions.push_back(TOKEN_ACTION_GOTO);
     actions.push_back(lookaheadRow);
     actions.push_back(targetRow);
-  }
+  }*/
+  INLINE BuilderLD::GotoSet& BuilderLD::ActionRow::AddActionGoto()
+  {
+    if(!gotoActionAdded)
+    {
+      actions.push_back(TOKEN_ACTION_GOTO);
+      gotoActionAdded = true;
+    }
+    return gotoSet;
+  }  
   
   INLINE void BuilderLD::ActionRow::AddActionReturn()
   {
