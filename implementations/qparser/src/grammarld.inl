@@ -29,10 +29,14 @@ namespace QParser
     // Construct the the parser
     // Get the start items
     BuilderLD builder;
+    ////////////////////////////// TEMPORARY
+    std::cout << "AddActionRow" << std::endl;
+    ////////////////////////////// TEMPORARY          
     states.push_back(new State(builder.AddActionRow()));
     GetStartItems(rootNonterminal, states[0]->items);
     
     // Construct the state graph recursively until we are done
+    
     //std::map<LDState*, uint> resolvedRules;
     ConstructStateGraph(builder, *states[0]/*, resolvedRules*/);
     
@@ -48,6 +52,10 @@ namespace QParser
   
   INLINE void GrammarLD::ConstructStateGraph(BuilderLD& builder, State& state)
   {
+    ////////////////////////////// TEMPORARY
+    std::cout << "> Construct a state node" << std::endl;
+    ////////////////////////////// TEMPORARY
+    
     while(true)
     {
       // Expand items in the state
@@ -58,7 +66,12 @@ namespace QParser
       StepOverTerminals(terminals, state.items);
       if(terminals.size() == 1)
       {
-        // Geneterminalsrate a shift action
+        ////////////////////////////// TEMPORARY
+        std::cout << ">> Generate shift(" << tokenRegistry.GetTokenName(*terminals.begin()) << ")" << std::endl;
+        //std::cout << ">> Complete items";
+        ////////////////////////////// TEMPORARY
+        
+        // Generate a shift action
         state.row.AddActionShift(*terminals.begin());
         
         // Complete all rules that are left over
@@ -97,8 +110,16 @@ namespace QParser
     
   INLINE void GrammarLD::ExpandItemSet(State& state)
   {
+    ////////////////////////////// TEMPORARY
+    std::cout << ">> Expand the item set";
+    ////////////////////////////// TEMPORARY
+    
     // Expand all items in the set
     ExpandItemSet(state, 0, state.items.size());
+    
+    ////////////////////////////// TEMPORARY
+    std::cout << std::endl;
+    ////////////////////////////// TEMPORARY
   }
   
   INLINE void GrammarLD::ExpandItemSet(State& state, uint cBegin, uint cEnd)
@@ -126,7 +147,7 @@ namespace QParser
       if(TokenRegistry::IsTerminal(inputToken))
         continue;
         
-      // Resolve the input position token to rule(s)
+      // Resolve the input position token to rule(s)      
       auto& inputProduction = *GetProductionSet(inputToken);
       
       for(auto cRuleIndex = inputProduction.rulesOffset; cRuleIndex < inputProduction.rulesOffset + inputProduction.rulesLength; ++cRuleIndex)
@@ -183,6 +204,13 @@ namespace QParser
         i->inputPositionRule = uint(-1);
       }
     }
+    
+    ////////////////////////////// TEMPORARY
+    std::cout << ">> Step over terminals:";
+    for(auto i = terminals.begin(); i != terminals.end(); ++i)
+      std::cout << ' ' << tokenRegistry.GetTokenName(*i);
+    std::cout << std::endl;
+    ////////////////////////////// TEMPORARY
   }
   
   INLINE bool GrammarLD::CompleteItems(BuilderLD& builder, State& state)
@@ -537,6 +565,10 @@ namespace QParser
     if(prevState == null)
       return false;
     
+    ////////////////////////////// TEMPORARY
+    std::cout << ">> Generate a cyclic pivot" << std::endl;
+    ////////////////////////////// TEMPORARY
+    
     // Generate the cyclic pivot 
     //auto& pivots = state.row.AddActionPivot();
     for(auto i = terminals.begin(); i != terminals.end(); ++i)
@@ -635,12 +667,20 @@ namespace QParser
   
   INLINE void GrammarLD::GeneratePivot(BuilderLD& builder, State& state/*, ResolvedRules& resolvedRules*/, const ParseTokenSet& terminals)
   {
+    ////////////////////////////// TEMPORARY
+    std::cout << ">> Generate a pivot" << std::endl;
+    ////////////////////////////// TEMPORARY
+    
     // Generate a pivot for each state
-    auto& pivots = state.row.AddActionPivot();
+    //OLD: auto& pivots = state.row.AddActionPivot();
     for(auto i = terminals.begin(); i != terminals.end(); ++i)
     {          
       // Copy the state and generate a new line in the action table to couple with it
-      states.push_back(new State(pivots.AddPivot(*i)));
+      //states.push_back(new State(pivots.AddPivot(*i)));
+      ////////////////////////////// TEMPORARY
+      std::cout << "AddActionRow" << std::endl;
+      ////////////////////////////// TEMPORARY
+      states.push_back(new State(builder.AddActionRow()));
       auto& targetState = *states.back();
       CopyStateUsingPivot(state, targetState, *i);
 
@@ -648,24 +688,38 @@ namespace QParser
       state.outgoingPivots.insert(LDState::PivotEdge(&targetState, *i));
       targetState.incomingPivots.insert(&state);
     }
-      
+     
     // Continue building each state graph starting from the pivot
     for(auto i = state.outgoingPivots.begin(); i != state.outgoingPivots.end(); ++i)
-    {
+    {    
       auto& targetState = *i->left;
-              
+      
+      ////////////////////////////// TEMPORARY
+      //std::cout << ">> Complete items";
+      ////////////////////////////// TEMPORARY
+    
       // Complete all rules that are now finished (in the target state)
       bool allItemsComplete = CompleteItems(builder, targetState);
       
       // Stop if there are no more items in this state to complete
       if(allItemsComplete)
+      {
+        ////////////////////////////// TEMPORARY
+        //std::cout << " (All items are complete)" << std::endl;
+        ////////////////////////////// TEMPORARY
+        
         continue; // No items left to complete
+      }
       
       /* Since we've reached a decision point:
       // Resolve all delays that are possible and set the new state as the current leaf node
       leafTarget = &targetState;      
       if(ResolveDelays(builder, state, resolvedRules))
         return;*/
+      
+      ////////////////////////////// TEMPORARY
+      //std::cout << std::endl;
+      ////////////////////////////// TEMPORARY
       
       // Recursively build state graph for this new state
       ConstructStateGraph(builder, targetState);
@@ -674,6 +728,10 @@ namespace QParser
   
   INLINE void GrammarLD::ResolveDelays(BuilderLD& builder, State& rootState)
   {
+    ////////////////////////////// TEMPORARY
+    std::cout << "> Resolve delayed reductions" << std::endl;
+    ////////////////////////////// TEMPORARY
+    
     // todo: it might be possible to optimize this slightly by moving forward gotos up to just before the pivot where the cyclic nesting depth
     // changes (in at least one of the outgoing states) ... we'll leave this for the future..
     
@@ -708,9 +766,7 @@ namespace QParser
     state.delaysChecked = true;
     
     minLookaheadCyclicDepth = std::min(minLookaheadCyclicDepth, state.cyclicNestingDepth);
-    
-    
-    
+        
     /* OLD: Test whether the end-state can resolve the current set of delayed rules
     // (THIS WOULD NOT WORK CORRECTLY. THERE WILL BE RULES THAT DO NOT CORRESPOND WITH THE RULE MAP)
     const auto& delayedRules = *iDelayedRules;
@@ -771,7 +827,7 @@ namespace QParser
     else
     {
       ////////////////////////////// TEMPORARY
-      std::cout << "Resolved reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
+      std::cout << ">> Resolved reduction in state: " << builder.GetRowIndex(state.row) << std::endl;
       ////////////////////////////// TEMPORARY
       
       // The reduction can be resolved
@@ -788,6 +844,9 @@ namespace QParser
         // (The state may have already been replaced by a goto action)
         if(state.outgoingPivots.size() == 0)        
         {
+          ////////////////////////////// TEMPORARY
+          std::cout << "AddActionRow" << std::endl;
+          ////////////////////////////// TEMPORARY
           auto& newGotoRow = builder.AddActionRow();
           gotoState = new State(newGotoRow);
           states.push_back(gotoState); 
@@ -796,6 +855,10 @@ namespace QParser
         }
         else
         {
+          ////////////////////////////// TEMPORARY
+          std::cout << "AddActionRow" << std::endl;
+          ////////////////////////////// TEMPORARY
+          
           // Generate a new state to replace the previous pivot targetState
           gotoState = &state;
           auto& newPivotRow = builder.AddActionRow();
@@ -836,26 +899,60 @@ namespace QParser
   {
     for(auto iState = states.begin(); iState != states.end(); ++iState)
     {
+      ////////////////////////////// TEMPORARY
+      std::cout << "> Generate branch actions" << std::endl;
+      ////////////////////////////// TEMPORARY
+    
       auto& state = **iState;
       
       // Generate pivot actions
       if(!state.outgoingPivots.empty())
       {
+        ////////////////////////////// TEMPORARY
+        std::cout << ">> Generate pivot actions:";
+        ////////////////////////////// TEMPORARY
+      
         auto& pivotSet = state.row.AddActionPivot();
         for(auto i = state.outgoingPivots.begin(); i != state.outgoingPivots.end(); ++i)
+        {
+          ////////////////////////////// TEMPORARY
+          std::cout << ' ' << tokenRegistry.GetTokenName(i->right) << "->" << builder.GetRowIndex(i->left->row) << ' ';
+          ////////////////////////////// TEMPORARY
+          
           pivotSet.AddPivot(i->right, i->left->row);
+        }
+        ////////////////////////////// TEMPORARY
+        std::cout << std::endl;
+        ////////////////////////////// TEMPORARY
       }
       
       // Generate goto actions
       if(!state.outgoingGotos.empty())
       {
+        ////////////////////////////// TEMPORARY
+        std::cout << ">> Generate goto actions:";
+        ////////////////////////////// TEMPORARY
+      
         auto& gotoSet = state.row.AddActionGoto();
         for(auto i = state.outgoingGotos.begin(); i != state.outgoingGotos.end(); ++i)
+        {
+          ////////////////////////////// TEMPORARY
+          std::cout << ' ' << builder.GetRowIndex(i->first->row) << "->" << builder.GetRowIndex(i->second->row) << ' ';
+          ////////////////////////////// TEMPORARY
+          
           gotoSet.AddGoto(i->first->row, i->second->row);
+        }
+        ////////////////////////////// TEMPORARY
+        std::cout << std::endl;
+        ////////////////////////////// TEMPORARY
       }
       // Generate return / accept actions
       else
       {
+        ////////////////////////////// TEMPORARY
+        std::cout << ">> Generate return / accept action" << std::endl;
+        ////////////////////////////// TEMPORARY
+      
         if(state.items.empty() && !state.completedRules.empty())
           state.row.AddActionAccept();
         else
