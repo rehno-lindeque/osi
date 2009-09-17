@@ -1,0 +1,130 @@
+##############################################################################
+#
+#     COMMONSCONSTRUCT
+#
+#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#
+#     Version 0.04 (2009-05-01)
+#
+#     (The versioning on this file is usefull because it may be copied often.
+#     Try and keep build scripts as up to date as possible. I.e. Always use
+#     the latest CommonSConstruct file)
+#
+##############################################################################
+
+import glob
+import os
+
+#########################################################
+# Setup the default build environment
+
+# Initialize environment
+env = Environment()
+
+# Initialize startup paths
+launch_dir = GetLaunchDir()
+script_dir = os.getcwd()
+
+# Setup build system information
+verbose = 0
+if '-Q' not in sys.argv:
+  verbose = 1
+
+# Definitions
+definitions = user_definitions
+
+if ARGUMENTS.get('targetlang', 0) == 'c':
+  if ARGUMENTS.get('build', 0) == 'dynamic':
+    definitions.append('OSI_C_DYNAMIC_BUILD')
+  else:
+    definitions.append('OSI_C_STATIC_BUILD')
+else:
+  if ARGUMENTS.get('build', 0) == 'dynamic':
+    definitions.append('OSI_CPP_DYNAMIC_BUILD')
+  else:
+    definitions.append('OSI_CPP_STATIC_BUILD')
+
+# Compiler paths
+if ARGUMENTS.get('CXX', 0):
+  env.Replace(CXX = ARGUMENTS.get('CXX', 0))
+
+if ARGUMENTS.get('CC', 0):
+  env.Replace(CC = ARGUMENTS.get('CC', 0))
+
+# Compiler flags
+env.Append(CCFLAGS = user_flags)
+if ARGUMENTS.get('debug', 0):
+  env.Append(CCFLAGS = user_debugflags)
+
+# System parameters
+if sys.platform=='win32':
+  env.Tool('mingw')
+
+# Build variables
+include_dirs = []
+for dir in user_include_dirs:
+  include_dirs.append(os.path.abspath(os.path.join(script_dir, dir)))
+
+lib_dirs = []
+for dir in user_lib_dirs:
+  lib_dirs.append(os.path.abspath(dir))
+Export('lib_dirs')
+
+libs = []
+for lib in user_libs:
+  libs.append(lib)
+  env.Append(LIBS=File(lib))
+Export('libs')
+
+objects = []
+
+#########################################################
+# Setup build targets
+
+main_target = user_target
+
+def argument_eq(arg, value): ARGUMENTS.get(arg,0) == value
+def argument_exist(arg): bool(ARGUMENTS.get(arg,0))
+
+target_postfix_rules = [
+  (argument_eq('targetlang', 'c'), 'c'), 
+  (argument_exist('debug'), 'd') ]
+
+for rule in target_postfix_rules:
+  if rule[0]: main_target = main_target + rule[1]
+
+#########################################################
+# Execute modules scripts
+
+Export('env')
+Export('verbose')
+Export('objects')
+Export('include_dirs')
+Export('definitions')
+
+if verbose:
+  print '-----------------------------------'
+  print 'Platform: %s' % env['PLATFORM']       # sys.platform
+  print 'Compiler: %s' % env['CXX']
+  print 'Include dirs: %s' % include_dirs
+  print 'Definitions: %s' % definitions
+  print 'Libs: %s' % libs
+
+for dir in user_scons_dirs:
+  SConscript('%s/SConscript' % dir)
+
+# Execute target script
+Export('main_target')
+
+SConscript('SConstargetscript', build_dir=user_build_dir, duplicate=0)
+
+
+#########################################################
+
+# Scons development help
+#help(Environment)
+#print env
+#print env.__dict__
+#exit();
+
+#########################################################

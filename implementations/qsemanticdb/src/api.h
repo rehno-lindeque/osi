@@ -1,0 +1,92 @@
+#ifndef __QSEMANTICDB_API_H__
+#define __QSEMANTICDB_API_H__
+//////////////////////////////////////////////////////////////////////////////
+//
+//    API.H
+//
+//    Copyright © 2009, Rehno Lindeque. All rights reserved.
+//
+//////////////////////////////////////////////////////////////////////////////
+/*                               DOCUMENTATION                              */
+/*
+    DESCRIPTION:
+      QSemanticDB API for OpenSemanticDB 0.1.
+*/
+/*                              COMPILER MACROS                             */
+#ifdef _MSC_VER
+# define STDEXT_NAMESPACE stdext
+#else
+# define STDEXT_NAMESPACE __gnu_cxx
+#endif
+        
+/*                                 INCLUDES                                 */
+// OpenParser
+#include <osix/semanticdb/semanticdb.hpp>
+#ifdef _DEBUG
+# include <osix/semanticdb/semanticdbdbg.hpp>
+#endif
+
+// BaseParser
+#include <basesemanticdb/basesemanticdb.h>
+
+// STL
+/*#include <algorithm>
+#include <list>*/
+#include <vector>
+/*#include <stack>
+#include <set>
+#include <map>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <unordered_map>
+#include <unordered_set>*/
+
+// STL extensions
+/*#ifdef _MSC_VER
+# include <ext/stdio_filebuf.h>?
+#else
+# include <ext/stdio_filebuf.h>
+#endif*/
+
+// CLib
+//#include <memory.h>
+
+// Boost
+//#include <boost/bimap.hpp>
+
+// QSemanticDB
+#include "semanticdb.h"
+
+/*                                  CLASSES                                 */
+namespace QSemanticDB
+{
+  class SemanticDB : public BaseSemanticDB::SemanticDB
+  {
+  public:
+    SemanticDBImplementation* semanticDB;
+
+    FORCE_INLINE SemanticDB() {}
+    FORCE_INLINE SemanticDBImplementation* operator-> () { return semanticDB; }
+
+#   ifdef _DEBUG
+      class SemanticDBDbg : public OSIX::SemanticDBDbg
+      {
+      public:
+        INLINE SemanticDB& GetSemanticDB() { return *(SemanticDB*)(((uint8*)this) - offsetof(SemanticDB, semanticDBDbg)); }
+      } semanticDBDbg;
+#   endif
+      
+  protected:
+    
+    std::vector<SemanticId> epsilonDomain;
+    std::vector<Relation> relations;
+  };
+}
+
+/*                                   INCLUDES                               */
+#ifdef OSI_STATIC_C_BUILD
+#include "api.inl"
+#endif
+
+#endif

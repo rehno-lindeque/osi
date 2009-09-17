@@ -1,0 +1,79 @@
+##############################################################################
+#
+#     SCONSCRIPTTESTS
+#
+#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+import os
+import subprocess
+
+user_build_dir = '../../build/tests'
+user_src_dir = '../tests'
+user_scriptname = 'QSemanticDB Unit Tests'
+user_tests = ['testsemanticdb']
+
+Import('env')
+Import('verbose')
+Import('objects')
+Import('include_dirs')
+Import('definitions')
+Import('libs')
+Import('lib_dirs')
+
+#execfile('CommonSConscript', globals())
+
+#########################################################
+# Setup build directories
+
+abs_build_dir = os.path.abspath(os.path.join(user_build_dir, env['PLATFORM'] + '-' + env['CXX']))
+abs_src_dir = os.path.abspath(user_src_dir)
+scriptdir = os.getcwd() 
+
+BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
+
+##############################################################################
+# Unit test builder
+def builder_unit_test(target, source, env):
+  app = str(source[0].abspath)
+  return_code = subprocess.call(app)
+  if return_code != 0:
+    print 'FAILED with return code ', return_code
+    return 1
+
+# Create a builder for unit tests
+env.Append(BUILDERS = {'UnitTest' : Builder(action = builder_unit_test)})
+
+##############################################################################
+# Unit test targets
+
+unit_test_programs = []
+
+for file in user_tests:
+  if(verbose):
+    print '-----------------------------------'
+    print 'Unit test: %s' % file
+    print 'Library Dirs: %s' % lib_dirs
+    print 'Libraries: %s' % libs
+
+  prog = env.Program(
+              source     = os.path.join(user_src_dir, file) + ".cpp",
+              CPPPATH    = include_dirs,
+              CPPDEFINES = definitions,
+              LIBPATH    = lib_dirs,
+              LIBS       = libs)
+  unit_test_programs.append(prog)
+  #AlwaysBuild(prog)
+
+##############################################################################
+# Execute unit test
+
+if(verbose):
+  print '==================================='
+  print 'Perform regression tests...'
+  print 'Executables: ', map(lambda prog: '%s' % prog[0], unit_test_programs)
+
+for testname,program in zip(user_tests, unit_test_programs):
+  env.UnitTest("run"+testname, program)
+

@@ -1,0 +1,1169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="39">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="base" displayName="base" projectFiles="true">
+      <logicalFolder name="common" displayName="common" projectFiles="true">
+        <itemPath>../../../base/src/base/common/functions.h</itemPath>
+        <itemPath>../../../base/src/base/common/object.h</itemPath>
+        <itemPath>../../../base/src/base/common/structures.h</itemPath>
+        <itemPath>../../../base/src/base/common/types.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="math" displayName="math" projectFiles="true">
+        <itemPath>../../../base/src/base/math/axisalignedboundingbox.h</itemPath>
+        <itemPath>../../../base/src/base/math/axisalignedboundingbox.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/hcoord3.h</itemPath>
+        <itemPath>../../../base/src/base/math/hcoord3.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/hpoint3.h</itemPath>
+        <itemPath>../../../base/src/base/math/hpoint3.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/hvector3.h</itemPath>
+        <itemPath>../../../base/src/base/math/hvector3.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/math.h</itemPath>
+        <itemPath>../../../base/src/base/math/matrix3.h</itemPath>
+        <itemPath>../../../base/src/base/math/matrix3.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/matrix4.h</itemPath>
+        <itemPath>../../../base/src/base/math/matrix4.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/quaternion.h</itemPath>
+        <itemPath>../../../base/src/base/math/quaternion.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/unitquaternion.h</itemPath>
+        <itemPath>../../../base/src/base/math/unitquaternion.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/vector2.h</itemPath>
+        <itemPath>../../../base/src/base/math/vector2.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/vector3.h</itemPath>
+        <itemPath>../../../base/src/base/math/vector3.hxx</itemPath>
+        <itemPath>../../../base/src/base/math/vector4.h</itemPath>
+        <itemPath>../../../base/src/base/math/vector4.hxx</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="baseparser"
+                   displayName="basesemanticdb"
+                   projectFiles="true">
+      <itemPath>../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h</itemPath>
+      <itemPath>../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx</itemPath>
+      <itemPath>../../../basesemanticdb/src/basesemanticdb/capi.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="parser" displayName="semanticdb" projectFiles="true">
+      <itemPath>../../../../api/osix/semanticdb/semanticdb.h</itemPath>
+      <itemPath>../../../../api/osix/semanticdb/semanticdb.hpp</itemPath>
+      <itemPath>../../../../api/osix/semanticdb/semanticdbdbg.h</itemPath>
+      <itemPath>../../../../api/osix/semanticdb/semanticdbdbg.hpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="src" displayName="src" projectFiles="true">
+      <itemPath>../../src/api.cpp</itemPath>
+      <itemPath>../../src/api.h</itemPath>
+      <itemPath>../../src/api.inl</itemPath>
+      <itemPath>../../src/functors.h</itemPath>
+      <itemPath>../../src/semanticdb.h</itemPath>
+      <itemPath>../../src/semanticdb.inl</itemPath>
+    </logicalFolder>
+    <logicalFolder name="tests" displayName="tests" projectFiles="true">
+      <itemPath>../../tests/testcommon.h</itemPath>
+      <itemPath>../../tests/testsemanticdb.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>../scons/CommonSConscript</itemPath>
+      <itemPath>../scons/CommonSConstruct</itemPath>
+      <itemPath>../make/Makefile</itemPath>
+      <itemPath>qsemanticdb-Makefile.mk</itemPath>
+      <itemPath>../scons/SConscript</itemPath>
+      <itemPath>../scons/SConscriptTests</itemPath>
+      <itemPath>../scons/SConstargetscript</itemPath>
+      <itemPath>../scons/SConstruct</itemPath>
+      <itemPath>../scons/SConsUtils.py</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>qsemanticdb-Makefile.mk</projectmakefile>
+  <confs>
+    <conf name="Scons_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons </buildCommand>
+          <cleanCommand>scons -c</cleanCommand>
+          <executablePath>../../lib/libqsemanticdb.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+    <conf name="Make_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../make</buildCommandWorkingDir>
+          <buildCommand>make</buildCommand>
+          <cleanCommand>make clean</cleanCommand>
+          <executablePath>../../lib/libqsemanticdb.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../api</directoryPath>
+            </includeDirectories>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+    <conf name="Debug_Scons_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons debug=1</buildCommand>
+          <cleanCommand>scons -c debug=1</cleanCommand>
+          <executablePath>../../lib/libqsemanticdbd.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+            <preprocessor>_DEBUG</preprocessor>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+    <conf name="Debug_Scons_Static_C" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons targetlang=c debug=1</buildCommand>
+          <cleanCommand>scons -c targetlang=c debug=1</cleanCommand>
+          <executablePath>../../lib/libqsemanticdbcd.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+            <preprocessor>_DEBUG</preprocessor>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+    <conf name="Scons_Static_C" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons targetlang=c</buildCommand>
+          <cleanCommand>scons -c targetlang=c</cleanCommand>
+          <executablePath>../../lib/libqsemanticdbc.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+            <preprocessor>_DEBUG</preprocessor>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+    <conf name="All_Debug_Scons_Static_CPP" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons ../.. debug=1 CXX="/usr/local/bin/g++-4.4"</buildCommand>
+          <cleanCommand>scons -c ../.. debug=1 CXX="/usr/local/bin/g++-4.4"</cleanCommand>
+          <executablePath>../../lib/libqsemanticdbd.a</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+            <preprocessor>_DEBUG</preprocessor>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+    <conf name="Test_SemanticDB" type="0">
+      <toolsSet>
+        <compilerSet>GNU</compilerSet>
+        <cRequired>true</cRequired>
+        <cppRequired>true</cppRequired>
+        <fortranRequired>false</fortranRequired>
+        <platform>2</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>../scons</buildCommandWorkingDir>
+          <buildCommand>scons ../../tests/testgrammarld debug=1 CXX="/usr/local/bin/g++-4.4"</buildCommand>
+          <cleanCommand>scons -c debug=1 CXX="/usr/local/bin/g++-4.4"</cleanCommand>
+          <executablePath>../../tests/testgrammarld</executablePath>
+          <cCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+          </cCompilerTool>
+          <ccCompilerTool>
+            <includeDirectories>
+              <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
+            </includeDirectories>
+            <preprocessor>_DEBUG</preprocessor>
+          </ccCompilerTool>
+        </makeTool>
+        <requiredProjects>
+        </requiredProjects>
+      </makefileType>
+      <item path="../../../../api/osix/semanticdb/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/functions.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/object.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/structures.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/common/types.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/axisalignedboundingbox.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hcoord3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hpoint3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/hvector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/math.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/matrix4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/quaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/unitquaternion.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector2.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector3.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../base/src/base/math/vector4.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.cpp">
+        <itemTool>1</itemTool>
+      </item>
+      <item path="../../src/api.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/functors.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/semanticdb.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testcommon.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../tests/testsemanticdb.cpp">
+        <itemTool>1</itemTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

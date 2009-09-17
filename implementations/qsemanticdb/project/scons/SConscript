@@ -1,0 +1,13 @@
+##############################################################################
+#
+#     SCONSCRIPT
+#
+#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+user_build_dir = '../../build'
+user_src_dir = '../../src'
+user_scriptname = 'QSemanticDB'
+
+execfile('CommonSConscript', globals())

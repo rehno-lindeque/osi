@@ -1,0 +1,36 @@
+##############################################################################
+#
+#     SCONSTRUCT
+#
+#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#
+##############################################################################
+
+import os
+import sys
+
+user_build_dir  = '../../lib'
+user_test_dir   = '../../tests'
+user_target     = 'qsemanticdb'
+user_scons_dirs = ['.', '../../../base/project/scons', '../../../basesemanticdb/project/scons']
+user_lib_dirs   = []
+user_libs       = ['libstdc++.a']
+user_include_dirs = ['../../../../api',                 # OSI Headers
+                     '../../../basesemanticdb/src',     # OpenSemanticDB Libraries
+                     '../../../base/src'
+                    ]
+user_definitions = [#'MSVC_BUILD',
+                    #'OS_64BIT' (TODO)
+                   ]
+user_flags = '-std=c++0x'
+user_debugflags = '-g -D_DEBUG -Wall' # '-ggdb'
+
+env = Environment()
+
+
+execfile('CommonSConstruct', globals())
+
+
+#########################################################
+# Execute the unit tests build script
+SConscript('./SConscriptTests', build_dir=user_test_dir, duplicate=0)
