@@ -7,6 +7,10 @@
       <itemPath>../../src/api.inl</itemPath>
     </logicalFolder>
     <logicalFolder name="stream" displayName="stream" projectFiles="true">
+      <logicalFolder name="f1" displayName="ext" projectFiles="true">
+        <itemPath>../../../../api/osix/stream/ext/qstream.h</itemPath>
+        <itemPath>../../../../api/osix/stream/ext/qstream.hpp</itemPath>
+      </logicalFolder>
       <itemPath>../../../../api/osix/stream/stream.h</itemPath>
       <itemPath>../../../../api/osix/stream/stream.hpp</itemPath>
     </logicalFolder>
@@ -51,6 +55,12 @@
         <requiredProjects>
         </requiredProjects>
       </makefileType>
+      <item path="../../../../api/osix/stream/ext/qstream.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/stream/ext/qstream.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/stream/stream.h">
         <itemTool>3</itemTool>
       </item>
@@ -95,6 +105,12 @@
         <requiredProjects>
         </requiredProjects>
       </makefileType>
+      <item path="../../../../api/osix/stream/ext/qstream.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/stream/ext/qstream.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/stream/stream.h">
         <itemTool>3</itemTool>
       </item>
@@ -139,6 +155,12 @@
         <requiredProjects>
         </requiredProjects>
       </makefileType>
+      <item path="../../../../api/osix/stream/ext/qstream.h">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/stream/ext/qstream.hpp">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/stream/stream.h">
         <itemTool>3</itemTool>
       </item>
