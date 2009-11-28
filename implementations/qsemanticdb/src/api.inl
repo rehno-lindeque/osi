@@ -16,9 +16,41 @@
 #define cast_object QSemanticDB::SemanticDB::cast_object
 
 /*                              IMPLEMENTATION                              */
+// QSemanticDB
+FORCE_INLINE QSemanticDB::SemanticDBImplementation* QSemanticDB::SemanticDB::operator-> ()
+{ 
+  return semanticDB; 
+}
+
+// OSIX
 OSIX::SemanticDB* OSI_API_CALL OSIX::semanticDBInit()
 {
   return static_cast<OSIX::SemanticDB*>(new QSemanticDB::SemanticDB());
+}
+
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareSymbol(const OSchar* name)
+{
+  return _this->DeclareSymbol(name);
+}
+
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareRelation(Relation& relation)
+{
+  _this->DeclareRelation(relation);
+}
+
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareOpenDomain(const OSchar* name)
+{
+  _this->DeclareOpenDomain(name);
+}
+
+void OSI_API_CALL OSIX::SemanticDB::CloseDomain(const OSchar* name)
+{
+  _this->CloseDomain(name);
+}
+
+void OSI_API_CALL OSIX::SemanticDB::CloseDomain()
+{
+  _this->CloseDomain();
 }
 
 #endif

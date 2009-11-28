@@ -55,20 +55,30 @@
 // Boost
 //#include <boost/bimap.hpp>
 
-// QSemanticDB
-#include "semanticdb.h"
 
-/*                                  CLASSES                                 */
+
 namespace QSemanticDB
 {
+/*                            FORWARD DECLARATIONS                          */
+  class SemanticDBImplementation;
+
+/*                                   TYPES                                  */
+  typedef OSIX::SemanticDB::Relation Relation;
+  typedef OSIX::SemanticId SemanticId;
+  
+/*                                  CLASSES                                 */  
   class SemanticDB : public BaseSemanticDB::SemanticDB
   {
   public:
     SemanticDBImplementation* semanticDB;
 
+    // Constructor
     FORCE_INLINE SemanticDB() {}
-    FORCE_INLINE SemanticDBImplementation* operator-> () { return semanticDB; }
-
+    
+    // Semantic DB implementation
+    SemanticDBImplementation* operator-> ();
+    
+    // Debug classes
 #   ifdef _DEBUG
       class SemanticDBDbg : public OSIX::SemanticDBDbg
       {
@@ -76,15 +86,14 @@ namespace QSemanticDB
         INLINE SemanticDB& GetSemanticDB() { return *(SemanticDB*)(((uint8*)this) - offsetof(SemanticDB, semanticDBDbg)); }
       } semanticDBDbg;
 #   endif
-      
-  protected:
-    
-    std::vector<SemanticId> epsilonDomain;
-    std::vector<Relation> relations;
   };
 }
 
 /*                                   INCLUDES                               */
+// QSemanticDB
+#include "semanticdb.h"
+
+// Inline implementation
 #ifdef OSI_STATIC_C_BUILD
 #include "api.inl"
 #endif

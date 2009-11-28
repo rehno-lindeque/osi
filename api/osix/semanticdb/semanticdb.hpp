@@ -23,7 +23,7 @@
 namespace OSIX
 {
   /*                                   TYPES                                  */
-
+  typedef OSuint32 SemanticId;
 
   /*                                     API                                  */
   class SemanticDB
@@ -33,12 +33,17 @@ namespace OSIX
     inline SemanticDB(const SemanticDB&) {}
     
   public:
-    typedef OSuint32 SemanticId;
     struct Relation
     {
       SemanticId domain;
       SemanticId codomain;
-    };    
+    };
+    
+    SemanticId DeclareSymbol(const OSchar* name);    
+    SemanticId DeclareRelation(Relation& relation);    
+    SemanticId DeclareOpenDomain(const OSchar* name);
+    void CloseDomain(const OSchar* name);
+    void CloseDomain();    
   };
 
   SemanticDB* OSI_API_CALL semanticDBInit();

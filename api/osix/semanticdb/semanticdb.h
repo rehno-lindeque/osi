@@ -31,7 +31,7 @@ extern "C" {
 /* debug */
 //void* OSI_API_C_CALL debugInit();
   
-void OSI_API_C_CALL parserInit();
+void OSI_API_C_CALL semanticDBInit();
 
 #ifdef __cplusplus
 }
