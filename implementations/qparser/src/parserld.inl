@@ -36,18 +36,8 @@ namespace QParser
     ParseTokens rules;
     RecognitionPass(parseResult, rules);
     
-    // Perform the final translation pass   
-    
-    /*// Main parse loop
-    while(true)
-    {
-      token = (cToken < parseResult.lexStream.length)? parseResult.lexStream.data[cToken].id : ID_SPECIAL;
-
-    skipTokenInitialization:
-
-      const BinaryIndexElement& parseElement = binaryParseTable[cTable];
-      if(parseElement.action == BinaryIndexElement::LRACTION_ERROR)
-      {*/
+    // Perform the final parse tree construction pass
+    ConstructAST(parseResult, rules);
   }
   
   void ParserLD::RecognitionPass(ParseResult& parseResult, ParseTokens& rules)
@@ -79,11 +69,7 @@ namespace QParser
 #endif
       }
       skipReadingToken = true;
-    
-      // If the lexical token doesn't need to be re-read, skip to this label instead of continueing
-      // Todo: we should test this and make sure that this optimization doesn't confuse the compiler
-      // skipReading:
-        
+
       // Read a parse action from the parse table
       parseAction = parseTable[parseState];
       
@@ -173,7 +159,7 @@ namespace QParser
           // (We assume that the pivot action will succeed)
           returnStates.push(parseState + 2*nPivots);
           
-          // Attempt to shift each of the pivots until a hit is 
+          // Attempt to shift each of the pivots until a hit is found
           uint c;
           for(c = 0; c < nPivots; ++c)
           {
@@ -278,141 +264,21 @@ namespace QParser
       }      
     }
   }
-
-  /*template<typename Item>
-  void GrammarLR<Item>::getStartItems(OSid nonterminal, vector<Item> &items)
+  
+  void ParserLD::ConstructAST(ParseResult& parseResult, ParseTokens& rules)
   {
-    OSI_ASSERT(!isTerminal(nonterminal));
-    ProductionSet* productionSet = getProductionSet(nonterminal);
-
-    Item item(nonterminal);
-    for(uint cProduction = 0; cProduction < productionSet->productionsLength; ++cProduction)
+    std::stack<uint> ruleChildCount;
+    /*while(true)
     {
-      item.productionIndex = productionSet->productionsOffset + cProduction;
-
-      // Add the item to the set if not already present
-      // todo: (optimization) use some form of index for this... (unfortunately stl doesn't allow multiple indexes...)
-      typename vector<Item>::iterator i;
-      for(i = items.begin(); i != items.end(); ++i) if (*i == item) break;
-      if(i == items.end())
-        items.push_back(item);
-    }
+      for(auto i = rules.begin(); i != rules.end(); ++i)
+      {
+        ProductionRule& rule = Grammar::rules[*i];
+        if(rule.)
+      }
+    }*/
   }
   
-  template<typename Item>
-  bool GrammarLR<Item>::getFirstTerminals(OSid id, set<OSid>& firstTerminals)
-  {
-    if(isTerminal(id))
-    {
-      firstTerminals.insert(id);
-      return false;  // FIRST(id) is not nullable
-    }
-
-    // Initialize the nullable attribute
-    ProductionSet& productionSet = *getProductionSet(id);
-    ++productionSet.visitedCount;
-
-    if(productionSet.visitedCount > 1)
-      return productionSet.nullable;
-
-    // Get first items
-    for(uint c = 0; c < productionSet.productionsLength; ++c)
-    {
-      const Production& production = productions[productionSet.productionsOffset + c].first;
-      bool productionNullable = true;
-
-      for(uint cSymbol = 0; cSymbol < production.symbolsLength; ++cSymbol)
-      {
-        productionNullable &= getFirstTerminals(production.symbols[cSymbol].id, firstTerminals);
-        if(!productionNullable)
-          break;
-      }
-
-      // If the production set's nullity changes and the production set is recursive, we must restart the process with the new nullity value
-      if((productionNullable || production.symbolsLength == 0) && productionSet.nullable == false)
-      {
-        // Note: If getFirstTerminals is called on productionSet for the first time, its nullity MUST be false.
-        //       It can change to true during evaluation of this function, but can never return to false.
-        //       If the nullity of the nonterminal changes and the nonterminals is recursive (visited count becomes > 1
-        //       during evaluation of its sub tokens), the function must be restarted using the new nullity value
-        //       (which must then be true since we can't return to false).
-        //       Also note that we don't need to restore the firstTerminals to its previous state since, we can only
-        //       add more terminals by making this nonterminal nullable.
-
-        productionSet.nullable = true;
-        productionSet.visitedCount = 0;
-        return getFirstTerminals(id, firstTerminals);
-      }
-    }
-
-    // Reset the visited count (since this is the first evaluation of the production set)
-    productionSet.visitedCount = 0;
-
-    return productionSet.nullable;
-  }
   
-  template<typename Item>
-  void GrammarLR<Item>::getLookaheadTerminals(const Item& item, set<OSid>& lookaheadTerminals)
-  {
-    const Production& production = productions[item.productionIndex].first;
-    for(uint cSymbol = item.inputPosition + 1; cSymbol < production.symbolsLength; ++cSymbol)
-    {
-      if(!getFirstTerminals(production.symbols[cSymbol].id, lookaheadTerminals))
-        return; // The symbol (terminal / nonterminal) is not nullable, so we're done
-    }
-
-    // Add the lookahead symbol of the parent item if all other items are nullable
-    // (this might be -1 for no lookahead)
-    lookaheadTerminals.insert(item.lookaheadSymbol);
-  }
-
-  template<typename Item>
-  int GrammarLR<Item>::findItemState(const Item& item)
-  {
-    typename map<Item, uint>::iterator i = itemStateIndex.find(item);
-    if(i == itemStateIndex.end() || i->first != item)
-      return -1;
-    return i->second;
-  }
-
-#ifdef _DEBUG
-  template<typename Item>
-  void GrammarLR<Item>::debugOutputEdge(typename State::Edges::const_reference edge) const
-  {
-    cout << "--(";
-    debugOutputSymbol(edge.first);
-    cout << ")--> " << edge.second;
-  }
-
-  template<typename Item>
-  void GrammarLR<Item>::debugOutputStates() const
-  {
-    cout << std::endl;
-    for(uint c = 0; c < states.size(); ++c)
-    {
-      const State& state = *states[c];
-      cout << "State " << c << std::endl;
-      cout << "---------" << std::endl;
-      cout << "Items:" << std::endl;
-      for(typename vector<Item>::const_iterator iItem = state.items.begin(); iItem != state.items.end(); ++iItem)
-      {
-        cout << ' ';
-        debugOutputItem(*iItem);
-        cout << std::endl;
-      }
-
-      cout << "Edges:" << std::endl;
-      for(typename State::Edges::const_iterator iEdge = state.edges.begin(); iEdge != state.edges.end(); ++iEdge)
-      {
-        cout << ' ';
-        debugOutputEdge(*iEdge);
-        cout << std::endl;
-      }
-
-      cout << std::endl;
-    }
-  }
-#endif*/
 }
 
 #endif

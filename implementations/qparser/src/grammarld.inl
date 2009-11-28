@@ -844,14 +844,22 @@ namespace QParser
         // (The state may have already been replaced by a goto action)
         if(state.outgoingPivots.size() == 0)        
         {
-          ////////////////////////////// TEMPORARY
-          std::cout << "AddActionRow" << std::endl;
-          ////////////////////////////// TEMPORARY
-          auto& newGotoRow = builder.AddActionRow();
-          gotoState = new State(newGotoRow);
-          states.push_back(gotoState); 
-          rootState.outgoingGotos.insert(std::make_pair(&state, gotoState));
-          //gotoState->incomingGotos.insert(std::make_pair(&state, gotoState));
+          auto iGotoState = rootState.outgoingGotos.find(&state);
+          if(iGotoState == rootState.outgoingGotos.end())
+          {
+            ////////////////////////////// TEMPORARY
+            std::cout << "AddActionRow" << std::endl;
+            ////////////////////////////// TEMPORARY
+            auto& newGotoRow = builder.AddActionRow();
+            gotoState = new State(newGotoRow);
+            states.push_back(gotoState); 
+            rootState.outgoingGotos.insert(std::make_pair(&state, gotoState));
+            //gotoState->incomingGotos.insert(std::make_pair(&state, gotoState));
+          }
+          else
+          {
+            gotoState = iGotoState->second;
+          }
         }
         else
         {
@@ -863,17 +871,18 @@ namespace QParser
           gotoState = &state;
           auto& newPivotRow = builder.AddActionRow();
           states.push_back(new State(newPivotRow));
-          states.back()->cyclicNestingDepth = state.cyclicNestingDepth;
-          rootState.outgoingGotos.insert(std::make_pair(states.back(), &state));
-          //gotoState->incomingGotos.insert(std::make_pair(states.back(), &state));
+          State& pivotState = *states.back();
+          pivotState.cyclicNestingDepth = state.cyclicNestingDepth;
+          rootState.outgoingGotos.insert(std::make_pair(&pivotState, gotoState));
+          //gotoState->incomingGotos.insert(std::make_pair(&pivotState, &state));
           
           // Replace the pivot with the new pivot state
           auto terminal = prevState.outgoingPivots.left.find(&state)->second;
-          prevState.outgoingPivots.insert(LDState::PivotEdge(states.back(), terminal));
-          //states.back()->incomingPivots.insert(LDState::PivotEdge(states.back(), terminal));
-          states.back()->incomingPivots.insert(states.back());
+          prevState.outgoingPivots.insert(LDState::PivotEdge(&pivotState, terminal));
           //state.incomingPivots.clear(state.incomingPivots.find(&state));
           state.incomingPivots.erase(&state);
+          //states.back()->incomingPivots.insert(LDState::PivotEdge(states.back(), terminal));
+          states.back()->incomingPivots.insert(states.back());
         }
       }
       

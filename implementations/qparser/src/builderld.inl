@@ -47,7 +47,7 @@ namespace QParser
       rowOffsets.push_back(ParseToken(parseTable.size()));
       
       // First output all ReducePrev actions in this row
-      std::copy(actionRow.resolvedReductions.begin(), actionRow.resolvedReductions.end(), std::back_inserter(parseTable));
+      //old: std::copy(actionRow.resolvedReductions.begin(), actionRow.resolvedReductions.end(), std::back_inserter(parseTable));
       
       // Get an iterator into the pivot sets associated with this action row
       PivotSets::const_iterator iPivotSet = actionRow.pivotSets.begin();
@@ -191,7 +191,8 @@ namespace QParser
   INLINE void BuilderLD::ActionRow::AddActionReducePrev(ParseToken rule)
   {
     // Add the action to the list of resolved (delayed) reductions
-    resolvedReductions.push_back(rule | TOKEN_FLAG_REDUCEPREV);      
+    //resolvedReductions.push_back(rule | TOKEN_FLAG_REDUCEPREV);
+    actions.push_back(rule | TOKEN_FLAG_REDUCEPREV);
   }
   
   /*INLINE void BuilderLD::ActionRow::AddActionGoto(ParseToken lookaheadRow, ParseToken targetRow)

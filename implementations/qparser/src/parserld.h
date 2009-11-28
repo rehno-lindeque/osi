@@ -71,6 +71,9 @@ namespace QParser
     
     // Perform the recognition pass
     void RecognitionPass(ParseResult& parseResult, ParseTokens& rules);
+    
+    // Construct the abstract syntax tree using the rules given from the recognition pass
+    void ConstructAST(ParseResult& parseResult, ParseTokens& rules);
   };
 }
 

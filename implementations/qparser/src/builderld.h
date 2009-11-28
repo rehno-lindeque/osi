@@ -145,7 +145,7 @@ namespace QParser
   {
   public:
     ParseTokens actions;            // Sequence of actions contained in this row
-    ParseTokens resolvedReductions; // Delayed reductions that should be resolved using ReducePrev actions
+    //ParseTokens resolvedReductions; // Delayed reductions that should be resolved using ReducePrev actions
     PivotSets pivotSets;            // Sets of pivots contained in the row
     GotoSet gotoSet;                // Set of gotos contained in the row
 
