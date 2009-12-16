@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 /*                                     API                                  */
-
+void OSI_API_C_CALL DebugOutputEnvironment();
 
 #ifdef __cplusplus
 }

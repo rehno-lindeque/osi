@@ -16,28 +16,48 @@ module OSIX.SemanticDB where
       OpenSemanticDB Haskell FFI interface.
 -}
 {-                                 INCLUDES                                 -}
-
 import Foreign
 import Foreign.C
---import Foreign.C.Types
+import Foreign.C.Types
 
 {-                                 CONSTANTS                                -}
--- #define PARSER_VERSION "0.1"
--- #define PARSER_TOKEN_VALUE_EOF "\x01"
 
 {-                                   TYPES                                  -}
+type SemanticId = CUInt
 
--- #ifdef __cplusplus
--- extern "C" {
--- #endif
+{-                                    API                                   -}
+semanticDBInit :: IO (StablePtr (Maybe Int))
 
-{-                                     API                                  -}
-  
-foreign import ccall "semanticdb.h semanticDBInit"
-     c_semanticDBInit :: IO ()
+{-                               DEBUGING API                               -}
 
--- #ifdef __cplusplus
--- }
--- #endif
+{-                                   C API                                  -}
+{- symbols -}
+foreign import ccall unsafe "semanticdb.h DeclareSymbol"
+  c_DeclareSymbol :: CString -> IO SemanticId
 
--- #endif
+{- relations -}
+foreign import ccall unsafe "semanticdb.h DeclareRelation"
+  c_DeclareRelation :: SemanticId -> SemanticId -> IO SemanticId
+
+{- domains -}
+foreign import ccall unsafe "semanticdb.h DeclareOpenDomain"
+  c_DeclareOpenDomain :: CString -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h CloseDomain"
+  c_CloseDomain :: CString -> IO ()
+
+{- debuging -}
+foreign import ccall unsafe "semanticdb.h SemanticDBDebugInit"
+  c_SemanticDBDebugInit :: IO (StablePtr (Maybe Int))
+
+{- initialization -}
+foreign import ccall unsafe "semanticdb.h SemanticDBInit"
+  c_SemanticDBInit :: IO ()
+
+{-                              C DEBUGING API                              -}
+foreign import ccall unsafe "semanticdbdbg.h DebugOutputEnvironment"
+  c_DebugOutputEnvironment :: IO ()
+
+{-                              IMPLEMENTATION                              -}
+semanticDBInit = c_SemanticDBInit >> c_SemanticDBDebugInit
+

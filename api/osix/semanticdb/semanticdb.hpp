@@ -29,25 +29,34 @@ namespace OSIX
   class SemanticDB
   {
   protected:
-    inline SemanticDB() {}
-    inline SemanticDB(const SemanticDB&) {}
+    OSI_INLINE_METHOD SemanticDB() {}
+    OSI_INLINE_METHOD SemanticDB(const SemanticDB&) {}
     
   public:
+    /* symbols */
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareSymbol(const OSchar* name);    
+    
+    /* relations */
     struct Relation
     {
       SemanticId domain;
       SemanticId codomain;
-      inline Relation(SemanticId domain, SemanticId codomain) : domain(domain), codomain(codomain) {}
+      OSI_INLINE_METHOD Relation(SemanticId domain, SemanticId codomain) : domain(domain), codomain(codomain) {}
     };
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareRelation(const Relation& relation);
+    OSI_INLINE_METHOD SemanticId OSI_API_CALL DeclareRelation(SemanticId domain, SemanticId codomain) { return DeclareRelation(domain, codomain); }
     
-    SemanticId DeclareSymbol(const OSchar* name);    
-    SemanticId DeclareRelation(const Relation& relation);    
-    SemanticId DeclareOpenDomain(const OSchar* name);
-    void CloseDomain(const OSchar* name);
-    void CloseDomain();    
+    /* domains */
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareOpenDomain(const OSchar* name);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL CloseDomain(const OSchar* name);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL CloseDomain();
+    
+    /* debug */
+    OSI_DYNAMIC_METHOD void* OSI_API_CALL DebugInit();
   };
 
-  SemanticDB* OSI_API_CALL semanticDBInit();
+  /* initialization */
+  SemanticDB* OSI_API_CALL SemanticDBInit();
 }
 
 #endif

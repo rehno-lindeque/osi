@@ -29,7 +29,7 @@ namespace OSIX
   class SemanticDBDbg
   {
   public:
-    
+    OSI_DYNAMIC_METHOD void OSI_API_CALL DebugOutputEnvironment();
   };
 }
 
