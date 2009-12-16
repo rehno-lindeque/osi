@@ -18,6 +18,6 @@ OSIX::SemanticDB *semanticDB = null;
 /* debug */
 //void* OSI_API_C_CALL debugInit() { return semanticDB->debugInit(); }
 
-void OSI_API_C_CALL semanticDBInit() { semanticDB = OSIX::semanticDBInit(); }
+extern "C" void OSI_API_C_CALL semanticDBInit() { semanticDB = OSIX::semanticDBInit(); }
 
 #endif

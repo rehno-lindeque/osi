@@ -33,14 +33,14 @@ OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareSymbol(const OSchar* name
   return _this->DeclareSymbol(name);
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareRelation(Relation& relation)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareRelation(const Relation& relation)
 {
-  _this->DeclareRelation(relation);
+  return _this->DeclareRelation(relation);
 }
 
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareOpenDomain(const OSchar* name)
 {
-  _this->DeclareOpenDomain(name);
+  return _this->DeclareOpenDomain(name);
 }
 
 void OSI_API_CALL OSIX::SemanticDB::CloseDomain(const OSchar* name)

@@ -32,31 +32,51 @@ namespace QSemanticDB
     //Destructor
     virtual ~SemanticDBImplementation();
     
-    OSIX::SemanticId DeclareSymbol(const char* name);    
-    OSIX::SemanticId DeclareRelation(OSIX::SemanticDB::Relation& relation);    
-    OSIX::SemanticId DeclareOpenDomain(const char* name);
+    SemanticId DeclareSymbol(const char* name);    
+    SemanticId DeclareRelation(const Relation& relation);    
+    SemanticId DeclareOpenDomain(const char* name);
     void CloseDomain(const char* name);
     void CloseDomain();
 
   protected:
+    
+    // (string, SemanticID) mappings
+    typedef std::pair<std::string, SemanticId> StringIdPair;
+    class StringIdAllocator : public std::allocator<StringIdPair>
+    {
+       pointer allocate (size_type num, const void* = 0) 
+       {
+           // print message and allocate memory with global new
+           pointer ret = (pointer)(::operator new(num*sizeof(StringIdPair)));
+           ret->second = SemanticId(-1);
+           return ret;
+       }
+    };
+    typedef std::unordered_map<std::string, SemanticId, std::hash<std::string>, std::equal_to<std::string>, StringIdAllocator> StringIdMap;
+    
+    
+    // The map of all tokens and their ids (in any context)
+    StringIdMap tokens;
+    SemanticId nextTokenId;  // The next id to be assigned to a token in DeclareGlobal
+    
     // Global domain of all literals (whose hash function are not equal to their own values)
     // (Note: this is equivalent to a perfect hash map since hash values that may contain conflicts are mapped
     // to permanent tokens that do not contain conflicts)
-    std::vector<OSIX::SemanticId> epsilonStrings;
+    std::vector<SemanticId> epsilonStrings;
         
-    std::vector<OSIX::SemanticId> epsilonDomain;        // Global domain of all symbols
+    std::vector<SemanticId> epsilonDomain;        // Global domain of all symbols
     std::vector<OSIX::SemanticDB::Relation> relations;  // Database of relations
-    std::stack<OSIX::SemanticId> environment;           // Environment of open domains
-    OSIX::SemanticId activeDomainId;                    // The last opened domain
+    std::stack<SemanticId> environment;           // Environment of open domains
+    SemanticId activeDomainId;                    // The last opened domain
 
     // Constants
-    static const OSIX::SemanticId epsilonId;            // The global domain "epsilon"
+    static const SemanticId epsilonId;            // The global domain "epsilon"
     
     // Declare an atomic symbol in the global domain "epsilon"
-    void DeclareGlobal(const char* name);
+    SemanticId DeclareGlobal(const char* name);
     
     // A helper for declaring a relation from an associative pair of ids
-    OSIX::SemanticId DeclareRelation(SemanticId domain, OSIX::SemanticId codomain);
+    SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
   };
 }
 

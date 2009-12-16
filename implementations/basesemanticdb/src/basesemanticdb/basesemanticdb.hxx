@@ -25,7 +25,7 @@ namespace BaseSemanticDB
                              INLINE void        SemanticDB::DeleteObject(Base::Object* object) { delete object; objects.remove(object); }
   template<class ObjectType> INLINE ObjectType* SemanticDB::cast_id(OSobject object)        { return (ObjectType*)(Base::Object*)object; }
   template<class ObjectType> INLINE OSobject    SemanticDB::cast_object(ObjectType* object) { return (OSobject)(Base::Object*)object; }
-                             INLINE void        SemanticDB::DeleteAllObjects()              { for(auto i = objects.begin(); i != objects.end(); ++i) delete *i; objects.clear(); }
+                             INLINE void        SemanticDB::DeleteAllObjects()              { for(std::list<Base::Object*>::iterator i = objects.begin(); i != objects.end(); ++i) delete *i; objects.clear(); }
 }
 
 #endif

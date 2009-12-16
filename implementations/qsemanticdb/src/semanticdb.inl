@@ -11,7 +11,7 @@
 
 namespace QSemanticDB
 {
-  SemanticDBImplementation::SemanticDBImplementation()
+  SemanticDBImplementation::SemanticDBImplementation() : nextTokenId(0)
   {
   }
 
@@ -24,7 +24,7 @@ namespace QSemanticDB
     return DeclareRelation(activeDomainId, DeclareGlobal(name));
   }
   
-  SemanticId SemanticDBImplementation::DeclareRelation(Relation& relation)
+  SemanticId SemanticDBImplementation::DeclareRelation(const Relation& relation)
   {
     return -1;
   }
@@ -46,17 +46,26 @@ namespace QSemanticDB
   void SemanticDBImplementation::CloseDomain()
   {
     environment.pop();
-    activeDomainId = environment.peek();
+    activeDomainId = environment.top();
   }
   
   SemanticId SemanticDBImplementation::DeclareGlobal(const char* name)
   {
-    epsilonDomain.push(name)
+    OSI_ASSERT(name != null);
+    const std::string nameString(name);
+    SemanticId &id = tokens[nameString];
+    if (id == SemanticId(-1))
+    {
+      id = nextTokenId;
+      epsilonDomain.push_back(id);
+      ++nextTokenId;
+    }
+    return id;
   }
   
-  OSIX::SemanticId DeclareRelation(SemanticId domain, SemanticId codomain)
+  SemanticId SemanticDBImplementation::DeclareRelation(SemanticId domain, SemanticId codomain)
   {
-    DeclareRelation(Relation(domain, codomain))
+    return DeclareRelation(Relation(domain, codomain));
   }
 }
 
