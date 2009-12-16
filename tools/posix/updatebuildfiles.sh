@@ -8,6 +8,7 @@ echo 'Copying common build system files to all projects...'
 
 cp -r common/buildfiles/* ../samples/parsertest/project/
 cp -r common/buildfiles/* ../implementations/qparser/project/
+cp -r common/buildfiles/* ../implementations/qsemanticdb/project/
 
 echo 'Done'
 echo
