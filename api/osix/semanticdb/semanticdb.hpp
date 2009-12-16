@@ -37,10 +37,11 @@ namespace OSIX
     {
       SemanticId domain;
       SemanticId codomain;
+      inline Relation(SemanticId domain, SemanticId codomain) : domain(domain), codomain(codomain) {}
     };
     
     SemanticId DeclareSymbol(const OSchar* name);    
-    SemanticId DeclareRelation(Relation& relation);    
+    SemanticId DeclareRelation(const Relation& relation);    
     SemanticId DeclareOpenDomain(const OSchar* name);
     void CloseDomain(const OSchar* name);
     void CloseDomain();    
