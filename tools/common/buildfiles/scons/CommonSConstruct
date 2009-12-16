@@ -4,7 +4,7 @@
 #
 #     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
 #
-#     Version 0.04 (2009-05-01)
+#     Version 0.05 (2009-12-16)
 #
 #     (The versioning on this file is usefull because it may be copied often.
 #     Try and keep build scripts as up to date as possible. I.e. Always use
@@ -83,8 +83,8 @@ objects = []
 
 main_target = user_target
 
-def argument_eq(arg, value): ARGUMENTS.get(arg,0) == value
-def argument_exist(arg): bool(ARGUMENTS.get(arg,0))
+def argument_eq(arg, value): return ARGUMENTS.get(arg,0) == value
+def argument_exist(arg): return bool(ARGUMENTS.get(arg,0))
 
 target_postfix_rules = [
   (argument_eq('targetlang', 'c'), 'c'), 
