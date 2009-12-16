@@ -13,10 +13,18 @@
       QSemanticDB API for OpenSemanticDB 0.1.
 */
 /*                              COMPILER MACROS                             */
+// Extended standard library flags
 #ifdef _MSC_VER
 # define STDEXT_NAMESPACE stdext
 #else
 # define STDEXT_NAMESPACE __gnu_cxx
+#endif
+
+// Verbose debugging flags
+#ifdef _DEBUG
+# define QSEMANTICDB_DEBUG_VERBOSE
+#elif defined(QSEMANTICDB_DEBUG_VERBOSE)
+# undef QSEMANTICDB_DEBUG_VERBOSE
 #endif
         
 /*                                 INCLUDES                                 */
@@ -43,12 +51,12 @@
 #include <unordered_map>
 /*#include <unordered_set>*/
 
-// STL extensions
-/*#ifdef _MSC_VER
+// C++ Std extensions
+#ifdef _MSC_VER
 # include <ext/stdio_filebuf.h>?
 #else
 # include <ext/stdio_filebuf.h>
-#endif*/
+#endif
 
 // CLib
 //#include <memory.h>
@@ -75,7 +83,7 @@ namespace QSemanticDB
 
     // Constructor
     FORCE_INLINE SemanticDB() {}
-    
+       
     // Semantic DB implementation
     SemanticDBImplementation* operator-> ();
     
@@ -84,7 +92,7 @@ namespace QSemanticDB
       class SemanticDBDbg : public OSIX::SemanticDBDbg
       {
       public:
-        INLINE SemanticDB& GetSemanticDB() { return *(SemanticDB*)(((uint8*)this) - offsetof(SemanticDB, semanticDBDbg)); }
+        INLINE SemanticDB& GetSemanticDB() { return *(SemanticDB*)(((uint8*)this) - offsetof(SemanticDB, semanticDBDbg)); }        
       } semanticDBDbg;
 #   endif
   };
@@ -96,7 +104,10 @@ namespace QSemanticDB
 
 // Inline implementation
 #ifdef OSI_STATIC_C_BUILD
-#include "api.inl"
+# include "api.inl"
+# ifdef _DEBUG
+#   include "apidbg.inl"
+# endif
 #endif
 
 #endif

@@ -23,9 +23,11 @@ FORCE_INLINE QSemanticDB::SemanticDBImplementation* QSemanticDB::SemanticDB::ope
 }
 
 // OSIX
-OSIX::SemanticDB* OSI_API_CALL OSIX::semanticDBInit()
+OSIX::SemanticDB* OSI_API_CALL OSIX::SemanticDBInit()
 {
-  return static_cast<OSIX::SemanticDB*>(new QSemanticDB::SemanticDB());
+  QSemanticDB::SemanticDB* semanticDB = new QSemanticDB::SemanticDB();
+  (*semanticDB)->Init();
+  return static_cast<OSIX::SemanticDB*>(semanticDB);
 }
 
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareSymbol(const OSchar* name)
@@ -51,6 +53,15 @@ void OSI_API_CALL OSIX::SemanticDB::CloseDomain(const OSchar* name)
 void OSI_API_CALL OSIX::SemanticDB::CloseDomain()
 {
   _this->CloseDomain();
+}
+
+void* OSI_API_CALL OSIX::SemanticDB::DebugInit()
+{
+# ifdef _DEBUG
+    return &_this.semanticDBDbg;
+# else
+    return null;
+# endif
 }
 
 #endif

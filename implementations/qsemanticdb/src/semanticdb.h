@@ -25,6 +25,9 @@ namespace QSemanticDB
 /*                                  CLASSES                                 */
   class SemanticDBImplementation : public Base::Object
   {
+#ifdef _DEBUG
+    friend class ::OSIX::SemanticDBDbg;
+#endif
   public:
     // Constructor
     INLINE SemanticDBImplementation();
@@ -37,9 +40,16 @@ namespace QSemanticDB
     SemanticId DeclareOpenDomain(const char* name);
     void CloseDomain(const char* name);
     void CloseDomain();
-
-  protected:
     
+    // Initialization
+    void Init();
+    
+    // Message streams
+    INLINE void SetErrorStream(FILE* stream);
+    INLINE void SetWarningStream(FILE* stream);
+    INLINE void SetInfoStream(FILE* stream);
+    
+  protected:    
     // (string, SemanticID) mappings
     typedef std::pair<std::string, SemanticId> StringIdPair;
     class StringIdAllocator : public std::allocator<StringIdPair>
@@ -54,7 +64,6 @@ namespace QSemanticDB
     };
     typedef std::unordered_map<std::string, SemanticId, std::hash<std::string>, std::equal_to<std::string>, StringIdAllocator> StringIdMap;
     
-    
     // The map of all tokens and their ids (in any context)
     StringIdMap tokens;
     SemanticId nextTokenId;  // The next id to be assigned to a token in DeclareGlobal
@@ -68,6 +77,11 @@ namespace QSemanticDB
     std::vector<OSIX::SemanticDB::Relation> relations;  // Database of relations
     std::stack<SemanticId> environment;           // Environment of open domains
     SemanticId activeDomainId;                    // The last opened domain
+    
+    // Streams for messages to be output
+    std::ostream errorStream;
+    std::ostream warnStream;
+    std::ostream infoStream;
 
     // Constants
     static const SemanticId epsilonId;            // The global domain "epsilon"
@@ -77,6 +91,11 @@ namespace QSemanticDB
     
     // A helper for declaring a relation from an associative pair of ids
     SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
+    
+#ifdef _DEBUG
+    // Debugging functions
+     void DebugOutputEnvironment();
+#endif
   };
 }
 

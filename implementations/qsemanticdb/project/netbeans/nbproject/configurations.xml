@@ -44,6 +44,7 @@
     <logicalFolder name="parser" displayName="semanticdb" projectFiles="true">
       <itemPath>../../../../api/osix/semanticdb/semanticdb.h</itemPath>
       <itemPath>../../../../api/osix/semanticdb/semanticdb.hpp</itemPath>
+      <itemPath>../../../../api/osix/semanticdb/semanticdb.hs</itemPath>
       <itemPath>../../../../api/osix/semanticdb/semanticdbdbg.h</itemPath>
       <itemPath>../../../../api/osix/semanticdb/semanticdbdbg.hpp</itemPath>
     </logicalFolder>
@@ -51,6 +52,7 @@
       <itemPath>../../src/api.cpp</itemPath>
       <itemPath>../../src/api.h</itemPath>
       <itemPath>../../src/api.inl</itemPath>
+      <itemPath>../../src/apidbg.inl</itemPath>
       <itemPath>../../src/functors.h</itemPath>
       <itemPath>../../src/semanticdb.h</itemPath>
       <itemPath>../../src/semanticdb.inl</itemPath>
@@ -67,6 +69,7 @@
       <itemPath>../make/Makefile</itemPath>
       <itemPath>qsemanticdb-Makefile.mk</itemPath>
       <itemPath>../scons/SConscript</itemPath>
+      <itemPath>../../../basesemanticdb/project/scons/SConscript</itemPath>
       <itemPath>../scons/SConscriptTests</itemPath>
       <itemPath>../scons/SConstargetscript</itemPath>
       <itemPath>../scons/SConstruct</itemPath>
@@ -107,6 +110,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
         <itemTool>3</itemTool>
       </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
@@ -212,6 +218,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
@@ -264,6 +273,9 @@
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
         <itemTool>3</itemTool>
       </item>
@@ -367,6 +379,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
@@ -420,6 +435,9 @@
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
         <itemTool>3</itemTool>
       </item>
@@ -523,6 +541,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
@@ -576,6 +597,9 @@
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
         <itemTool>3</itemTool>
       </item>
@@ -679,6 +703,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
@@ -732,6 +759,9 @@
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
         <itemTool>3</itemTool>
       </item>
@@ -835,6 +865,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
@@ -888,6 +921,9 @@
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
         <itemTool>3</itemTool>
       </item>
@@ -991,6 +1027,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">
@@ -1044,6 +1083,9 @@
       <item path="../../../../api/osix/semanticdb/semanticdb.hpp">
         <itemTool>3</itemTool>
       </item>
+      <item path="../../../../api/osix/semanticdb/semanticdb.hs">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../../../api/osix/semanticdb/semanticdbdbg.h">
         <itemTool>3</itemTool>
       </item>
@@ -1147,6 +1189,9 @@
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.inl">
+        <itemTool>3</itemTool>
+      </item>
+      <item path="../../src/apidbg.inl">
         <itemTool>3</itemTool>
       </item>
       <item path="../../src/functors.h">

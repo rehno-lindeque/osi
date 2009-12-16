@@ -21,6 +21,9 @@
 
 #ifndef OSI_STATIC_C_BUILD
 # include "api.inl"
+# ifdef _DEBUG
+#   include "apidbg.inl"
+# endif
 #endif
 
 /*                                  MACROS                                  */
