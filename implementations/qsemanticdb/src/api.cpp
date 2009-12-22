@@ -30,3 +30,8 @@
 #ifdef _MSC_VER
 # pragma warning(pop)
 #endif
+
+/*                                  GLOBALS                                 */
+const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::invalidId = ~OSIX::SemanticId(0);
+const char* const QSemanticDB::SemanticDBImplementation::epsilonName = "Epsilon";
+const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::epsilonId = ~OSIX::SemanticId(0) - 1;

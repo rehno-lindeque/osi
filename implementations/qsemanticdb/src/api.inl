@@ -19,7 +19,7 @@
 // QSemanticDB
 FORCE_INLINE QSemanticDB::SemanticDBImplementation* QSemanticDB::SemanticDB::operator-> ()
 { 
-  return semanticDB; 
+  return &semanticDB; 
 }
 
 // OSIX
@@ -29,6 +29,15 @@ OSIX::SemanticDB* OSI_API_CALL OSIX::SemanticDBInit()
   (*semanticDB)->Init();
   return static_cast<OSIX::SemanticDB*>(semanticDB);
 }
+
+/*void SemanticDB::Init()
+{
+  // Create the semantic db implementation
+  if (semanticDB)
+    delete semanticDB;
+  semanticDB = new QSemanticDB::SemanticDBImplementation();
+  semanticDB->Init();
+}*/
 
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareSymbol(const OSchar* name)
 {

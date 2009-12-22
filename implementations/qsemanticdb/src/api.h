@@ -42,10 +42,9 @@
 #include <list>*/
 #include <vector>
 /*#include <stack>
-#include <set>
+#include <set>*/
 #include <map>
-#include <string>
-#include <iostream>
+/*#include <iostream>
 #include <fstream>*/
 #include <string>
 #include <unordered_map>
@@ -65,24 +64,32 @@
 //#include <boost/bimap.hpp>
 
 
-
-namespace QSemanticDB
-{
 /*                            FORWARD DECLARATIONS                          */
-  class SemanticDBImplementation;
 
 /*                                   TYPES                                  */
+namespace QSemanticDB
+{
   typedef OSIX::SemanticDB::Relation Relation;
   typedef OSIX::SemanticId SemanticId;
-  
+}
+
+/*                                   INCLUDES                               */
+// QSemanticDB
+#include "semanticdb.h"
+
 /*                                  CLASSES                                 */  
+namespace QSemanticDB
+{
   class SemanticDB : public BaseSemanticDB::SemanticDB
   {
   public:
-    SemanticDBImplementation* semanticDB;
+    SemanticDBImplementation semanticDB;
 
     // Constructor
-    FORCE_INLINE SemanticDB() {}
+    INLINE SemanticDB() {}
+    
+    // Initialization
+    //void Init();
        
     // Semantic DB implementation
     SemanticDBImplementation* operator-> ();
@@ -99,8 +106,6 @@ namespace QSemanticDB
 }
 
 /*                                   INCLUDES                               */
-// QSemanticDB
-#include "semanticdb.h"
 
 // Inline implementation
 #ifdef OSI_STATIC_C_BUILD
