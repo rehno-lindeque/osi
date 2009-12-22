@@ -55,8 +55,10 @@ foreign import ccall unsafe "semanticdb.h SemanticDBInit"
   c_SemanticDBInit :: IO ()
 
 {-                              C DEBUGING API                              -}
+--{-
 foreign import ccall unsafe "semanticdbdbg.h DebugOutputEnvironment"
   c_DebugOutputEnvironment :: IO ()
+--}
 
 {-                              IMPLEMENTATION                              -}
 semanticDBInit = c_SemanticDBInit >> c_SemanticDBDebugInit
