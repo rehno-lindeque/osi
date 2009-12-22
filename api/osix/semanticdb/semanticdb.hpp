@@ -44,7 +44,7 @@ namespace OSIX
       OSI_INLINE_METHOD Relation(SemanticId domain, SemanticId codomain) : domain(domain), codomain(codomain) {}
     };
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareRelation(const Relation& relation);
-    OSI_INLINE_METHOD SemanticId OSI_API_CALL DeclareRelation(SemanticId domain, SemanticId codomain) { return DeclareRelation(domain, codomain); }
+    OSI_INLINE_METHOD SemanticId OSI_API_CALL DeclareRelation(SemanticId domain, SemanticId codomain) { return DeclareRelation(Relation(domain, codomain)); }
     
     /* domains */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareOpenDomain(const OSchar* name);
