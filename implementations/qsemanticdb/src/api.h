@@ -28,27 +28,21 @@
 #endif
         
 /*                                 INCLUDES                                 */
-// OpenParser
+// OpenSemanticDB
 #include <osix/semanticdb/semanticdb.hpp>
 #ifdef _DEBUG
 # include <osix/semanticdb/semanticdbdbg.hpp>
 #endif
 
-// BaseParser
+// BaseSemanticDB
 #include <basesemanticdb/basesemanticdb.h>
+#include <basesemanticdb/orderedrelation.h>
 
 // C++ Std
-/*#include <algorithm>
-#include <list>*/
 #include <vector>
-/*#include <stack>
-#include <set>*/
 #include <map>
-/*#include <iostream>
-#include <fstream>*/
 #include <string>
 #include <unordered_map>
-/*#include <unordered_set>*/
 
 // C++ Std extensions
 #ifdef _MSC_VER
@@ -56,6 +50,9 @@
 #else
 # include <ext/stdio_filebuf.h>
 #endif
+
+// Boost
+#include <boost/bimap/bimap.hpp>
 
 // CLib
 //#include <memory.h>

@@ -29,11 +29,17 @@ extern "C" {
 #endif
 /*                                     API                                  */
 /* symbols */
-SemanticId OSI_API_C_CALL DeclareSymbol(const OSchar* name);    
+SemanticId OSI_API_C_CALL DeclareSymbol(const OSchar* name);
+SemanticId OSI_API_C_CALL GlobalSymbol(const OSchar* name);
 
 /* relations */
+
+/** declarations **/
 //SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);    
-SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
+SemanticId OSI_API_C_CALL DeclareRelation(SemanticId domain, SemanticId codomain);
+
+/** queries **/
+SemanticId OSI_API_C_CALL SelectRelation(SemanticId domain, SemanticId codomain);
 
 /* domains */
 SemanticId OSI_API_C_CALL DeclareOpenDomain(const OSchar* name);

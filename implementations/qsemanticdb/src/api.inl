@@ -44,9 +44,23 @@ OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareSymbol(const OSchar* name
   return _this->DeclareSymbol(name);
 }
 
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::GlobalSymbol(const OSchar* name)
+{
+  return _this->GlobalSymbol(name);
+}
+
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareRelation(const Relation& relation)
 {
   return _this->DeclareRelation(relation);
+}
+
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectRelation(const Relation& relation)
+{
+  std::vector<OSIX::SemanticId> qualifiedCodomains;
+  _this->SelectRelation(relation, qualifiedCodomains);
+  if (qualifiedCodomains.empty())
+    return -1; // todo: return invalidId
+  return qualifiedCodomains[0];
 }
 
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareOpenDomain(const OSchar* name)

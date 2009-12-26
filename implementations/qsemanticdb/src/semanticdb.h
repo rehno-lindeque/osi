@@ -22,8 +22,10 @@
 
 namespace QSemanticDB
 {
+/*                                   TYPES                                  */
+  using BaseSemanticDB::OrderedRelation;
 /*                                 FUNCTIONS                                */
-  inline bool operator == (const Relation& arg1, const Relation& arg2)
+  /*inline bool operator == (const Relation& arg1, const Relation& arg2)
   {
     return arg1.domain == arg2.domain && arg1.codomain == arg2.codomain;
   }
@@ -35,7 +37,7 @@ namespace QSemanticDB
   
   template<typename T> struct CompareLess {};
   template<> struct CompareLess<Relation> 
-  { inline bool operator()(const Relation& arg1,const Relation& arg2) { return arg1 < arg2; } };
+  { inline bool operator()(const Relation& arg1,const Relation& arg2) { return arg1 < arg2; } };*/
   
   
   /*template<typename T> class Hash {};  
@@ -57,8 +59,11 @@ namespace QSemanticDB
     //Destructor
     virtual ~SemanticDBImplementation();
     
-    SemanticId DeclareSymbol(const char* name);    
-    SemanticId DeclareRelation(const Relation& relation);    
+    SemanticId DeclareSymbol(const char* name);
+    SemanticId GlobalSymbol(const char* name);
+    SemanticId DeclareRelation(const Relation& unqualifiedRelation);
+    //SemanticId SelectRelation(const Relation& relation);
+    void SelectRelation(const Relation& unqualifiedRelation, std::vector<SemanticId>& qualifiedCodomains);
     SemanticId DeclareOpenDomain(const char* name);
     void CloseDomain(const char* name);
     void CloseDomain();
@@ -102,26 +107,36 @@ namespace QSemanticDB
     // (Note: this is equivalent to a perfect hash map since hash values that may contain conflicts are mapped
     // to permanent tokens that do not contain conflicts)
     std::map<SemanticId, std::string> epsilonStrings;
-        
-    std::vector<SemanticId> epsilonDomain;              // Global domain of all symbols
-    //RelationIdMap relations;                            // Database of relations
-    std::stack<SemanticId> environment;                 // Environment of open domains
-    SemanticId activeDomainId;                          // The last opened domain    
-    std::multimap<SemanticId, SemanticId> codomains;    // All mappings from domain to codomain
-    RelationTailIdMap tailIds;                          // Mapping from relation ids to tail ids
-    
+
+    // A vectors of semantic Id's
+    typedef std::vector<SemanticId> IdVector;
+    typedef std::stack<SemanticId> IdStack;
+
+    // A mapping from one id to multiple ids
+    typedef std::multimap<SemanticId, SemanticId> IdMultiIndex;
+
+    // A relation from relation
+    typedef boost::bimaps::bimap<SemanticId, OrderedRelation> RelationIndex;
+
+    // Indexes / Database
+    IdVector epsilonDomain;                             // Global domain of all symbols
+    RelationIndex relations;                            // Bidirectional mapping between unqualified relations (domain, codomain) pairs and qualified codomain ids.
+    IdMultiIndex domainIndexUCodomains;                 // All mappings from domain id to unqualified codomains
+    IdMultiIndex domainIndexQCodomains;                 // All mappings from domain id to qualified codomains
+
+    // Environment
+    IdStack environment;                                // Environment of open domains
+    SemanticId activeDomainId;                          // The last opened domain
+
     // Streams for messages to be output
     std::ostream errorStream;
     std::ostream warnStream;
     std::ostream infoStream;
 
     // Constants
-    static const SemanticId epsilonId;            // The global domain "Epsilon"
-    static const char* const epsilonName;         // Name string of the global domain "Epsilon"
-    static const SemanticId invalidId;            // An invalid id
-    
-    // Declare an atomic symbol in the global domain "epsilon"
-    SemanticId DeclareGlobal(const char* name);
+    static const SemanticId epsilonId;                  // The global domain "Epsilon"
+    static const char* const epsilonName;               // Name string of the global domain "Epsilon"
+    static const SemanticId invalidId;                  // An invalid id
     
     // A helper for declaring a relation from an associative pair of ids
     SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
@@ -131,17 +146,29 @@ namespace QSemanticDB
     
     // Get the semantic id represention the relation from domain to codomain
     SemanticId GetTailId(SemanticId relationId);
+
+    // Get the unqualified id from a qualified id (i.e. the tail part such that a.b -> b)
+    SemanticId GetUnqualifiedId(SemanticId qualifiedId);
     
     // Test whether any relations exist from the given fully typed domain
     bool HasStaticRelations(SemanticId domain);
     
     // Create an id for the relation using both the domain and codomain
-    SemanticId CreateRelationId(const Relation& relation);
+    SemanticId CreateQualifiedId(const Relation& relation);
+
+    // Test whether an id matches the relation at some point in the relation.domain set of codomains
+    //bool MatchDomain(SemanticId qualifiedCodomain, SemanticId matchDomain);
+
+    /*// Split an id into a qualified relation pair (domain, codomain)
+    void QualifiedSplit(SemanticId relationId, Relation& qualifiedRelation);
+
+    // Split an id into a unqualified relation pair (domain, codomain)
+    void UnqualifiedSplit(SemanticId relationId, Relation& unqualifiedRelation);*/
     
 #ifdef _DEBUG
     // Debugging functions
     void DebugOutputEnvironment();
-    void DebugOutputSymbolEnvironment(SemanticId parent, SemanticId symbol, uint indent);
+    void DebugOutputSymbolEnvironment(SemanticId domain, SemanticId qualifiedCodomain, uint indent);
 #endif
   };
 }

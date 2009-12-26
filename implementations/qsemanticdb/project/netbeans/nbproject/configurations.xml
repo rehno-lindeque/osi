@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="39">
+<configurationDescriptor version="51">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="base" displayName="base" projectFiles="true">
       <logicalFolder name="common" displayName="common" projectFiles="true">
@@ -40,6 +40,7 @@
       <itemPath>../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h</itemPath>
       <itemPath>../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx</itemPath>
       <itemPath>../../../basesemanticdb/src/basesemanticdb/capi.cpp</itemPath>
+      <itemPath>../../../basesemanticdb/src/basesemanticdb/orderedrelation.h</itemPath>
     </logicalFolder>
     <logicalFolder name="parser" displayName="semanticdb" projectFiles="true">
       <itemPath>../../../../api/osix/semanticdb/semanticdb.h</itemPath>
@@ -76,14 +77,21 @@
       <itemPath>../scons/SConsUtils.py</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../scons</Elem>
+    <Elem>../make</Elem>
+    <Elem>../scons</Elem>
+    <Elem>../scons</Elem>
+    <Elem>../scons</Elem>
+    <Elem>../scons</Elem>
+    <Elem>../scons</Elem>
+  </sourceRootList>
   <projectmakefile>qsemanticdb-Makefile.mk</projectmakefile>
   <confs>
     <conf name="Scons_Static_CPP" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -211,6 +219,9 @@
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
       </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -241,10 +252,8 @@
     </conf>
     <conf name="Make_Static_CPP" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -372,6 +381,9 @@
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
       </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
+      </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>
       </item>
@@ -402,10 +414,8 @@
     </conf>
     <conf name="Debug_Scons_Static_CPP" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -423,7 +433,9 @@
             <includeDirectories>
               <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
             </includeDirectories>
-            <preprocessor>_DEBUG</preprocessor>
+            <preprocessorList>
+              <Elem>_DEBUG</Elem>
+            </preprocessorList>
           </ccCompilerTool>
         </makeTool>
         <requiredProjects>
@@ -533,6 +545,9 @@
       </item>
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>
@@ -564,10 +579,8 @@
     </conf>
     <conf name="Debug_Scons_Static_C" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -585,7 +598,9 @@
             <includeDirectories>
               <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
             </includeDirectories>
-            <preprocessor>_DEBUG</preprocessor>
+            <preprocessorList>
+              <Elem>_DEBUG</Elem>
+            </preprocessorList>
           </ccCompilerTool>
         </makeTool>
         <requiredProjects>
@@ -695,6 +710,9 @@
       </item>
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>
@@ -726,10 +744,8 @@
     </conf>
     <conf name="Scons_Static_C" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -747,7 +763,9 @@
             <includeDirectories>
               <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
             </includeDirectories>
-            <preprocessor>_DEBUG</preprocessor>
+            <preprocessorList>
+              <Elem>_DEBUG</Elem>
+            </preprocessorList>
           </ccCompilerTool>
         </makeTool>
         <requiredProjects>
@@ -857,6 +875,9 @@
       </item>
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>
@@ -888,10 +909,8 @@
     </conf>
     <conf name="All_Debug_Scons_Static_CPP" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -909,7 +928,9 @@
             <includeDirectories>
               <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
             </includeDirectories>
-            <preprocessor>_DEBUG</preprocessor>
+            <preprocessorList>
+              <Elem>_DEBUG</Elem>
+            </preprocessorList>
           </ccCompilerTool>
         </makeTool>
         <requiredProjects>
@@ -1019,6 +1040,9 @@
       </item>
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>
@@ -1050,10 +1074,8 @@
     </conf>
     <conf name="Test_SemanticDB" type="0">
       <toolsSet>
-        <compilerSet>GNU</compilerSet>
-        <cRequired>true</cRequired>
-        <cppRequired>true</cppRequired>
-        <fortranRequired>false</fortranRequired>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
         <platform>2</platform>
       </toolsSet>
       <makefileType>
@@ -1071,7 +1093,9 @@
             <includeDirectories>
               <directoryPath>../../../../../../../../libraries/osi/api</directoryPath>
             </includeDirectories>
-            <preprocessor>_DEBUG</preprocessor>
+            <preprocessorList>
+              <Elem>_DEBUG</Elem>
+            </preprocessorList>
           </ccCompilerTool>
         </makeTool>
         <requiredProjects>
@@ -1181,6 +1205,9 @@
       </item>
       <item path="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
         <itemTool>1</itemTool>
+      </item>
+      <item path="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+        <itemTool>3</itemTool>
       </item>
       <item path="../../src/api.cpp">
         <itemTool>1</itemTool>

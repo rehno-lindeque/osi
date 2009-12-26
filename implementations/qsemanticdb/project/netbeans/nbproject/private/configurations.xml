@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="39">
+<configurationDescriptor version="51">
   <projectmakefile>qsemanticdb-Makefile.mk</projectmakefile>
   <defaultConf>3</defaultConf>
   <confs>
     <conf name="Scons_Static_CPP" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>
@@ -18,8 +19,9 @@
       </runprofile>
     </conf>
     <conf name="Make_Static_CPP" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>
@@ -32,8 +34,9 @@
       </runprofile>
     </conf>
     <conf name="Debug_Scons_Static_CPP" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>
@@ -46,8 +49,9 @@
       </runprofile>
     </conf>
     <conf name="Debug_Scons_Static_C" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>
@@ -60,8 +64,9 @@
       </runprofile>
     </conf>
     <conf name="Scons_Static_C" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>
@@ -74,8 +79,9 @@
       </runprofile>
     </conf>
     <conf name="All_Debug_Scons_Static_CPP" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>
@@ -88,8 +94,9 @@
       </runprofile>
     </conf>
     <conf name="Test_SemanticDB" type="0">
-      <gdbdebugger version="1">
+      <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
       </gdbdebugger>
       <runprofile version="5">
         <args></args>

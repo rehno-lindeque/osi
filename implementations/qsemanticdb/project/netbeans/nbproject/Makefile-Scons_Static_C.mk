@@ -1,5 +1,5 @@
 #
-# Gererated Makefile - do not edit!
+# Generated Makefile - do not edit!
 #
 # Edit the Makefile in the project folder instead (../Makefile). Each target
 # has a -pre and a -post target defined where you can add customized code.
@@ -17,11 +17,14 @@ CCC=g++
 CXX=g++
 FC=
 
+# Macros
+PLATFORM=GNU-Linux-x86
+
 # Include project Makefile
 include qsemanticdb-Makefile.mk
 
 # Object Directory
-OBJECTDIR=build/Scons_Static_C/GNU-Linux-x86
+OBJECTDIR=build/Scons_Static_C/${PLATFORM}
 
 # Object Files
 OBJECTFILES=
@@ -40,7 +43,7 @@ FFLAGS=
 LDLIBSOPTIONS=
 
 # Build Targets
-.build-conf: ${BUILD_SUBPROJECTS} 
+.build-conf: ${BUILD_SUBPROJECTS}
 	cd ../scons && scons targetlang=c
 
 # Subprojects

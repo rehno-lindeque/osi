@@ -34,7 +34,8 @@ namespace OSIX
     
   public:
     /* symbols */
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareSymbol(const OSchar* name);    
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareSymbol(const OSchar* name);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL GlobalSymbol(const OSchar* name);
     
     /* relations */
     struct Relation
@@ -43,8 +44,14 @@ namespace OSIX
       SemanticId codomain;
       OSI_INLINE_METHOD Relation(SemanticId domain, SemanticId codomain) : domain(domain), codomain(codomain) {}
     };
+    
+    /** declarations */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareRelation(const Relation& relation);
     OSI_INLINE_METHOD SemanticId OSI_API_CALL DeclareRelation(SemanticId domain, SemanticId codomain) { return DeclareRelation(Relation(domain, codomain)); }
+    
+    /** queries **/
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectRelation(const Relation& relation);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectRelation(SemanticId domain, SemanticId codomain) { return SelectRelation(Relation(domain, codomain)); }
     
     /* domains */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareOpenDomain(const OSchar* name);

@@ -27,11 +27,21 @@ extern "C" SemanticId OSI_API_C_CALL DeclareSymbol(const OSchar* name)
   return semanticDB->DeclareSymbol(name);
 }
 
+extern "C" SemanticId OSI_API_C_CALL GlobalSymbol(const OSchar* name)
+{
+  return semanticDB->GlobalSymbol(name);
+}
+
 //extern "C" SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);    
 
 extern "C" SemanticId DeclareRelation(SemanticId domain, SemanticId codomain)
 {
   return semanticDB->DeclareRelation(domain, codomain);
+}
+
+extern "C" SemanticId SelectRelation(SemanticId domain, SemanticId codomain)
+{
+  return semanticDB->SelectRelation(domain, codomain);
 }
 
 extern "C" SemanticId OSI_API_C_CALL DeclareOpenDomain(const OSchar* name)

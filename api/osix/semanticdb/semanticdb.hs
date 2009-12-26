@@ -35,9 +35,18 @@ semanticDBInit :: IO (StablePtr (Maybe Int))
 foreign import ccall unsafe "semanticdb.h DeclareSymbol"
   c_DeclareSymbol :: CString -> IO SemanticId
 
+foreign import ccall unsafe "semanticdb.h GlobalSymbol"
+  c_GlobalSymbol :: CString -> IO SemanticId
+
 {- relations -}
+
+{-- declarations --}
 foreign import ccall unsafe "semanticdb.h DeclareRelation"
   c_DeclareRelation :: SemanticId -> SemanticId -> IO SemanticId
+
+{-- queries --}
+foreign import ccall unsafe "semanticdb.h SelectRelation"
+  c_SelectRelation :: SemanticId -> SemanticId -> IO SemanticId
 
 {- domains -}
 foreign import ccall unsafe "semanticdb.h DeclareOpenDomain"
