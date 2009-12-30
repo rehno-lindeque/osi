@@ -32,6 +32,7 @@
 #endif
 
 /*                                  GLOBALS                                 */
-const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::invalidId = ~OSIX::SemanticId(0);
+//const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::invalidId = ~OSIX::SemanticId(0);
+const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::firstReservedId = OSIX::SEMANTICID_STRING;
 const char* const QSemanticDB::SemanticDBImplementation::epsilonName = "Epsilon";
-const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::epsilonId = ~OSIX::SemanticId(0) - 1;
+//const OSIX::SemanticId QSemanticDB::SemanticDBImplementation::epsilonId = ~OSIX::SemanticId(0) - 1;
