@@ -45,12 +45,12 @@ namespace OSIX
   protected:
     OSI_INLINE_METHOD SemanticDB() {}
     OSI_INLINE_METHOD SemanticDB(const SemanticDB&) {}
-    
+
   public:
     /* symbols */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareSymbol(const OSchar* name);
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL GlobalSymbol(const OSchar* name);
-    
+
     /* relations */
     struct Relation
     {
@@ -58,11 +58,11 @@ namespace OSIX
       SemanticId codomain;
       OSI_INLINE_METHOD Relation(SemanticId domain, SemanticId codomain) : domain(domain), codomain(codomain) {}
     };
-    
+
     /** declarations */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareRelation(const Relation& relation);
     OSI_INLINE_METHOD SemanticId OSI_API_CALL DeclareRelation(SemanticId domain, SemanticId codomain) { return DeclareRelation(Relation(domain, codomain)); }
-    
+
     /** queries **/
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectRelation(const Relation& relation);
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectRelation(SemanticId domain, SemanticId codomain) { return SelectRelation(Relation(domain, codomain)); }
@@ -73,18 +73,20 @@ namespace OSIX
     OSI_DYNAMIC_METHOD void OSI_API_CALL CloseDomain();
 
     /* queries */
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionDisjunct(SemanticId domain, SemanticId selection);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionExclusiveDisjunct(SemanticId domain, SemanticId selection);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionConjunct(SemanticId domain, SemanticId selection);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionStrictConjunct(SemanticId domain, SemanticId selection);
-    //OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionStrictExclusiveDisjunct(SemanticId domain, SemanticId selection);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL BeginQuery();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL EndQuery();
 
-    /* mutations */
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationDisjunct(SemanticId domain, SemanticId mutation);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationExclusiveDisjunct(SemanticId domain, SemanticId mutation);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationConjunct(SemanticId domain, SemanticId mutation);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationStrictConjunct(SemanticId domain, SemanticId mutation);
-    //OSI_DYNAMIC_METHOD  SemanticId OSI_API_CALL MutationStrictExclusiveDisjunct(SemanticId domain, SemanticId mutation);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionDisjunct(SemanticId selection);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionExclusiveDisjunct(SemanticId selection);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionConjunct(SemanticId selection);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionStrictConjunct(SemanticId selection);
+    //OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionStrictExclusiveDisjunct(SemanticId selection);
+
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationDisjunct(SemanticId mutation);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationExclusiveDisjunct(SemanticId mutation);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationConjunct(SemanticId mutation);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationStrictConjunct(SemanticId mutation);
+    //OSI_DYNAMIC_METHOD  SemanticId OSI_API_CALL MutationStrictExclusiveDisjunct(SemanticId mutation);
 
     // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectiveMutation(SemanticId domain, SemanticId mutation); // Conjunctive // Injective/selective morphism
     // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL AssertiveMutation(SemanticId domain, SemanticId mutation);
@@ -113,7 +115,7 @@ namespace OSIX
     OSI_DYNAMIC_METHOD OSint64 OSI_API_CALL GetInt64(SemanticId symbol);
     OSI_DYNAMIC_METHOD OSfloat OSI_API_CALL GetFloat(SemanticId symbol);
     OSI_DYNAMIC_METHOD OSdouble OSI_API_CALL GetDouble(SemanticId symbol);
-    
+
     /* debug */
     OSI_DYNAMIC_METHOD void* OSI_API_CALL DebugInit();
   };

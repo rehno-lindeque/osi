@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="c_static_debug_scons" />
+	<File name="../../../../api/osix/semanticdb/semanticdb.h" open="1" top="0" tabpos="7">
+		<Cursor position="3309" topLine="45" />
+	</File>
+	<File name="../../../../api/osix/semanticdb/semanticdb.hpp" open="1" top="0" tabpos="6">
+		<Cursor position="3016" topLine="49" />
+	</File>
+	<File name="../../../../api/osix/semanticdb/semanticdbdbg.h" open="1" top="0" tabpos="8">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="../../../basesemanticdb/src/basesemanticdb/capi.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="1535" topLine="35" />
+	</File>
+	<File name="MakeScons" open="1" top="0" tabpos="10">
+		<Cursor position="643" topLine="0" />
+	</File>
+	<File name="../make/Makefile" open="1" top="0" tabpos="12">
+		<Cursor position="643" topLine="0" />
+	</File>
+	<File name="../scons/SConscript" open="0" top="0" tabpos="0">
+		<Cursor position="388" topLine="0" />
+	</File>
+	<File name="../../src/api.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="355" topLine="0" />
+	</File>
+	<File name="../../src/api.h" open="1" top="0" tabpos="2">
+		<Cursor position="2338" topLine="65" />
+	</File>
+	<File name="../../src/api.inl" open="1" top="0" tabpos="11">
+		<Cursor position="1513" topLine="29" />
+	</File>
+	<File name="../../src/apidbg.inl" open="1" top="0" tabpos="3">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="../../src/semanticdb.h" open="1" top="0" tabpos="4">
+		<Cursor position="3304" topLine="184" />
+	</File>
+	<File name="../../src/semanticdb.inl" open="1" top="1" tabpos="9">
+		<Cursor position="19012" topLine="547" />
+	</File>
+</CodeBlocks_layout_file>

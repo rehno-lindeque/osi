@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="qsemanticdb" />
+		<Option makefile="MakeScons" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="src/;osix/;basesemanticdb/;osix/semanticdb/;project/;project/codeblocks/;project/scons/;project/make/;" />
+		<Build>
+			<Target title="c_static_scons">
+				<Option output="libqsemanticdbc" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../../build/posix-g++/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="c_static_debug_scons">
+				<Option output="libqsemanticdbcd" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../../build/posix-g++/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="cpp_static_scons">
+				<Option output="libqsemanticdb" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../../build/posix-g++/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="cpp_static_debug_scons">
+				<Option output="libqsemanticdbd" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../../build/posix-g++/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../../../api/osix/semanticdb/semanticdb.h">
+			<Option virtualFolder="osix/semanticdb/" />
+		</Unit>
+		<Unit filename="../../../../api/osix/semanticdb/semanticdb.hpp">
+			<Option virtualFolder="osix/semanticdb/" />
+		</Unit>
+		<Unit filename="../../../../api/osix/semanticdb/semanticdbdbg.h">
+			<Option virtualFolder="osix/semanticdb/" />
+		</Unit>
+		<Unit filename="../../../../api/osix/semanticdb/semanticdbdbg.hpp">
+			<Option virtualFolder="osix/semanticdb/" />
+		</Unit>
+		<Unit filename="../../../basesemanticdb/project/scons/SConscript">
+			<Option virtualFolder="basesemanticdb/" />
+		</Unit>
+		<Unit filename="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h">
+			<Option virtualFolder="basesemanticdb/" />
+		</Unit>
+		<Unit filename="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.hxx">
+			<Option virtualFolder="basesemanticdb/" />
+		</Unit>
+		<Unit filename="../../../basesemanticdb/src/basesemanticdb/capi.cpp">
+			<Option virtualFolder="basesemanticdb/" />
+		</Unit>
+		<Unit filename="../../../basesemanticdb/src/basesemanticdb/orderedrelation.h">
+			<Option virtualFolder="basesemanticdb/" />
+		</Unit>
+		<Unit filename="MakeScons">
+			<Option virtualFolder="project/codeblocks/" />
+		</Unit>
+		<Unit filename="../make/Makefile">
+			<Option virtualFolder="project/make/" />
+		</Unit>
+		<Unit filename="../scons/SConscript">
+			<Option virtualFolder="project/scons/" />
+		</Unit>
+		<Unit filename="../scons/SConscriptTests">
+			<Option virtualFolder="project/scons/" />
+		</Unit>
+		<Unit filename="../scons/SConstargetscript">
+			<Option virtualFolder="project/scons/" />
+		</Unit>
+		<Unit filename="../scons/SConstruct">
+			<Option virtualFolder="project/scons/" />
+		</Unit>
+		<Unit filename="../../src/api.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/api.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/api.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/apidbg.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/functors.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/semanticdb.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/semanticdb.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

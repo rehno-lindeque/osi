@@ -34,7 +34,7 @@ SemanticId OSI_API_C_CALL GlobalSymbol(const OSchar* name)
   return semanticDB->GlobalSymbol(name);
 }
 
-//SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);    
+//SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);
 
 SemanticId DeclareRelation(SemanticId domain, SemanticId codomain)
 {
@@ -59,44 +59,54 @@ void OSI_API_C_CALL CloseDomain(const OSchar* name)
     semanticDB->CloseDomain(name);
 }
 
-SemanticId OSI_API_C_CALL SelectionDisjunct(SemanticId domain, SemanticId selection)
+void OSI_API_C_CALL BeginQuery()
 {
-  return semanticDB->SelectionDisjunct(domain, selection);
+  return semanticDB->BeginQuery();
 }
 
-SemanticId OSI_API_C_CALL SelectionExclusiveDisjunct(SemanticId domain, SemanticId selection)
+void OSI_API_C_CALL EndQuery()
 {
-  return semanticDB->SelectionExclusiveDisjunct(domain, selection);
+  semanticDB->EndQuery();
 }
 
-SemanticId OSI_API_C_CALL SelectionConjunct(SemanticId domain, SemanticId selection)
+SemanticId OSI_API_C_CALL SelectionDisjunct(SemanticId selection)
 {
-  return semanticDB->SelectionConjunct(domain, selection);
+  return semanticDB->SelectionDisjunct(selection);
 }
 
-SemanticId OSI_API_C_CALL SelectionStrictConjunct(SemanticId domain, SemanticId selection)
+SemanticId OSI_API_C_CALL SelectionExclusiveDisjunct(SemanticId selection)
 {
-  return semanticDB->SelectionStrictConjunct(domain, selection);
+  return semanticDB->SelectionExclusiveDisjunct(selection);
 }
 
-SemanticId OSI_API_C_CALL MutationDisjunct(SemanticId domain, SemanticId mutation)
+SemanticId OSI_API_C_CALL SelectionConjunct(SemanticId selection)
 {
-  return semanticDB->MutationDisjunct(domain, mutation);
+  return semanticDB->SelectionConjunct(selection);
 }
 
-SemanticId OSI_API_C_CALL MutationExclusiveDisjunct(SemanticId domain, SemanticId mutation)
+SemanticId OSI_API_C_CALL SelectionStrictConjunct(SemanticId selection)
 {
-  return semanticDB->MutationExclusiveDisjunct(domain, mutation);
+  return semanticDB->SelectionStrictConjunct(selection);
 }
 
-SemanticId OSI_API_C_CALL MutationConjunct(SemanticId domain, SemanticId mutation)
+SemanticId OSI_API_C_CALL MutationDisjunct(SemanticId mutation)
 {
-  return semanticDB->MutationConjunct(domain, mutation);
+  return semanticDB->MutationDisjunct(mutation);
 }
 
-SemanticId OSI_API_C_CALL MutationStrictConjunct(SemanticId domain, SemanticId mutation)
+SemanticId OSI_API_C_CALL MutationExclusiveDisjunct(SemanticId mutation)
 {
-  return semanticDB->MutationStrictConjunct(domain, mutation);
+  return semanticDB->MutationExclusiveDisjunct(mutation);
+}
+
+SemanticId OSI_API_C_CALL MutationConjunct(SemanticId mutation)
+{
+  return semanticDB->MutationConjunct(mutation);
+}
+
+SemanticId OSI_API_C_CALL MutationStrictConjunct(SemanticId mutation)
+{
+  return semanticDB->MutationStrictConjunct(mutation);
 }
 
 OSobject OSI_API_C_CALL BeginEvaluation(SemanticId query)
@@ -184,13 +194,13 @@ OSdouble OSI_API_C_CALL GetDouble(SemanticId symbol)
   return semanticDB->GetDouble(symbol);
 }
 
-void* OSI_API_C_CALL SemanticDBDebugInit() 
-{ 
-  void* dbg = semanticDB->DebugInit(); 
+void* OSI_API_C_CALL SemanticDBDebugInit()
+{
+  void* dbg = semanticDB->DebugInit();
 #ifdef _DEBUG
   semanticDBDbg = static_cast<OSIX::SemanticDBDbg*>(dbg);
 #endif
-  return dbg; 
+  return dbg;
 }
 
 void OSI_API_C_CALL SemanticDBInit() { semanticDB = OSIX::SemanticDBInit(); }

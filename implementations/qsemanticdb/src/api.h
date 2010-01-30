@@ -26,7 +26,7 @@
 #elif defined(QSEMANTICDB_DEBUG_VERBOSE)
 # undef QSEMANTICDB_DEBUG_VERBOSE
 #endif
-        
+
 /*                                 INCLUDES                                 */
 // OpenSemanticDB
 #include <osix/semanticdb/semanticdb.hpp>
@@ -52,6 +52,8 @@
 #endif
 
 // Boost
+//#define BOOST_BIMAP_DISABLE_SERIALIZATION
+//#define BOOST_NO_EXCEPTIONS
 #include <boost/bimap/bimap.hpp>
 
 // CLib
@@ -74,7 +76,7 @@ namespace QSemanticDB
 // QSemanticDB
 #include "semanticdb.h"
 
-/*                                  CLASSES                                 */  
+/*                                  CLASSES                                 */
 namespace QSemanticDB
 {
   class SemanticDB : public BaseSemanticDB::SemanticDB
@@ -84,19 +86,19 @@ namespace QSemanticDB
 
     // Constructor
     INLINE SemanticDB() {}
-    
+
     // Initialization
     //void Init();
-       
+
     // Semantic DB implementation
     SemanticDBImplementation* operator-> ();
-    
+
     // Debug classes
 #   ifdef _DEBUG
       class SemanticDBDbg : public OSIX::SemanticDBDbg
       {
       public:
-        INLINE SemanticDB& GetSemanticDB() { return *(SemanticDB*)(((uint8*)this) - offsetof(SemanticDB, semanticDBDbg)); }        
+        INLINE SemanticDB& GetSemanticDB() { return *(SemanticDB*)(((uint8*)this) - offsetof(SemanticDB, semanticDBDbg)); }
       } semanticDBDbg;
 #   endif
   };

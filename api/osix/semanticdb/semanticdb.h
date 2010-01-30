@@ -47,7 +47,7 @@ SemanticId OSI_API_C_CALL GlobalSymbol(const OSchar* name);
 /* relations */
 
 /** declarations **/
-//SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);    
+//SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);
 SemanticId OSI_API_C_CALL DeclareRelation(SemanticId domain, SemanticId codomain);
 
 /** queries **/
@@ -60,18 +60,20 @@ void OSI_API_C_CALL CloseDomain(const OSchar* name = 0);
 /* builtin morphisms */
 //SemanticId OSI_API_C_CALL AdditiveMutation(SemanticId domain, SemanticId crossSection);
 
-/* selections */
-SemanticId OSI_API_C_CALL SelectionDisjunct(SemanticId domain, SemanticId selection);
-SemanticId OSI_API_C_CALL SelectionExclusiveDisjunct(SemanticId domain, SemanticId selection);
-SemanticId OSI_API_C_CALL SelectionConjunct(SemanticId domain, SemanticId selection);
-SemanticId OSI_API_C_CALL SelectionStrictConjunct(SemanticId domain, SemanticId selection);
+/* queries */
+void OSI_API_C_CALL BeginQuery();
+void OSI_API_C_CALL EndQuery();
+
+SemanticId OSI_API_C_CALL SelectionDisjunct(SemanticId selection);
+SemanticId OSI_API_C_CALL SelectionExclusiveDisjunct(SemanticId selection);
+SemanticId OSI_API_C_CALL SelectionConjunct(SemanticId selection);
+SemanticId OSI_API_C_CALL SelectionStrictConjunct(SemanticId selection);
 //SemanticId OSI_API_C_CALL SelectionStrictExclusiveDisjunct(SemanticId domain, SemanticId selection);
 
-/* mutations */
-SemanticId OSI_API_C_CALL MutationDisjunct(SemanticId domain, SemanticId mutation);
-SemanticId OSI_API_C_CALL MutationExclusiveDisjunct(SemanticId domain, SemanticId mutation);
-SemanticId OSI_API_C_CALL MutationConjunct(SemanticId domain, SemanticId mutation);
-SemanticId OSI_API_C_CALL MutationStrictConjunct(SemanticId domain, SemanticId mutation);
+SemanticId OSI_API_C_CALL MutationDisjunct(SemanticId mutation);
+SemanticId OSI_API_C_CALL MutationExclusiveDisjunct(SemanticId mutation);
+SemanticId OSI_API_C_CALL MutationConjunct(SemanticId mutation);
+SemanticId OSI_API_C_CALL MutationStrictConjunct(SemanticId mutation);
 //SemanticId OSI_API_C_CALL MutationStrictExclusiveDisjunct(SemanticId domain, SemanticId mutation);
 
 /* evaluation */

@@ -18,8 +18,8 @@
 /*                              IMPLEMENTATION                              */
 // QSemanticDB
 FORCE_INLINE QSemanticDB::SemanticDBImplementation* QSemanticDB::SemanticDB::operator-> ()
-{ 
-  return &semanticDB; 
+{
+  return &semanticDB;
 }
 
 // OSIX
@@ -78,44 +78,54 @@ void OSI_API_CALL OSIX::SemanticDB::CloseDomain()
   _this->CloseDomain();
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionDisjunct(OSIX::SemanticId domain, OSIX::SemanticId selection)
+void OSI_API_CALL OSIX::SemanticDB::BeginQuery()
 {
-   return _this->SelectionDisjunct(domain, selection);
+  _this->BeginQuery();
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionExclusiveDisjunct(OSIX::SemanticId domain, OSIX::SemanticId selection)
+void OSI_API_CALL OSIX::SemanticDB::EndQuery()
 {
-  return _this->SelectionDisjunct(domain, selection);
+  _this->EndQuery();
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionConjunct(OSIX::SemanticId domain, OSIX::SemanticId selection)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionDisjunct(OSIX::SemanticId selection)
 {
-  return _this->SelectionConjunct(domain, selection);
+   return _this->SelectionDisjunct(selection);
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionStrictConjunct(OSIX::SemanticId domain, OSIX::SemanticId selection)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionExclusiveDisjunct(OSIX::SemanticId selection)
 {
-  return _this->SelectionStrictConjunct(domain, selection);
+  return _this->SelectionDisjunct(selection);
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationDisjunct(OSIX::SemanticId domain, OSIX::SemanticId mutation)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionConjunct(OSIX::SemanticId selection)
 {
-  return _this->MutationDisjunct(domain, mutation);
+  return _this->SelectionConjunct(selection);
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationExclusiveDisjunct(OSIX::SemanticId domain, OSIX::SemanticId mutation)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::SelectionStrictConjunct(OSIX::SemanticId selection)
 {
-  return _this->MutationExclusiveDisjunct(domain, mutation);
+  return _this->SelectionStrictConjunct(selection);
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationConjunct(OSIX::SemanticId domain, OSIX::SemanticId mutation)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationDisjunct(OSIX::SemanticId mutation)
 {
-  return _this->MutationConjunct(domain, mutation);
+  return _this->MutationDisjunct(mutation);
 }
 
-OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationStrictConjunct(OSIX::SemanticId domain, OSIX::SemanticId mutation)
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationExclusiveDisjunct(OSIX::SemanticId mutation)
 {
-  return _this->MutationStrictConjunct(domain, mutation);
+  return _this->MutationExclusiveDisjunct(mutation);
+}
+
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationConjunct(OSIX::SemanticId mutation)
+{
+  return _this->MutationConjunct(mutation);
+}
+
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::MutationStrictConjunct(OSIX::SemanticId mutation)
+{
+  return _this->MutationStrictConjunct(mutation);
 }
 
 OSobject OSI_API_CALL OSIX::SemanticDB::BeginEvaluation(OSIX::SemanticId query)

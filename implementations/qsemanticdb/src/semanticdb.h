@@ -27,6 +27,7 @@ namespace QSemanticDB
 
   enum QueryType
   {
+    QueryNone,
     QuerySelectionDisjunct,
     QuerySelectionExclusiveDisjunct,
     QuerySelectionConjunct,
@@ -59,23 +60,23 @@ namespace QSemanticDB
   {
     return arg1.domain == arg2.domain && arg1.codomain == arg2.codomain;
   }
-  
+
   inline bool operator < (const Relation& arg1, const Relation& arg2)
   {
     return (arg1.domain < arg2.domain) || (arg1.domain == arg2.domain && arg1.codomain < arg2.codomain);
   }
-  
+
   template<typename T> struct CompareLess {};
-  template<> struct CompareLess<Relation> 
+  template<> struct CompareLess<Relation>
   { inline bool operator()(const Relation& arg1,const Relation& arg2) { return arg1 < arg2; } };*/
-  
-  
-  /*template<typename T> class Hash {};  
+
+
+  /*template<typename T> class Hash {};
   template<> class Hash<Relation>
   {
     inline size_t operator()(const Relation& arg) const { return std::hash< std::pair<SemanticId, SemanticId> >(std::make_pair(arg.domain, arg.codomain)); }
   };*/
-  
+
 /*                                  CLASSES                                 */
   class SemanticDBImplementation : public Base::Object
   {
@@ -92,7 +93,7 @@ namespace QSemanticDB
 
     //Destructor
     virtual ~SemanticDBImplementation();
-    
+
     SemanticId DeclareSymbol(const char* name);
     SemanticId GlobalSymbol(const char* name);
     SemanticId DeclareAnonymousSymbol();
@@ -108,16 +109,18 @@ namespace QSemanticDB
     //SemanticId ConjunctMorphism(SemanticId domain, SemanticId crossSection);
 
     // queries
-    SemanticId SelectionDisjunct(SemanticId domain, SemanticId selection);
-    SemanticId SelectionExclusiveDisjunct(SemanticId domain, SemanticId selection);
-    SemanticId SelectionConjunct(SemanticId domain, SemanticId selection);
-    SemanticId SelectionStrictConjunct(SemanticId domain, SemanticId selection);
+    void BeginQuery();
+    void EndQuery();
 
-    // mutations
-    SemanticId MutationDisjunct(SemanticId domain, SemanticId mutation);
-    SemanticId MutationExclusiveDisjunct(SemanticId domain, SemanticId mutation);
-    SemanticId MutationConjunct(SemanticId domain, SemanticId mutation);
-    SemanticId MutationStrictConjunct(SemanticId domain, SemanticId mutation);
+    SemanticId SelectionDisjunct(SemanticId selection);
+    SemanticId SelectionExclusiveDisjunct(SemanticId selection);
+    SemanticId SelectionConjunct(SemanticId selection);
+    SemanticId SelectionStrictConjunct(SemanticId selection);
+
+    SemanticId MutationDisjunct(SemanticId mutation);
+    SemanticId MutationExclusiveDisjunct(SemanticId mutation);
+    SemanticId MutationConjunct(SemanticId mutation);
+    SemanticId MutationStrictConjunct(SemanticId mutation);
 
     // Evaluation
     void BeginEvaluation(SemanticId query);
@@ -132,31 +135,28 @@ namespace QSemanticDB
     int64 GetInt64(SemanticId symbol);
     float GetFloat(SemanticId symbol);
     double GetDouble(SemanticId symbol);
-    
+
     // Initialization
     void Init();
-    
+
     // Message streams
     INLINE void SetErrorStream(FILE* stream);
     INLINE void SetWarningStream(FILE* stream);
     INLINE void SetInfoStream(FILE* stream);
-    
-  protected:    
+
+  protected:
     // (string, SemanticID) mappings
     typedef std::pair<std::string, SemanticId> StringIdPair;
     typedef std::unordered_map<std::string, SemanticId, std::hash<std::string>, std::equal_to<std::string> > StringIdMap;
-    
+
     // The map of all tokens and their ids (in any context)
     StringIdMap tokens;
     SemanticId nextSymbolId;  // The next id to be assigned to a token in DeclareGlobal
-    
+
     // Global domain of all literals (whose hash function are not equal to their own values)
     // (Note: this is equivalent to a perfect hash map since hash values that may contain conflicts are mapped
     // to permanent tokens that do not contain conflicts)
     std::map<SemanticId, std::string> epsilonStrings;
-
-    typedef boost::bimaps::bimap<SemanticId, Query> QueryIndex;
-    typedef QueryIndex::value_type QueryIndexValue;
 
     // A mapping from one id to multiple ids
     typedef std::multimap<SemanticId, SemanticId> IdMultiIndex;
@@ -167,6 +167,24 @@ namespace QSemanticDB
     typedef boost::bimaps::bimap<SemanticId, OrderedRelation> RelationIndex;
     typedef RelationIndex::value_type RelationIndexValue;
 
+    // A list of all queries
+    typedef boost::bimaps::bimap<SemanticId, Query> QueryIndex;
+    typedef QueryIndex::value_type QueryIndexValue;
+
+    // Additional symbol properties
+    struct SymbolProperties { SymbolProperties(bool concrete, QueryType query) : concrete(concrete), query(query) {} bool concrete; QueryType query; };
+    typedef std::pair<SemanticId, SymbolProperties> IdPropertiesPair;
+    typedef std::map<SemanticId, SymbolProperties> IdPropertiesMap;
+
+    // The state of the current building environment
+    enum EnvironmentState
+    {
+      BUILD_DECLARATION,
+      BUILD_QUERY_SOURCE,
+      BUILD_QUERY_ARGUMENT
+    };
+    typedef std::stack<EnvironmentState> EnvironmentStateStack;
+
     // Indexes / Database
     IdVector epsilonDomain;                             // Global domain of all (named) symbols
     IdVector anonDomain;                                // Global domain of all anonymous symbols
@@ -174,6 +192,7 @@ namespace QSemanticDB
     IdMultiIndex domainIndexUCodomains;                 // All mappings from domain id to unqualified codomains
     IdMultiIndex domainIndexQCodomains;                 // All mappings from domain id to qualified codomains
     QueryIndex queries;                                 // All queries in the database (these may be memoized later on)
+    IdPropertiesMap symbolProperties;                   // Additional properties for each symbol
 
     // Evaluation
     IdStack evaluationQueries;                          // Stack of evaluation queries
@@ -181,8 +200,11 @@ namespace QSemanticDB
     SemanticId activeQueryId;                           // The last query returned by Eval
 
     // Environment
-    IdStack environment;                                // Environment of open domains
+    IdStack domainEnvironment;                          // Environment of open domains
+    EnvironmentStateStack environmentState;             // State of the environment (e.g. building a query etc)
     SemanticId activeDomainId;                          // The last opened domain
+    IdStack queryEnvironment;                           // TODO: Environment of speculative symbols
+    //IdStack queryDomains;
 
     // Streams for messages to be output
     std::ostream errorStream;
@@ -192,30 +214,37 @@ namespace QSemanticDB
     // Constants
     static const char* const epsilonName;               // Name string of the global domain "Epsilon"
     static const SemanticId firstReservedId;            // The first id that is reserved for built-in ids
-    
+
     // A helper for declaring a relation from an associative pair of ids
     SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
-    
+
+    // Declare a speculative relation from an associative pair of ids
+    SemanticId DeclareSpeculativeRelation(SemanticId domain, SemanticId codomain);
+    SemanticId DeclareSpeculativeRelation(const Relation& unqualifiedRelation);
+
     // Get the semantic id represention the relation from domain to codomain
-    SemanticId GetRelationId(SemanticId domain, SemanticId codomain);
-    
+    //SemanticId GetRelationId(SemanticId domain, SemanticId codomain);
+
     // Get the semantic id represention the relation from domain to codomain
-    SemanticId GetTailId(SemanticId relationId);
+    //SemanticId GetTailId(SemanticId relationId);
 
     // Get the unqualified id from a qualified id (i.e. the tail part such that a.b -> b)
     SemanticId GetUnqualifiedCodomain(SemanticId qualifiedId);
 
     // Get the unqualified relation
     bool GetUnqualifiedRelation(SemanticId qualifiedId, Relation& unqualifiedRelation);
-    
+
     // Test whether any relations exist from the given fully typed domain
     bool HasStaticRelations(SemanticId domain);
-    
+
     // Create an id for the relation using both the domain and codomain
     SemanticId CreateQualifiedId(const Relation& relation);
 
     // Add a query to the database
     SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
+
+    // Declare a speculative Id
+    //DeclareSpeculativeId(QueryType)
 
     // Test whether an id matches the relation at some point in the relation.domain set of codomains
     //bool MatchDomain(SemanticId qualifiedCodomain, SemanticId matchDomain);
@@ -225,7 +254,7 @@ namespace QSemanticDB
 
     // Split an id into a unqualified relation pair (domain, codomain)
     void UnqualifiedSplit(SemanticId relationId, Relation& unqualifiedRelation);*/
-    
+
 #ifdef _DEBUG
     // Debugging functions
     void DebugOutputEnvironment();

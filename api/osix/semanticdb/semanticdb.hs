@@ -20,10 +20,46 @@ import Foreign
 import Foreign.C
 import Foreign.C.Types
 
-{-                                 CONSTANTS                                -}
-
 {-                                   TYPES                                  -}
 type SemanticId = CUInt
+type OSint16 = CShort
+type OSint32 = CInt
+type OSint64 = CLLong
+type OSuint16 = CUShort
+type OSuint32 = CUInt
+type OSuint64 = CULLong
+type OSfloat = CFloat
+type OSdouble = CDouble
+type OSobject = OSuint32
+
+{-                                 CONSTANTS                                -}
+c_SEMANTICID_INVALID  :: SemanticId
+c_SEMANTICID_EPSILON  :: SemanticId
+c_SEMANTICID_QUERY    :: SemanticId
+c_SEMANTICID_INT16    :: SemanticId
+c_SEMANTICID_INT32    :: SemanticId
+c_SEMANTICID_INT64    :: SemanticId
+c_SEMANTICID_UINT16   :: SemanticId
+c_SEMANTICID_UINT32   :: SemanticId
+c_SEMANTICID_UINT64   :: SemanticId
+c_SEMANTICID_FLOAT    :: SemanticId
+c_SEMANTICID_DOUBLE   :: SemanticId
+c_SEMANTICID_CHAR     :: SemanticId
+c_SEMANTICID_STRING   :: SemanticId
+
+c_SEMANTICID_INVALID  = 0xffffffff
+c_SEMANTICID_EPSILON  = 0xfffffffe
+c_SEMANTICID_QUERY    = 0xfffffffd
+c_SEMANTICID_INT16    = 0xfffffffc
+c_SEMANTICID_INT32    = 0xfffffffb
+c_SEMANTICID_INT64    = 0xfffffffa
+c_SEMANTICID_UINT16   = 0xfffffff9
+c_SEMANTICID_UINT32   = 0xfffffff8
+c_SEMANTICID_UINT64   = 0xfffffff7
+c_SEMANTICID_FLOAT    = 0xfffffff6
+c_SEMANTICID_DOUBLE   = 0xfffffff5
+c_SEMANTICID_CHAR     = 0xfffffff4
+c_SEMANTICID_STRING   = 0xfffffff3
 
 {-                                    API                                   -}
 semanticDBInit :: IO (StablePtr (Maybe Int))
@@ -54,6 +90,95 @@ foreign import ccall unsafe "semanticdb.h DeclareOpenDomain"
 
 foreign import ccall unsafe "semanticdb.h CloseDomain"
   c_CloseDomain :: CString -> IO ()
+
+{-- queries --}
+foreign import ccall unsafe "semanticdb.h BeginQuery"
+  c_BeginQuery :: IO ()
+
+foreign import ccall unsafe "semanticdb.h EndQuery"
+  c_EndQuery :: IO ()
+
+foreign import ccall unsafe "semanticdb.h SelectionDisjunct"
+  c_SelectionDisjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h SelectionExclusiveDisjunct"
+  c_SelectionExclusiveDisjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h SelectionConjunct"
+  c_SelectionConjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h SelectionStrictConjunct"
+  c_SelectionStrictConjunct :: SemanticId -> IO SemanticId
+
+--foreign import ccall unsafe "semanticdb.h SelectionStrictExclusiveDisjunct"
+--  c_SelectionStrictExclusiveDisjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h MutationDisjunct"
+  c_MutationDisjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h MutationExclusiveDisjunct"
+  c_MutationExclusiveDisjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h MutationConjunct"
+  c_MutationConjunct :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h MutationStrictConjunct"
+  c_MutationStrictConjunct :: SemanticId -> IO SemanticId
+
+--foreign import ccall unsafe "semanticdb.h MutationStrictExclusiveDisjunct"
+--  c_MutationStrictExclusiveDisjunct :: SemanticId -> SemanticId -> IO SemanticId
+
+{- evaluation -}
+foreign import ccall unsafe "semanticdb.h BeginEvaluation"
+  c_BeginEvaluation :: SemanticId -> IO OSobject
+
+foreign import ccall unsafe "semanticdb.h Eval"
+  c_Eval :: IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h GetEvalDomain"
+  c_GetEvalDomain :: IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h GetEvalString"
+  c_GetEvalString :: IO CString
+
+foreign import ccall unsafe "semanticdb.h GetEvalInt16"
+  c_GetEvalInt16 :: IO OSint16
+
+foreign import ccall unsafe "semanticdb.h GetEvalInt32"
+  c_GetEvalInt32 :: IO OSint32
+
+foreign import ccall unsafe "semanticdb.h GetEvalInt64"
+  c_GetEvalInt64 :: IO OSint64
+
+foreign import ccall unsafe "semanticdb.h GetEvalFloat"
+  c_GetEvalFloat :: IO OSfloat
+
+foreign import ccall unsafe "semanticdb.h GetEvalDouble"
+  c_GetEvalDouble :: IO OSdouble
+
+foreign import ccall unsafe "semanticdb.h EndEvaluation"
+  c_EndEvaluation :: OSobject -> IO ()
+
+foreign import ccall unsafe "semanticdb.h GetDomain"
+  c_GetDomain :: SemanticId -> IO SemanticId
+
+foreign import ccall unsafe "semanticdb.h GetString"
+  c_GetString :: SemanticId -> IO CString
+
+foreign import ccall unsafe "semanticdb.h GetInt16"
+  c_GetInt16 :: SemanticId -> IO OSint16
+
+foreign import ccall unsafe "semanticdb.h GetInt32"
+  c_GetInt32 :: SemanticId -> IO OSint32
+
+foreign import ccall unsafe "semanticdb.h GetInt64"
+  c_GetInt64 :: SemanticId -> IO OSint64
+
+foreign import ccall unsafe "semanticdb.h GetFloat"
+  c_GetFloat :: SemanticId -> IO OSfloat
+
+foreign import ccall unsafe "semanticdb.h GetDouble"
+  c_GetDouble :: SemanticId -> IO OSdouble
 
 {- debuging -}
 foreign import ccall unsafe "semanticdb.h SemanticDBDebugInit"

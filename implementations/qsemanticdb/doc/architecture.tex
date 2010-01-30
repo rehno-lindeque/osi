@@ -1,0 +1,58 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     ARCHITECTURE.TEX
+%
+%     Copyright © 2009, Rehno Lindeque. All rights reserved.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt]{article}
+
+%                                  PACKAGES                                  %
+%\usepackage{tikz}
+\usepackage{geometry}
+\geometry{a4paper}
+%\usepackage{float}
+%\usepackage{wrapfig}
+%\usepackage{proof}
+
+%\usepackage{amssymb}
+%\usepackage{amsthm}
+%\usepackage{amsmath}
+
+%                                   MACROS                                   %
+
+%                                  DOCUMENT                                  %
+\begin{document}
+
+\title{Architecture of the QSemanticDB implementation}
+\author{Rehno Lindeque}
+
+\maketitle
+
+\begin{abstract}
+The architecture an OpenSemanticDB reference implementation is described.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Terminology}
+\begin{itemize}
+\item \emph{Semantic symbol / symbol} -- The conceptual representation of a semantic value. For example $a$ could be a symbol and so could $a.b$
+\item \emph{Semantic id / id} -- The internal representation of some semantic symbol.
+\item \emph{Fully qualified id} -- An id that represents some semantic symbol inside some context.
+\item \emph{Unqualified id} -- An id that represents some semantic symbol disregarding the context it is found in. (I.e. $a.(b.c)$ is qualified, but $c$ or even $b.c$ is unqualified when refering to a).
+\item \emph{Relation} -- A declaration in the form $a \rightarrow b$ which is represented by the existence of the query $a.b$.
+\item \emph{Unqualified relation} -- A pair of id's $(domainId, codomainId)$ such that $codomainId$ is unqualified with respect to $domainId$.
+\end{itemize}
+
+\subsection{Data structures}
+The following basic indexes are needed. Note that a $qualifiedCodomain$ represents the relation $domain.unqualifiedCodomain$.
+\begin{itemize}
+\item SplitRelations: $qualifiedCodomain \rightarrow (domain, unqualifiedCodomain)$
+\item UnifyRelations: $(domain, unqualifiedCodomain) \rightarrow qualifiedCodomain$
+\item DomainQCodomains $domain \rightarrow \* qualifiedCodomain$
+\item DomainUCodomains $domain \rightarrow \* unqualifiedCodomain$
+\end{itemize}
+
+\end{document}
