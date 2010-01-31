@@ -64,49 +64,49 @@ void OSI_API_C_CALL BeginQuery()
   return semanticDB->BeginQuery();
 }
 
-void OSI_API_C_CALL EndQuery()
+SemanticId OSI_API_C_CALL EndQuery()
 {
-  semanticDB->EndQuery();
+  return semanticDB->EndQuery();
 }
 
-SemanticId OSI_API_C_CALL SelectionDisjunct(SemanticId selection)
+void OSI_API_C_CALL SelectionDisjunct()
 {
-  return semanticDB->SelectionDisjunct(selection);
+  semanticDB->SelectionDisjunct();
 }
 
-SemanticId OSI_API_C_CALL SelectionExclusiveDisjunct(SemanticId selection)
+void OSI_API_C_CALL SelectionExclusiveDisjunct()
 {
-  return semanticDB->SelectionExclusiveDisjunct(selection);
+  semanticDB->SelectionExclusiveDisjunct();
 }
 
-SemanticId OSI_API_C_CALL SelectionConjunct(SemanticId selection)
+void OSI_API_C_CALL SelectionConjunct()
 {
-  return semanticDB->SelectionConjunct(selection);
+  semanticDB->SelectionConjunct();
 }
 
-SemanticId OSI_API_C_CALL SelectionStrictConjunct(SemanticId selection)
+void OSI_API_C_CALL SelectionStrictConjunct()
 {
-  return semanticDB->SelectionStrictConjunct(selection);
+  semanticDB->SelectionStrictConjunct();
 }
 
-SemanticId OSI_API_C_CALL MutationDisjunct(SemanticId mutation)
+void OSI_API_C_CALL MutationDisjunct()
 {
-  return semanticDB->MutationDisjunct(mutation);
+  semanticDB->MutationDisjunct();
 }
 
-SemanticId OSI_API_C_CALL MutationExclusiveDisjunct(SemanticId mutation)
+void OSI_API_C_CALL MutationExclusiveDisjunct()
 {
-  return semanticDB->MutationExclusiveDisjunct(mutation);
+  semanticDB->MutationExclusiveDisjunct();
 }
 
-SemanticId OSI_API_C_CALL MutationConjunct(SemanticId mutation)
+void OSI_API_C_CALL MutationConjunct()
 {
-  return semanticDB->MutationConjunct(mutation);
+  semanticDB->MutationConjunct();
 }
 
-SemanticId OSI_API_C_CALL MutationStrictConjunct(SemanticId mutation)
+void OSI_API_C_CALL MutationStrictConjunct()
 {
-  return semanticDB->MutationStrictConjunct(mutation);
+   semanticDB->MutationStrictConjunct();
 }
 
 OSobject OSI_API_C_CALL BeginEvaluation(SemanticId query)

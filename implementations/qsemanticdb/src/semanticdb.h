@@ -110,17 +110,17 @@ namespace QSemanticDB
 
     // queries
     void BeginQuery();
-    void EndQuery();
+    SemanticId EndQuery();
 
-    SemanticId SelectionDisjunct(SemanticId selection);
-    SemanticId SelectionExclusiveDisjunct(SemanticId selection);
-    SemanticId SelectionConjunct(SemanticId selection);
-    SemanticId SelectionStrictConjunct(SemanticId selection);
+    void SelectionDisjunct();
+    void SelectionExclusiveDisjunct();
+    void SelectionConjunct();
+    void SelectionStrictConjunct();
 
-    SemanticId MutationDisjunct(SemanticId mutation);
-    SemanticId MutationExclusiveDisjunct(SemanticId mutation);
-    SemanticId MutationConjunct(SemanticId mutation);
-    SemanticId MutationStrictConjunct(SemanticId mutation);
+    void MutationDisjunct();
+    void MutationExclusiveDisjunct();
+    void MutationConjunct();
+    void MutationStrictConjunct();
 
     // Evaluation
     void BeginEvaluation(SemanticId query);
@@ -181,7 +181,17 @@ namespace QSemanticDB
     {
       BUILD_DECLARATION,
       BUILD_QUERY_SOURCE,
-      BUILD_QUERY_ARGUMENT
+      BUILD_QUERY_ARGUMENT = 0x08000000
+      /*BUILD_QUERY_SELECTIONDISJUNCT,
+      BUILD_QUERY_SELECTIONEXCLUSIVEDISJUNCT,
+      BUILD_QUERY_SELECTIONCONJUNCT,
+      BUILD_QUERY_SELECTIONSTRICTCONJUNCT,
+      //BUILD_QUERY_SELECTIONSTRICTEXCLUSIVEDISJUNCT,
+      BUILD_QUERY_MUTATIONDISJUNCT,
+      BUILD_QUERY_MUTATIONEXCLUSIVEDISJUNCT,
+      BUILD_QUERY_MUTATIONCONJUNCT,
+      BUILD_QUERY_MUTATIONSTRICTCONJUNCT
+      //BUILD_QUERY_MUTATIONSTRICTEXCLUSIVEDISJUNCT*/
     };
     typedef std::stack<EnvironmentState> EnvironmentStateStack;
 
@@ -222,6 +232,9 @@ namespace QSemanticDB
     SemanticId DeclareSpeculativeRelation(SemanticId domain, SemanticId codomain);
     SemanticId DeclareSpeculativeRelation(const Relation& unqualifiedRelation);
 
+    // Put the builder into the correct state for accepting query arguments
+    void OpenQueryArgument(QueryType queryType);
+
     // Get the semantic id represention the relation from domain to codomain
     //SemanticId GetRelationId(SemanticId domain, SemanticId codomain);
 
@@ -241,7 +254,8 @@ namespace QSemanticDB
     SemanticId CreateQualifiedId(const Relation& relation);
 
     // Add a query to the database
-    SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
+    //SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
+    void CreateQuery(QueryType type, SemanticId relation);
 
     // Declare a speculative Id
     //DeclareSpeculativeId(QueryType)

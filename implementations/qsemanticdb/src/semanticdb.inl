@@ -48,11 +48,19 @@ namespace QSemanticDB
 #endif
     SemanticId qualifiedId = OSIX::SEMANTICID_INVALID;
     if (environmentState.top() == BUILD_DECLARATION)
+    {
       qualifiedId = DeclareRelation(activeDomainId, GlobalSymbol(name));
+    }
     else if (environmentState.top() == BUILD_QUERY_SOURCE)
+    {
       qualifiedId = DeclareSpeculativeRelation(activeDomainId, GlobalSymbol(name));
-    else if (environmentState.top() == BUILD_QUERY_ARGUMENT)
-      qualifiedId = DeclareRelation(activeDomainId, GlobalSymbol(name));
+      queryEnvironment.push(qualifiedId);
+    }
+    else if ((environmentState.top() & BUILD_QUERY_ARGUMENT) == BUILD_QUERY_ARGUMENT)
+    {
+      qualifiedId = DeclareRelation(queryEnvironment.top(), GlobalSymbol(name));
+      CreateQuery(static_cast<QueryType>(environmentState.top() & ~BUILD_QUERY_ARGUMENT), qualifiedId);
+    }
 
     OSI_ASSERT(qualifiedId != OSIX::SEMANTICID_INVALID);
     return qualifiedId;
@@ -203,17 +211,15 @@ namespace QSemanticDB
     domainEnvironment.push(activeDomainId);//*/
   }
 
-  void SemanticDBImplementation::EndQuery()
+  SemanticId SemanticDBImplementation::EndQuery()
   {
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
     infoStream << "EndQuery" << std::endl;
 #endif
 
     // Remove the query state from the environment
-    OSI_ASSERT(environmentState.top() == BUILD_QUERY_ARGUMENT);
+    OSI_ASSERT((environmentState.top() & BUILD_QUERY_ARGUMENT) == BUILD_QUERY_ARGUMENT);
     environmentState.pop();
-
-
 
     /* TODO: Move this ....
 
@@ -227,54 +233,61 @@ namespace QSemanticDB
 
     // TEMP:
     queryEnvironment.pop();
-
+    return 0;
 
 
 
     /* OLD:
     activeDomainId = domainEnvironment.top();
     domainEnvironment.pop();//*/
-
   }
 
-  SemanticId SemanticDBImplementation::SelectionDisjunct(SemanticId selection)
+  void SemanticDBImplementation::SelectionDisjunct()
   {
-    return CreateQuery(QuerySelectionDisjunct, queryEnvironment.top(), selection);
+    OpenQueryArgument(QuerySelectionDisjunct);
+    //return CreateQuery(QuerySelectionDisjunct, queryEnvironment.top(), selection);
   }
 
-  SemanticId SemanticDBImplementation::SelectionExclusiveDisjunct(SemanticId selection)
+  void SemanticDBImplementation::SelectionExclusiveDisjunct()
   {
-    return CreateQuery(QuerySelectionExclusiveDisjunct, queryEnvironment.top(), selection);
+    OpenQueryArgument(QueryMutationExclusiveDisjunct);
+    //return CreateQuery(QuerySelectionExclusiveDisjunct, queryEnvironment.top(), selection);
   }
 
-  SemanticId SemanticDBImplementation::SelectionConjunct(SemanticId selection)
+  void SemanticDBImplementation::SelectionConjunct()
   {
-    return CreateQuery(QuerySelectionConjunct, queryEnvironment.top(), selection);
+    OpenQueryArgument(QuerySelectionConjunct);
+    //return CreateQuery(QuerySelectionConjunct, queryEnvironment.top(), selection);
   }
 
-  SemanticId SemanticDBImplementation::SelectionStrictConjunct(SemanticId selection)
+  void SemanticDBImplementation::SelectionStrictConjunct()
   {
-    return CreateQuery(QuerySelectionStrictConjunct, queryEnvironment.top(), selection);
+    OpenQueryArgument(QuerySelectionStrictConjunct);
+    //return CreateQuery(QuerySelectionStrictConjunct, queryEnvironment.top(), selection);
   }
 
-  SemanticId SemanticDBImplementation::MutationDisjunct(SemanticId mutation)
+  void SemanticDBImplementation::MutationDisjunct()
   {
-    return CreateQuery(QueryMutationDisjunct, queryEnvironment.top(), mutation);
+    OpenQueryArgument(QueryMutationDisjunct);
+    //return CreateQuery(QueryMutationDisjunct, queryEnvironment.top(), mutation);
   }
 
-  SemanticId SemanticDBImplementation::MutationExclusiveDisjunct(SemanticId mutation)
+  void SemanticDBImplementation::MutationExclusiveDisjunct()
   {
-    return CreateQuery(QueryMutationExclusiveDisjunct, queryEnvironment.top(), mutation);
+    OpenQueryArgument(QueryMutationExclusiveDisjunct);
+    //return CreateQuery(QueryMutationExclusiveDisjunct, queryEnvironment.top(), mutation);
   }
 
-  SemanticId SemanticDBImplementation::MutationConjunct(SemanticId mutation)
+  void SemanticDBImplementation::MutationConjunct()
   {
-    return CreateQuery(QueryMutationConjunct, queryEnvironment.top(), mutation);
+    OpenQueryArgument(QueryMutationConjunct);
+    //return CreateQuery(QueryMutationConjunct, queryEnvironment.top(), mutation);
   }
 
-  SemanticId SemanticDBImplementation::MutationStrictConjunct(SemanticId mutation)
+  void SemanticDBImplementation::MutationStrictConjunct()
   {
-    return CreateQuery(QueryMutationStrictConjunct, queryEnvironment.top(), mutation);
+    OpenQueryArgument(QueryMutationStrictConjunct);
+    //return CreateQuery(QueryMutationStrictConjunct, queryEnvironment.top(), mutation);
   }
 
   void SemanticDBImplementation::BeginEvaluation(SemanticId query)
@@ -450,13 +463,21 @@ namespace QSemanticDB
     SemanticId qualifiedCodomain = unqualifiedRelation.codomain;
     if(unqualifiedRelation.domain != OSIX::SEMANTICID_EPSILON)
     {
+      // TODO: SHOULD unqualifiedRelation.domain == OSIX::SEMANTICID_EPSILON be possible.
+      //        Probably not - an error should be given if not.
+
       qualifiedCodomain = CreateQualifiedId(unqualifiedRelation);
       domainIndexUCodomains.insert(std::make_pair(unqualifiedRelation.domain, unqualifiedRelation.codomain));
       domainIndexQCodomains.insert(std::make_pair(unqualifiedRelation.domain, qualifiedCodomain));
       relations.insert(RelationIndexValue(qualifiedCodomain, unqualifiedRelation));
 
+      // Add to domains
+      //queryEnvironment.push
+
       // Add the speculative flag to the relation (opposite of concrete)
       symbolProperties.insert(std::make_pair(qualifiedCodomain, SymbolProperties(false, QueryNone)));
+
+
     }
 
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
@@ -465,6 +486,14 @@ namespace QSemanticDB
                << " = " << qualifiedCodomain << ')' << std::endl;
 #endif
     return qualifiedCodomain;
+  }
+
+  void SemanticDBImplementation::OpenQueryArgument(QueryType queryType)
+  {
+    // Change the query state
+    OSI_ASSERT(environmentState.top() == BUILD_QUERY_SOURCE);
+    environmentState.pop();
+    environmentState.push(static_cast<EnvironmentState>(BUILD_QUERY_ARGUMENT | queryType));
   }
 
   /*SemanticId SemanticDBImplementation::GetRelationId(SemanticId domain, SemanticId codomain)
@@ -513,15 +542,10 @@ namespace QSemanticDB
     return id;
   }
 
-  SemanticId SemanticDBImplementation::CreateQuery(QueryType type, SemanticId domain, SemanticId argument)
+  /*SemanticId SemanticDBImplementation::CreateQuery(QueryType type, SemanticId domain, SemanticId argument)
   {
     const Query query(type, domain, argument);
     QueryIndex::right_iterator i = queries.right.find(query);
-
-    // Change the query state
-    OSI_ASSERT(environmentState.top() == BUILD_QUERY_SOURCE);
-    environmentState.pop();
-    environmentState.push(BUILD_QUERY_ARGUMENT);
 
     // Declare or get the query id representing this query
     SemanticId queryId;
@@ -532,6 +556,12 @@ namespace QSemanticDB
     }
 
     return queryId;
+  }*/
+
+  void SemanticDBImplementation::CreateQuery(QueryType type, SemanticId qualifiedId)
+  {
+    // Set a flag indicating that the id represents a query
+    symbolProperties.insert(std::make_pair(qualifiedId, SymbolProperties(true, type)));
   }
 
   /*bool SemanticDBImplementation::MatchDomain(SemanticId qualifiedCodomain, SemanticId matchDomain)
@@ -607,9 +637,23 @@ namespace QSemanticDB
 
       // Test  whether the qualified codomain is concrete (if not, then this is an (unresolved) query)
       IdPropertiesMap::iterator iProperties = symbolProperties.find(qualifiedCodomain);
-
       bool concrete = iProperties == symbolProperties.end() || iProperties->second.concrete;
-      infoStream << (concrete? "(" : "(? ") << qualifiedCodomain << " = " << domain << '.' << unqualifiedCodomain << (concrete? ")" : " ?)");
+      const char* relationOperator = "->";
+      switch(iProperties->second.query)
+      {
+      case QuerySelectionDisjunct:                    relationOperator = "~"; break;
+      case QuerySelectionExclusiveDisjunct:           relationOperator = "!"; break;
+      case QuerySelectionConjunct:                    relationOperator = "."; break;
+      case QuerySelectionStrictConjunct:              relationOperator = ":"; break;
+      //case QuerySelectionStrictExclusiveDisjunct:   break;
+      case QueryMutationDisjunct:                     break;
+      case QueryMutationExclusiveDisjunct:            break;
+      case QueryMutationConjunct:                     break;
+      case QueryMutationStrictConjunct:               break;
+      }
+
+
+      infoStream << (concrete? "(" : "(? ") << qualifiedCodomain << " = " << domain << relationOperator << unqualifiedCodomain << (concrete? ")" : " ?)");
     }
 
     // Get the parent:symbol id
