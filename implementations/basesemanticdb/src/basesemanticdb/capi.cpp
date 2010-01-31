@@ -109,9 +109,9 @@ void OSI_API_C_CALL MutationStrictConjunct()
    semanticDB->MutationStrictConjunct();
 }
 
-OSobject OSI_API_C_CALL BeginEvaluation(SemanticId query)
+OSobject OSI_API_C_CALL BeginEvaluation(SemanticId root)
 {
-  return semanticDB->BeginEvaluation(query);
+  return semanticDB->BeginEvaluation(root);
 }
 
 SemanticId OSI_API_C_CALL Eval()

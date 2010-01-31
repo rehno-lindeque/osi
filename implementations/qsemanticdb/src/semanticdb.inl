@@ -16,7 +16,7 @@ namespace QSemanticDB
 {
   SemanticDBImplementation::SemanticDBImplementation() :
     nextSymbolId(0),
-    activeQueryId(OSIX::SEMANTICID_INVALID),
+    evalQueryId(OSIX::SEMANTICID_INVALID),
     activeDomainId(OSIX::SEMANTICID_EPSILON),
     errorStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
     warnStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
@@ -290,34 +290,83 @@ namespace QSemanticDB
     //return CreateQuery(QueryMutationStrictConjunct, queryEnvironment.top(), mutation);
   }
 
-  void SemanticDBImplementation::BeginEvaluation(SemanticId query)
+  void SemanticDBImplementation::BeginEvaluation(SemanticId root)
   {
-    evaluationQueries.push(query);
-    activeQueries.push(activeQueryId);
-    activeQueryId = OSIX::SEMANTICID_INVALID;
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << "Begin evaluation ";
+    IdStringMap::iterator i = epsilonStrings.find(root);
+    if(i == epsilonStrings.end())
+      infoStream << "(Unknown Id)";
+    else
+      infoStream << '(' << i->second << ')';
+    infoStream << std::endl;
+#endif
+
+    //evaluationQueries.push(root);
+    //activeQueries.push(evalQueryId);
+    //evalQueryId = OSIX::SEMANTICID_INVALID;
+    evalQueryId = root;
   }
 
   SemanticId SemanticDBImplementation::Eval()
   {
-    // Advance the active query
-    if (activeQueryId == OSIX::SEMANTICID_INVALID)
-      activeQueryId = evaluationQueries.top();
-    else
-      activeQueryId = GetUnqualifiedCodomain(activeQueryId);
-    return activeQueryId;
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << "  Eval: ";
+#endif
+
+    if (evalQueryId != OSIX::SEMANTICID_INVALID)
+    {
+      // Add parent codomain edges of this id to the evaluation stack
+      const IdMultiIndexRange r = domainIndexQCodomains.equal_range(evalQueryId);
+      for (IdMultiIndexIterator i = r.first; i != r.second; ++i)
+        evaluationQueries.push(i->second);
+
+      //* Determine whether this id has child codomains and evaluate them
+      SemanticId unqualifiedCodomain = GetUnqualifiedCodomain(evalQueryId);
+      if (unqualifiedCodomain == OSIX::SEMANTICID_INVALID)
+      {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+        IdStringMap::iterator i = epsilonStrings.find(evalQueryId);
+        if(i == epsilonStrings.end())
+          infoStream << "(Unknown Atom Id)";
+        else
+          infoStream << i->second;
+#endif
+      }
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      else
+      {
+        infoStream << "(Qualified Id)";
+      }
+#endif
+      evalQueryId = unqualifiedCodomain;//*/
+    }
+
+    //* If there are any queries left on the evaluation stack, then evaluate them
+    if (evalQueryId == OSIX::SEMANTICID_INVALID && !evaluationQueries.empty())
+    {
+      evalQueryId = evaluationQueries.top();
+      evaluationQueries.pop();
+    }
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << std::endl;
+#endif
+
+    return evalQueryId;
   }
 
   void SemanticDBImplementation::EndEvaluation()
   {
-    if (activeQueries.empty())
+    /*if (activeQueries.empty())
     {
-      activeQueryId = OSIX::SEMANTICID_INVALID;
+      evalQueryId = OSIX::SEMANTICID_INVALID;
     }
     else
     {
-      activeQueryId = activeQueries.top();
+      evalQueryId = activeQueries.top();
       activeQueries.pop();
-    }
+    }*/
 
     if (!evaluationQueries.empty())
       evaluationQueries.pop();
@@ -325,7 +374,7 @@ namespace QSemanticDB
 
   SemanticId SemanticDBImplementation::GetActiveQuery()
   {
-    return activeQueryId;
+    return evalQueryId;
   }
 
   SemanticId SemanticDBImplementation::GetDomain(SemanticId qualifiedId)
@@ -618,7 +667,7 @@ namespace QSemanticDB
     if(domain == OSIX::SEMANTICID_EPSILON)
     {
       //infoStream << epsilonName << ".";
-      std::map<SemanticId, std::string>::iterator i = epsilonStrings.find(qualifiedCodomain);
+      IdStringMap::iterator i = epsilonStrings.find(qualifiedCodomain);
       if(i == epsilonStrings.end())
         infoStream << "Anonymous";
       else
@@ -629,7 +678,7 @@ namespace QSemanticDB
       infoStream << "Invalid (no tail for " << domain << " -> " << qualifiedCodomain << ")";
     else
     {
-      std::map<SemanticId, std::string>::iterator i = epsilonStrings.find(unqualifiedCodomain);
+      IdStringMap::iterator i = epsilonStrings.find(unqualifiedCodomain);
       if(i == epsilonStrings.end())
         infoStream << "Anonymous";
       else
@@ -645,11 +694,10 @@ namespace QSemanticDB
       case QuerySelectionExclusiveDisjunct:           relationOperator = "!"; break;
       case QuerySelectionConjunct:                    relationOperator = "."; break;
       case QuerySelectionStrictConjunct:              relationOperator = ":"; break;
-      //case QuerySelectionStrictExclusiveDisjunct:   break;
-      case QueryMutationDisjunct:                     break;
-      case QueryMutationExclusiveDisjunct:            break;
-      case QueryMutationConjunct:                     break;
-      case QueryMutationStrictConjunct:               break;
+      case QueryMutationDisjunct:                     relationOperator = "~~"; break;
+      case QueryMutationExclusiveDisjunct:            relationOperator = "!!"; break;
+      case QueryMutationConjunct:                     relationOperator = ".."; break;
+      case QueryMutationStrictConjunct:               relationOperator = "::"; break;
       }
 
 

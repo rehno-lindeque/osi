@@ -74,30 +74,22 @@ namespace OSIX
 
     /* queries */
     OSI_DYNAMIC_METHOD void OSI_API_CALL BeginQuery();
-    OSI_DYNAMIC_METHOD void OSI_API_CALL EndQuery();
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL EndQuery();
 
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionDisjunct(SemanticId selection);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionExclusiveDisjunct(SemanticId selection);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionConjunct(SemanticId selection);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionStrictConjunct(SemanticId selection);
-    //OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectionStrictExclusiveDisjunct(SemanticId selection);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL SelectionDisjunct();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL SelectionExclusiveDisjunct();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL SelectionConjunct();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL SelectionStrictConjunct();
+    //OSI_DYNAMIC_METHOD void OSI_API_CALL SelectionStrictExclusiveDisjunct();
 
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationDisjunct(SemanticId mutation);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationExclusiveDisjunct(SemanticId mutation);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationConjunct(SemanticId mutation);
-    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL MutationStrictConjunct(SemanticId mutation);
-    //OSI_DYNAMIC_METHOD  SemanticId OSI_API_CALL MutationStrictExclusiveDisjunct(SemanticId mutation);
-
-    // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectiveMutation(SemanticId domain, SemanticId mutation); // Conjunctive // Injective/selective morphism
-    // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL AssertiveMutation(SemanticId domain, SemanticId mutation);
-    // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL Disjunctive/AdditiveMutation/UnifyingQuery(SemanticId domain, SemanticId mutation);
-
-    // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL SelectiveQuery(SemanticId domain, SemanticId query);
-    // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL AssertiveQuery(SemanticId domain, SemanticId query);
-    // OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL AdditiveQuery/UnifyingQuery(SemanticId domain, SemanticId query);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL MutationDisjunct();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL MutationExclusiveDisjunct();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL MutationConjunct();
+    OSI_DYNAMIC_METHOD void OSI_API_CALL MutationStrictConjunct();
+    //OSI_DYNAMIC_METHOD  void OSI_API_CALL MutationStrictExclusiveDisjunct();
 
     /* evaluation */
-    OSI_DYNAMIC_METHOD OSobject OSI_API_CALL BeginEvaluation(SemanticId query);
+    OSI_DYNAMIC_METHOD OSobject OSI_API_CALL BeginEvaluation(SemanticId root);
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL Eval();
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL GetEvalDomain();
     OSI_DYNAMIC_METHOD const OSchar* OSI_API_CALL GetEvalString();

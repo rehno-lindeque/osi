@@ -128,9 +128,9 @@ void OSI_API_CALL OSIX::SemanticDB::MutationStrictConjunct()
   return _this->MutationStrictConjunct();
 }
 
-OSobject OSI_API_CALL OSIX::SemanticDB::BeginEvaluation(OSIX::SemanticId query)
+OSobject OSI_API_CALL OSIX::SemanticDB::BeginEvaluation(OSIX::SemanticId root)
 {
-  _this->BeginEvaluation(query);
+  _this->BeginEvaluation(root);
   return 0; // todo...
 }
 

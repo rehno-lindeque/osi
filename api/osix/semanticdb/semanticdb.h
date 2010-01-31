@@ -62,22 +62,22 @@ void OSI_API_C_CALL CloseDomain(const OSchar* name = 0);
 
 /* queries */
 void OSI_API_C_CALL BeginQuery();
-void OSI_API_C_CALL EndQuery();
+SemanticId OSI_API_C_CALL EndQuery();
 
-SemanticId OSI_API_C_CALL SelectionDisjunct(SemanticId selection);
-SemanticId OSI_API_C_CALL SelectionExclusiveDisjunct(SemanticId selection);
-SemanticId OSI_API_C_CALL SelectionConjunct(SemanticId selection);
-SemanticId OSI_API_C_CALL SelectionStrictConjunct(SemanticId selection);
-//SemanticId OSI_API_C_CALL SelectionStrictExclusiveDisjunct(SemanticId domain, SemanticId selection);
+void OSI_API_C_CALL SelectionDisjunct();
+void OSI_API_C_CALL SelectionExclusiveDisjunct();
+void OSI_API_C_CALL SelectionConjunct();
+void OSI_API_C_CALL SelectionStrictConjunct();
+//void OSI_API_C_CALL SelectionStrictExclusiveDisjunct();
 
-SemanticId OSI_API_C_CALL MutationDisjunct(SemanticId mutation);
-SemanticId OSI_API_C_CALL MutationExclusiveDisjunct(SemanticId mutation);
-SemanticId OSI_API_C_CALL MutationConjunct(SemanticId mutation);
-SemanticId OSI_API_C_CALL MutationStrictConjunct(SemanticId mutation);
-//SemanticId OSI_API_C_CALL MutationStrictExclusiveDisjunct(SemanticId domain, SemanticId mutation);
+void OSI_API_C_CALL MutationDisjunct();
+void OSI_API_C_CALL MutationExclusiveDisjunct();
+void OSI_API_C_CALL MutationConjunct();
+void OSI_API_C_CALL MutationStrictConjunct();
+//void OSI_API_C_CALL MutationStrictExclusiveDisjunct();
 
 /* evaluation */
-OSobject OSI_API_C_CALL BeginEvaluation(SemanticId query);
+OSobject OSI_API_C_CALL BeginEvaluation(SemanticId root);
 SemanticId OSI_API_C_CALL Eval();
 SemanticId OSI_API_C_CALL GetEvalDomain();
 const OSchar* OSI_API_C_CALL GetEvalString();

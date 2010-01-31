@@ -32,6 +32,8 @@ type OSfloat = CFloat
 type OSdouble = CDouble
 type OSobject = OSuint32
 
+type QueryFunction = IO ()
+
 {-                                 CONSTANTS                                -}
 c_SEMANTICID_INVALID  :: SemanticId
 c_SEMANTICID_EPSILON  :: SemanticId
@@ -96,37 +98,37 @@ foreign import ccall unsafe "semanticdb.h BeginQuery"
   c_BeginQuery :: IO ()
 
 foreign import ccall unsafe "semanticdb.h EndQuery"
-  c_EndQuery :: IO ()
+  c_EndQuery :: IO SemanticId
 
 foreign import ccall unsafe "semanticdb.h SelectionDisjunct"
-  c_SelectionDisjunct :: SemanticId -> IO SemanticId
+  c_SelectionDisjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h SelectionExclusiveDisjunct"
-  c_SelectionExclusiveDisjunct :: SemanticId -> IO SemanticId
+  c_SelectionExclusiveDisjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h SelectionConjunct"
-  c_SelectionConjunct :: SemanticId -> IO SemanticId
+  c_SelectionConjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h SelectionStrictConjunct"
-  c_SelectionStrictConjunct :: SemanticId -> IO SemanticId
+  c_SelectionStrictConjunct :: QueryFunction
 
 --foreign import ccall unsafe "semanticdb.h SelectionStrictExclusiveDisjunct"
---  c_SelectionStrictExclusiveDisjunct :: SemanticId -> IO SemanticId
+--  c_SelectionStrictExclusiveDisjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h MutationDisjunct"
-  c_MutationDisjunct :: SemanticId -> IO SemanticId
+  c_MutationDisjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h MutationExclusiveDisjunct"
-  c_MutationExclusiveDisjunct :: SemanticId -> IO SemanticId
+  c_MutationExclusiveDisjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h MutationConjunct"
-  c_MutationConjunct :: SemanticId -> IO SemanticId
+  c_MutationConjunct :: QueryFunction
 
 foreign import ccall unsafe "semanticdb.h MutationStrictConjunct"
-  c_MutationStrictConjunct :: SemanticId -> IO SemanticId
+  c_MutationStrictConjunct :: QueryFunction
 
 --foreign import ccall unsafe "semanticdb.h MutationStrictExclusiveDisjunct"
---  c_MutationStrictExclusiveDisjunct :: SemanticId -> SemanticId -> IO SemanticId
+--  c_MutationStrictExclusiveDisjunct :: QueryFunction
 
 {- evaluation -}
 foreign import ccall unsafe "semanticdb.h BeginEvaluation"

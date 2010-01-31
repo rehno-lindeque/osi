@@ -38,6 +38,7 @@ namespace QSemanticDB
     QueryMutationConjunct,
     QueryMutationStrictConjunct
     //QueryMutationStrictExclusiveDisjunct,
+    //Effect
   };
 
   struct Query
@@ -123,7 +124,7 @@ namespace QSemanticDB
     void MutationStrictConjunct();
 
     // Evaluation
-    void BeginEvaluation(SemanticId query);
+    void BeginEvaluation(SemanticId root);
     SemanticId Eval();
     void EndEvaluation();
     SemanticId GetActiveQuery();
@@ -156,7 +157,8 @@ namespace QSemanticDB
     // Global domain of all literals (whose hash function are not equal to their own values)
     // (Note: this is equivalent to a perfect hash map since hash values that may contain conflicts are mapped
     // to permanent tokens that do not contain conflicts)
-    std::map<SemanticId, std::string> epsilonStrings;
+    typedef std::map<SemanticId, std::string> IdStringMap;
+    IdStringMap epsilonStrings;
 
     // A mapping from one id to multiple ids
     typedef std::multimap<SemanticId, SemanticId> IdMultiIndex;
@@ -206,8 +208,8 @@ namespace QSemanticDB
 
     // Evaluation
     IdStack evaluationQueries;                          // Stack of evaluation queries
-    IdStack activeQueries;                              // Stack of queries in progress
-    SemanticId activeQueryId;                           // The last query returned by Eval
+    //IdStack activeQueries;                              // Stack of queries in progress
+    SemanticId evalQueryId;                           // The last query returned by Eval
 
     // Environment
     IdStack domainEnvironment;                          // Environment of open domains
@@ -247,7 +249,7 @@ namespace QSemanticDB
     // Get the unqualified relation
     bool GetUnqualifiedRelation(SemanticId qualifiedId, Relation& unqualifiedRelation);
 
-    // Test whether any relations exist from the given fully typed domain
+    // Test whether any relations exist from the given fully qualified domain
     bool HasStaticRelations(SemanticId domain);
 
     // Create an id for the relation using both the domain and codomain
