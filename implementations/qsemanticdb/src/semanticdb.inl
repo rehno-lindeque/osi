@@ -47,16 +47,16 @@ namespace QSemanticDB
     infoStream << "DeclareSymbol (" << name << ")" << std::endl;
 #endif
     SemanticId qualifiedId = OSIX::SEMANTICID_INVALID;
-    if (environmentState.top() == BUILD_DECLARATION)
+    if(environmentState.top() == BUILD_DECLARATION)
     {
       qualifiedId = DeclareRelation(activeDomainId, GlobalSymbol(name));
     }
-    else if (environmentState.top() == BUILD_QUERY_SOURCE)
+    else if(environmentState.top() == BUILD_QUERY_SOURCE)
     {
       qualifiedId = DeclareSpeculativeRelation(activeDomainId, GlobalSymbol(name));
       queryEnvironment.push(qualifiedId);
     }
-    else if ((environmentState.top() & BUILD_QUERY_ARGUMENT) == BUILD_QUERY_ARGUMENT)
+    else if((environmentState.top() & BUILD_QUERY_ARGUMENT) == BUILD_QUERY_ARGUMENT)
     {
       qualifiedId = DeclareRelation(queryEnvironment.top(), GlobalSymbol(name));
       CreateQuery(static_cast<QueryType>(environmentState.top() & ~BUILD_QUERY_ARGUMENT), qualifiedId);
@@ -173,7 +173,7 @@ namespace QSemanticDB
 
     // Declare or get the query id representing this query
     SemanticId queryId;
-    if (i == queries.right.end())
+    if(i == queries.right.end())
     {
       queryId = DeclareAnonymousSymbol();
       queries.insert(QueryIndexValue(queryId, query));
@@ -314,51 +314,18 @@ namespace QSemanticDB
     infoStream << "  Eval: ";
 #endif
 
-    if (evalQueryId != OSIX::SEMANTICID_INVALID)
-    {
-      // Add parent codomain edges of this id to the evaluation stack
-      const IdMultiIndexRange r = domainIndexQCodomains.equal_range(evalQueryId);
-      for (IdMultiIndexIterator i = r.first; i != r.second; ++i)
-        evaluationQueries.push(i->second);
-
-      //* Determine whether this id has child codomains and evaluate them
-      SemanticId unqualifiedCodomain = GetUnqualifiedCodomain(evalQueryId);
-      if (unqualifiedCodomain == OSIX::SEMANTICID_INVALID)
-      {
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
-        IdStringMap::iterator i = epsilonStrings.find(evalQueryId);
-        if(i == epsilonStrings.end())
-          infoStream << "(Unknown Atom Id)";
-        else
-          infoStream << i->second;
-#endif
-      }
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
-      else
-      {
-        infoStream << "(Qualified Id)";
-      }
-#endif
-      evalQueryId = unqualifiedCodomain;//*/
-    }
-
-    //* If there are any queries left on the evaluation stack, then evaluate them
-    if (evalQueryId == OSIX::SEMANTICID_INVALID && !evaluationQueries.empty())
-    {
-      evalQueryId = evaluationQueries.top();
-      evaluationQueries.pop();
-    }
+    SemanticId result = EvalInternal();
 
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
-      infoStream << std::endl;
+    infoStream << std::endl;
 #endif
 
-    return evalQueryId;
+    return result;
   }
 
   void SemanticDBImplementation::EndEvaluation()
   {
-    /*if (activeQueries.empty())
+    /*if(activeQueries.empty())
     {
       evalQueryId = OSIX::SEMANTICID_INVALID;
     }
@@ -368,9 +335,10 @@ namespace QSemanticDB
       activeQueries.pop();
     }*/
 
-    if (!evaluationQueries.empty())
+    if(!evaluationQueries.empty())
       evaluationQueries.pop();
   }
+
 
   SemanticId SemanticDBImplementation::GetActiveQuery()
   {
@@ -440,7 +408,7 @@ namespace QSemanticDB
       IdVector qualifiedCodomains;
       SelectExtendedRelations(Relation(domain, GetDomain(i->second)), qualifiedCodomains);
 
-      for (IdVector::iterator iCodomain = qualifiedCodomains.begin(); iCodomain != qualifiedCodomains.end(); ++iCodomain)
+      for(IdVector::iterator iCodomain = qualifiedCodomains.begin(); iCodomain != qualifiedCodomains.end(); ++iCodomain)
       {
         SemanticId qualifiedCodomain = *iCodomain;
       }
@@ -503,7 +471,7 @@ namespace QSemanticDB
   {
     // First test whether the relation already exists (in which case there is no need to create a "speculative" relation
     RelationIndex::right_const_iterator i = relations.right.find(unqualifiedRelation);
-    if (i != relations.right.end())
+    if(i != relations.right.end())
     {
       return i->second;
     }
@@ -598,7 +566,7 @@ namespace QSemanticDB
 
     // Declare or get the query id representing this query
     SemanticId queryId;
-    if (i == queries.right.end())
+    if(i == queries.right.end())
     {
       queryId = DeclareAnonymousSymbol();
       queries.insert(QueryIndexValue(queryId, query));
@@ -611,6 +579,196 @@ namespace QSemanticDB
   {
     // Set a flag indicating that the id represents a query
     symbolProperties.insert(std::make_pair(qualifiedId, SymbolProperties(true, type)));
+  }
+
+  SemanticId SemanticDBImplementation::EvalInternal()
+  {
+    SemanticId currentEvalId = evalQueryId;
+    if(evalQueryId != OSIX::SEMANTICID_INVALID)
+    {
+      // Add parent codomain edges of this id to the evaluation stack
+      EvalScheduleCodomains();
+
+      // Check whether the item represents an atom, a query or a speculative domain
+      IdPropertiesMap::iterator i = symbolProperties.find(evalQueryId);
+      if(i == symbolProperties.end() || (i->second.query == QueryNone && i->second.concrete))
+      {
+        EvalSymbol(evalQueryId);
+      }
+      else if(!i->second.concrete)
+      {
+          EvalContinue();
+          EvalInternal();
+      }
+      else if(i->second.query == QuerySelectionConjunct || i->second.query == QuerySelectionStrictConjunct)
+      {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+        infoStream << "SELECT CONJUNCT";
+        if(i->second.query == QuerySelectionStrictConjunct)
+          infoStream << " (STRICT)";
+#endif
+
+        // Get the domain and the unqualified codomain of the query (i.e. as an unqualified relation)
+        evalQueryId = ResolveConjunctSelection(evalQueryId);
+        if (evalQueryId == OSIX::SEMANTICID_INVALID && i->second.query == QuerySelectionStrictConjunct)
+        {
+          //errorStream << "TODO: Assertion failed...";
+          infoStream << " TODO: Assertion failed...";
+        }
+      }
+      else
+      {
+        // TODO: Unhandled type of query....
+        evalQueryId = OSIX::SEMANTICID_INVALID;
+      }
+    }
+
+    // Set up for the next evaluation
+    if(evalQueryId == OSIX::SEMANTICID_INVALID)
+      EvalContinue();
+
+    return evalQueryId;
+  }
+
+  void SemanticDBImplementation::EvalContinue()
+  {
+    if (evaluationQueries.empty())
+    {
+      evalQueryId = OSIX::SEMANTICID_INVALID;
+      return;
+    }
+
+    //* If there are any queries left on the evaluation stack, then evaluate them
+    evalQueryId = evaluationQueries.top();
+    evaluationQueries.pop();
+  }
+
+  void SemanticDBImplementation::EvalScheduleCodomains()
+  {
+    const IdMultiIndexRange r = domainIndexQCodomains.equal_range(evalQueryId);
+    for(IdMultiIndexIterator i = r.first; i != r.second; ++i)
+      evaluationQueries.push(i->second);
+  }
+
+  SemanticId SemanticDBImplementation::EvalSymbol(SemanticId symbol)
+  {
+    //* Determine whether this id has child codomains and evaluate them
+    SemanticId unqualifiedCodomain = GetUnqualifiedCodomain(symbol);
+    if(unqualifiedCodomain == OSIX::SEMANTICID_INVALID)
+    {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      IdStringMap::iterator i = epsilonStrings.find(symbol);
+      if(i == epsilonStrings.end())
+        infoStream << "(Unknown Atom Id)";
+      else
+        infoStream << "(Atom: " << i->second << ")";
+#endif
+    }
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    else
+    {
+      infoStream << "(Qualified Id: " << symbol << ")";
+    }
+#endif
+    evalQueryId = unqualifiedCodomain;//*/
+
+    // TEMP:
+    //infoStream << unqualifiedCodomain;
+  }
+
+  SemanticId SemanticDBImplementation::ResolveContext(SemanticId domain)
+  {
+    // Resolve the speculative domain on the left-hand side
+    while(domain != OSIX::SEMANTICID_INVALID)
+    {
+      // Test whether this domain is concrete
+      IdPropertiesMap::iterator iDomain = symbolProperties.find(domain);
+      if(iDomain == symbolProperties.end() || iDomain->second.concrete == true)
+        break;
+
+      // Get the  domain of this symbol
+      domain = GetDomain(domain);
+    }
+    return domain;
+  }
+
+  SemanticId SemanticDBImplementation::ResolveRelation(const OrderedRelation& relation)
+  {
+    SemanticId parentContext = ResolveContext(relation.domain);
+    RelationIndex::right_const_iterator i = relations.right.find(OrderedRelation(parentContext, relation.codomain));
+    while(i == relations.right.end()
+          && parentContext != OSIX::SEMANTICID_EPSILON
+          && parentContext != OSIX::SEMANTICID_INVALID)
+    {
+      parentContext = GetDomain(parentContext);
+      i = relations.right.find(OrderedRelation(parentContext, relation.codomain));
+    }
+  }
+
+  SemanticId SemanticDBImplementation::ResolveConjunctSelection(SemanticId query)
+  {
+    RelationIndex::left_const_iterator iQueryRelation = relations.left.find(query);
+    if(iQueryRelation == relations.left.end())
+    {
+      errorStream << "FATAL ERROR: Could not find the relation for a query in the database. This should never happen and should be reported as bug!" << std::endl;
+      return OSIX::SEMANTICID_INVALID;
+    }
+    const OrderedRelation &queryRelation = iQueryRelation->second;
+
+    RelationIndex::left_const_iterator iDomainRelation = relations.left.find(queryRelation.domain);
+    if(iDomainRelation == relations.left.end())
+    {
+      errorStream << "ERROR (TODO): Could not find a query domain in the database. Not yet sure what to do in this case..." << std::endl;
+      return OSIX::SEMANTICID_INVALID;
+    }
+    const OrderedRelation &domainRelation = iDomainRelation->second;
+
+    // Resolve the speculative domain of the query to get a concrete domain
+    SemanticId concreteDomain = ResolveRelation(domainRelation);
+
+    // Resolve the selection itself
+    RelationIndex::right_const_iterator iCodomain = relations.right.find(OrderedRelation(concreteDomain, queryRelation.codomain));
+    if(iCodomain == relations.right.end())
+      return OSIX::SEMANTICID_INVALID;
+
+    return iCodomain->second;
+
+    /*
+    SemanticId concreteDomain = ResolveContext(relation.domain);
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << std::endl << "(TEMPORARY NOTE: Concrete domain = " << concreteDomain << ")" << std::endl;
+#endif
+
+    // The domain is invalid if the speculative id could not be resolved (i.e. the query failed)
+    if(concreteDomain == OSIX::SEMANTICID_INVALID)
+    {
+      return OSIX::SEMANTICID_INVALID;
+    }
+
+    // Test whether the codomain can be selected from the resolved (concrete) domain
+    /* TODO ...
+    RelationIndex::right_const_iterator i = relations.right.find(OrderedRelation(concreteDomain, relation.codomain));
+    if(i != relations.right.end())
+    {
+      // The codomain could not be selected from this concrete domain
+
+    }*/
+
+    /* OLD:
+    IdMultiIndexRange rUCodomains = domainIndexUCodomains.equal_range(concreteDomain);
+    for(IdMultiIndexIterator iUCodomain = rUCodomains.first; iUCodomain != rUCodomains.second; ++iUCodomain)
+    {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << " -- Codomain -- ";
+#endif
+      if(iUCodomain->second ==
+    }*/
+
+    // Resolve the query by creating a new
+
+    /////// TEMPORARY //////////
+    evalQueryId = OSIX::SEMANTICID_INVALID;
+    /////// TEMPORARY //////////
   }
 
   /*bool SemanticDBImplementation::MatchDomain(SemanticId qualifiedCodomain, SemanticId matchDomain)

@@ -25,13 +25,14 @@ namespace BaseSemanticDB
   {
   public:
     inline OrderedRelation(const OSIX::SemanticDB::Relation& relation) : Relation(relation) {}
+    inline OrderedRelation(OSIX::SemanticId domain, OSIX::SemanticId codomain) : Relation(domain, codomain) {}
   };
 
   inline bool operator == (const OrderedRelation& arg1, const OrderedRelation& arg2)
   {
     return arg1.domain == arg2.domain && arg1.codomain == arg2.codomain;
   }
-  
+
   inline bool operator < (const OrderedRelation& arg1, const OrderedRelation& arg2)
   {
     return (arg1.domain < arg2.domain) || (arg1.domain == arg2.domain && arg1.codomain < arg2.codomain);

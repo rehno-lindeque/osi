@@ -23,8 +23,10 @@
 // Verbose debugging flags
 #ifdef _DEBUG
 # define QSEMANTICDB_DEBUG_VERBOSE
+//# define QSEMANTICDB_DEBUG_DETAILEDEVAL
 #elif defined(QSEMANTICDB_DEBUG_VERBOSE)
 # undef QSEMANTICDB_DEBUG_VERBOSE
+//# undef QSEMANTICDB_DEBUG_DETAILEDEVAL
 #endif
 
 /*                                 INCLUDES                                 */

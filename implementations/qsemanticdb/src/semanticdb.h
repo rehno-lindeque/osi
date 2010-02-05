@@ -184,16 +184,6 @@ namespace QSemanticDB
       BUILD_DECLARATION,
       BUILD_QUERY_SOURCE,
       BUILD_QUERY_ARGUMENT = 0x08000000
-      /*BUILD_QUERY_SELECTIONDISJUNCT,
-      BUILD_QUERY_SELECTIONEXCLUSIVEDISJUNCT,
-      BUILD_QUERY_SELECTIONCONJUNCT,
-      BUILD_QUERY_SELECTIONSTRICTCONJUNCT,
-      //BUILD_QUERY_SELECTIONSTRICTEXCLUSIVEDISJUNCT,
-      BUILD_QUERY_MUTATIONDISJUNCT,
-      BUILD_QUERY_MUTATIONEXCLUSIVEDISJUNCT,
-      BUILD_QUERY_MUTATIONCONJUNCT,
-      BUILD_QUERY_MUTATIONSTRICTCONJUNCT
-      //BUILD_QUERY_MUTATIONSTRICTEXCLUSIVEDISJUNCT*/
     };
     typedef std::stack<EnvironmentState> EnvironmentStateStack;
 
@@ -258,6 +248,31 @@ namespace QSemanticDB
     // Add a query to the database
     //SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
     void CreateQuery(QueryType type, SemanticId relation);
+
+///////////////////////////////////////////////////
+// EVALUATION stuff
+
+    // Internal eval function
+    SemanticId EvalInternal();
+
+    // Continue evaluation (set up for the next iteration)
+    void EvalContinue();
+
+    // Schedule codomain edges for later evaluation (push it onto the evaluation stack)
+    void EvalScheduleCodomains();
+
+    // Evaluate a symbol (non-query)
+    SemanticId EvalSymbol(SemanticId symbol);
+
+    // Resolve a speculative context with the first concrete parent context
+    SemanticId ResolveContext(SemanticId domain);
+
+    // Resolve a speculative unqualified relation.
+    // Returns the first concrete qualified codomain in a parent context
+    SemanticId ResolveRelation(const OrderedRelation& relation);
+
+    // Resolve a selection at compile-time
+    SemanticId ResolveConjunctSelection(SemanticId symbol);
 
     // Declare a speculative Id
     //DeclareSpeculativeId(QueryType)
