@@ -165,7 +165,7 @@ namespace QSemanticDB
     typedef IdMultiIndex::iterator IdMultiIndexIterator;
     typedef std::pair<IdMultiIndexIterator, IdMultiIndexIterator> IdMultiIndexRange;
 
-    // A relation from relation
+    // A bidirectional mapping between unqualified relations (domain, codomain) pairs and qualified codomain ids
     typedef boost::bimaps::bimap<SemanticId, OrderedRelation> RelationIndex;
     typedef RelationIndex::value_type RelationIndexValue;
 
@@ -174,7 +174,7 @@ namespace QSemanticDB
     typedef QueryIndex::value_type QueryIndexValue;
 
     // Additional symbol properties
-    struct SymbolProperties { SymbolProperties(bool concrete, QueryType query) : concrete(concrete), query(query) {} bool concrete; QueryType query; };
+    struct SymbolProperties { SymbolProperties(bool concrete = true, QueryType query = QueryNone) : concrete(concrete), query(query) {} bool concrete; QueryType query; };
     typedef std::pair<SemanticId, SymbolProperties> IdPropertiesPair;
     typedef std::map<SemanticId, SymbolProperties> IdPropertiesMap;
 
@@ -245,6 +245,9 @@ namespace QSemanticDB
     // Create an id for the relation using both the domain and codomain
     SemanticId CreateQualifiedId(const Relation& relation);
 
+    // Get the properties associated with a symbol
+    const SymbolProperties& GetProperties(SemanticId domain) const;
+
     // Add a query to the database
     //SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
     void CreateQuery(QueryType type, SemanticId relation);
@@ -267,9 +270,10 @@ namespace QSemanticDB
     // Resolve a speculative context with the first concrete parent context
     SemanticId ResolveContext(SemanticId domain);
 
-    // Resolve a speculative unqualified relation.
-    // Returns the first concrete qualified codomain in a parent context
-    SemanticId ResolveRelation(const OrderedRelation& relation);
+    // Resolve a relation
+    // Modifies the domain part of the unqualified relation until the codomain can be found in it
+    // Returns the first qualified codomain corresponding to the unqualified codomain in a parent context
+    SemanticId ResolveRelation(OrderedRelation& relation);
 
     // Resolve a selection at compile-time
     SemanticId ResolveConjunctSelection(SemanticId symbol);

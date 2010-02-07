@@ -348,8 +348,12 @@ namespace QSemanticDB
   SemanticId SemanticDBImplementation::GetDomain(SemanticId qualifiedId)
   {
     RelationIndex::left_iterator i = relations.left.find(qualifiedId);
+    /*OLD:
     if(i == relations.left.end())
-      return OSIX::SEMANTICID_INVALID;
+      return OSIX::SEMANTICID_INVALID;*/
+    //* NEW: all id's belong in the global epsilon domain
+    if(i == relations.left.end())
+      return OSIX::SEMANTICID_EPSILON;//*/
     return i->second.domain;
   }
 
@@ -559,6 +563,12 @@ namespace QSemanticDB
     return id;
   }
 
+  const SemanticDBImplementation::SymbolProperties& SemanticDBImplementation::GetProperties(SemanticId domain) const
+  {
+    static const SymbolProperties defaultProperties;
+    return defaultProperties;
+  }
+
   /*SemanticId SemanticDBImplementation::CreateQuery(QueryType type, SemanticId domain, SemanticId argument)
   {
     const Query query(type, domain, argument);
@@ -682,8 +692,11 @@ namespace QSemanticDB
     while(domain != OSIX::SEMANTICID_INVALID)
     {
       // Test whether this domain is concrete
+      /*OLD:
       IdPropertiesMap::iterator iDomain = symbolProperties.find(domain);
       if(iDomain == symbolProperties.end() || iDomain->second.concrete == true)
+        break;*/
+      if(GetProperties(domain).concrete)
         break;
 
       // Get the  domain of this symbol
@@ -692,46 +705,114 @@ namespace QSemanticDB
     return domain;
   }
 
-  SemanticId SemanticDBImplementation::ResolveRelation(const OrderedRelation& relation)
+  SemanticId SemanticDBImplementation::ResolveRelation(OrderedRelation& relation)
   {
-    SemanticId parentContext = ResolveContext(relation.domain);
-    RelationIndex::right_const_iterator i = relations.right.find(OrderedRelation(parentContext, relation.codomain));
-    while(i == relations.right.end()
-          && parentContext != OSIX::SEMANTICID_EPSILON
-          && parentContext != OSIX::SEMANTICID_INVALID)
+    // Try to find a concrete relation
+    // TODO: what happens when the relation turns out to be a query (Is this possible?)
+    RelationIndex::right_const_iterator i = relations.right.find(relation);
+
+    /* We only need to check whether the first symbol is either speculative or a query.
+    // Every symbol in a parent context can not be either
+    const SymbolProperties& properties = GetProperties(i->second);
+    if (!properties.concrete || properties.query != QueryNone)
     {
-      parentContext = GetDomain(parentContext);
-      i = relations.right.find(OrderedRelation(parentContext, relation.codomain));
+      relation.domain = GetDomain(relation.domain);
+      i = relations.right.find(OrderedRelation(relation.domain, relation.codomain));
+    }//*/
+
+    //while((i == relations.right.end() || !GetProperties(i->second).concrete)
+    while(i == relations.right.end()
+          && relation.domain != OSIX::SEMANTICID_EPSILON
+          && relation.domain != OSIX::SEMANTICID_INVALID)
+    {
+      relation.domain = GetDomain(relation.domain);
+      i = relations.right.find(OrderedRelation(relation.domain, relation.codomain));
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << "relation.domain = " << relation.domain << std::endl;
+#endif
     }
+
+    // Test whether the codomain was found in a parent context
+    if(i == relations.right.end())
+    {
+      /*OLD: return OSIX::SEMANTICID_INVALID;*/
+
+      // All symbols exist in the global domain, epsilon so just return the unqualified codomain itself.
+      return relation.codomain;
+    }
+
+    // The qualified codomain exists in a parent context
+    return i->second;
   }
 
   SemanticId SemanticDBImplementation::ResolveConjunctSelection(SemanticId query)
   {
+    // Split the query into a speculative domain and an unqualified query argument
     RelationIndex::left_const_iterator iQueryRelation = relations.left.find(query);
     if(iQueryRelation == relations.left.end())
     {
       errorStream << "FATAL ERROR: Could not find the relation for a query in the database. This should never happen and should be reported as bug!" << std::endl;
       return OSIX::SEMANTICID_INVALID;
     }
-    const OrderedRelation &queryRelation = iQueryRelation->second;
+    OrderedRelation queryRelation = iQueryRelation->second;
 
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << std::endl << "(TEMPORARY NOTE: Query relation = " << queryRelation.domain << "->" << queryRelation.codomain << ")" << std::endl;
+#endif
+
+    // Split the speculative domain into a domain and an unqualified codomain
     RelationIndex::left_const_iterator iDomainRelation = relations.left.find(queryRelation.domain);
     if(iDomainRelation == relations.left.end())
     {
       errorStream << "ERROR (TODO): Could not find a query domain in the database. Not yet sure what to do in this case..." << std::endl;
       return OSIX::SEMANTICID_INVALID;
     }
-    const OrderedRelation &domainRelation = iDomainRelation->second;
+    OrderedRelation domainRelation = iDomainRelation->second;
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << "(TEMPORARY NOTE: Speculative domain relation = " << domainRelation.domain << "->" << domainRelation.codomain << ")" << std::endl;
+#endif
 
     // Resolve the speculative domain of the query to get a concrete domain
-    SemanticId concreteDomain = ResolveRelation(domainRelation);
+    domainRelation.domain = ResolveContext(domainRelation.domain);
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << "(TEMPORARY NOTE: Concrete domain relation = " << domainRelation.domain << "->" << domainRelation.codomain << ")" << std::endl;
+#endif
 
     // Resolve the selection itself
-    RelationIndex::right_const_iterator iCodomain = relations.right.find(OrderedRelation(concreteDomain, queryRelation.codomain));
-    if(iCodomain == relations.right.end())
-      return OSIX::SEMANTICID_INVALID;
+    SemanticId result = OSIX::SEMANTICID_INVALID;
+    while(domainRelation.domain != OSIX::SEMANTICID_INVALID)
+    {
+      // Find a suitable domain for the query
+      domainRelation.domain = GetDomain(domainRelation.domain);
+      queryRelation.domain = ResolveRelation(domainRelation);
 
-    return iCodomain->second;
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << "(TEMPORARY NOTE: QUERY DOMAIN = " << domainRelation.domain << "->" << domainRelation.codomain << ")" << std::endl;
+      infoStream << "(TEMPORARY NOTE: QUERY = " << queryRelation.domain << "->" << queryRelation.codomain << ")" << std::endl;
+#endif
+
+      result = ResolveRelation(queryRelation);
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << "(TEMPORARY NOTE: QUERY = " << queryRelation.domain << "->" << queryRelation.codomain << ")" << std::endl;
+      infoStream << "(TEMPORARY NOTE: QUERY RESULT = " << result << ")" << std::endl;
+#endif
+
+      // If the query's domain could not be resolved, then the query has failed.
+      if(queryRelation.domain == OSIX::SEMANTICID_EPSILON)
+        return OSIX::SEMANTICID_INVALID;
+
+      return result;
+
+      /*OLD: Test whether the query succeeded in this context
+      if(result != OSIX::SEMANTICID_INVALID)
+        return result;*/
+
+      //domainRelation.domain = GetDomain(domainRelation.domain);
+    }
 
     /*
     SemanticId concreteDomain = ResolveContext(relation.domain);
