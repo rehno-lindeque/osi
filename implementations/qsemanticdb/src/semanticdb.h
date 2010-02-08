@@ -177,6 +177,7 @@ namespace QSemanticDB
     struct SymbolProperties { SymbolProperties(bool concrete = true, QueryType query = QueryNone) : concrete(concrete), query(query) {} bool concrete; QueryType query; };
     typedef std::pair<SemanticId, SymbolProperties> IdPropertiesPair;
     typedef std::map<SemanticId, SymbolProperties> IdPropertiesMap;
+    typedef IdPropertiesMap::iterator IdPropertiesIterator;
 
     // The state of the current building environment
     enum EnvironmentState
@@ -239,8 +240,15 @@ namespace QSemanticDB
     // Get the unqualified relation
     bool GetUnqualifiedRelation(SemanticId qualifiedId, Relation& unqualifiedRelation);
 
+    // Get the qualified codomain from a unqualified relation
+    // Return invalid id if the relation does not exist
+    SemanticId GetQualifiedCodomain(const OrderedRelation& unqualifiedRelation) const;
+
     // Test whether any relations exist from the given fully qualified domain
-    bool HasStaticRelations(SemanticId domain);
+    bool HasStaticRelations(SemanticId domain) const;
+
+    // Test whether a relation already exists
+    //bool DoesRelationExist(const OrderedRelation& unqualifiedRelation) const;
 
     // Create an id for the relation using both the domain and codomain
     SemanticId CreateQualifiedId(const Relation& relation);

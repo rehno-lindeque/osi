@@ -49,7 +49,26 @@ namespace QSemanticDB
     SemanticId qualifiedId = OSIX::SEMANTICID_INVALID;
     if(environmentState.top() == BUILD_DECLARATION)
     {
-      qualifiedId = DeclareRelation(activeDomainId, GlobalSymbol(name));
+      SemanticId symbol = GlobalSymbol(name);
+
+      // Create the declaration if it does not yet exist
+      // (Or replace a query or speculative symbol that already exists)
+      qualifiedId = GetQualifiedCodomain(OrderedRelation(activeDomainId, symbol));
+      if(qualifiedId == OSIX::SEMANTICID_INVALID)
+      {
+        qualifiedId = DeclareRelation(activeDomainId, symbol);
+      }
+      else
+      {
+        // Overwrite the properties of the relation if any exists (note that declarations override queries and speculative symbols)
+        IdPropertiesMap::iterator i = symbolProperties.find(qualifiedId);
+        if(i != symbolProperties.end())
+        {
+          SymbolProperties& properties = i->second;
+          properties.concrete = true;
+          properties.query = QueryNone;
+        }
+      }
     }
     else if(environmentState.top() == BUILD_QUERY_SOURCE)
     {
@@ -58,8 +77,13 @@ namespace QSemanticDB
     }
     else if((environmentState.top() & BUILD_QUERY_ARGUMENT) == BUILD_QUERY_ARGUMENT)
     {
-      qualifiedId = DeclareRelation(queryEnvironment.top(), GlobalSymbol(name));
-      CreateQuery(static_cast<QueryType>(environmentState.top() & ~BUILD_QUERY_ARGUMENT), qualifiedId);
+      SemanticId symbol = GlobalSymbol(name);
+      qualifiedId = GetQualifiedCodomain(OrderedRelation(queryEnvironment.top(), symbol));
+      if(qualifiedId == OSIX::SEMANTICID_INVALID)
+      {
+        qualifiedId = DeclareRelation(queryEnvironment.top(), symbol);
+        CreateQuery(static_cast<QueryType>(environmentState.top() & ~BUILD_QUERY_ARGUMENT), qualifiedId);
+      }
     }
 
     OSI_ASSERT(qualifiedId != OSIX::SEMANTICID_INVALID);
@@ -245,49 +269,41 @@ namespace QSemanticDB
   void SemanticDBImplementation::SelectionDisjunct()
   {
     OpenQueryArgument(QuerySelectionDisjunct);
-    //return CreateQuery(QuerySelectionDisjunct, queryEnvironment.top(), selection);
   }
 
   void SemanticDBImplementation::SelectionExclusiveDisjunct()
   {
     OpenQueryArgument(QueryMutationExclusiveDisjunct);
-    //return CreateQuery(QuerySelectionExclusiveDisjunct, queryEnvironment.top(), selection);
   }
 
   void SemanticDBImplementation::SelectionConjunct()
   {
     OpenQueryArgument(QuerySelectionConjunct);
-    //return CreateQuery(QuerySelectionConjunct, queryEnvironment.top(), selection);
   }
 
   void SemanticDBImplementation::SelectionStrictConjunct()
   {
     OpenQueryArgument(QuerySelectionStrictConjunct);
-    //return CreateQuery(QuerySelectionStrictConjunct, queryEnvironment.top(), selection);
   }
 
   void SemanticDBImplementation::MutationDisjunct()
   {
     OpenQueryArgument(QueryMutationDisjunct);
-    //return CreateQuery(QueryMutationDisjunct, queryEnvironment.top(), mutation);
   }
 
   void SemanticDBImplementation::MutationExclusiveDisjunct()
   {
     OpenQueryArgument(QueryMutationExclusiveDisjunct);
-    //return CreateQuery(QueryMutationExclusiveDisjunct, queryEnvironment.top(), mutation);
   }
 
   void SemanticDBImplementation::MutationConjunct()
   {
     OpenQueryArgument(QueryMutationConjunct);
-    //return CreateQuery(QueryMutationConjunct, queryEnvironment.top(), mutation);
   }
 
   void SemanticDBImplementation::MutationStrictConjunct()
   {
     OpenQueryArgument(QueryMutationStrictConjunct);
-    //return CreateQuery(QueryMutationStrictConjunct, queryEnvironment.top(), mutation);
   }
 
   void SemanticDBImplementation::BeginEvaluation(SemanticId root)
@@ -497,8 +513,6 @@ namespace QSemanticDB
 
       // Add the speculative flag to the relation (opposite of concrete)
       symbolProperties.insert(std::make_pair(qualifiedCodomain, SymbolProperties(false, QueryNone)));
-
-
     }
 
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
@@ -550,10 +564,21 @@ namespace QSemanticDB
     return true;
   }
 
-  bool SemanticDBImplementation::HasStaticRelations(SemanticId domain)
+  SemanticId SemanticDBImplementation::GetQualifiedCodomain(const OrderedRelation& unqualifiedRelation) const
+  {
+    RelationIndex::right_const_iterator i = relations.right.find(unqualifiedRelation);
+    return i == relations.right.end() ? OSIX::SEMANTICID_INVALID : i->second;
+  }
+
+  bool SemanticDBImplementation::HasStaticRelations(SemanticId domain) const
   {
     return domainIndexQCodomains.find(domain) != domainIndexQCodomains.end();
   }
+
+  /*bool SemanticDBImplementation::DoesRelationExist(const OrderedRelation& unqualifiedRelation) const
+  {
+    return relations.right.find(unqualifiedRelation) != relations.right.end();
+  }*/
 
   SemanticId SemanticDBImplementation::CreateQualifiedId(const Relation& relation)
   {
@@ -566,7 +591,10 @@ namespace QSemanticDB
   const SemanticDBImplementation::SymbolProperties& SemanticDBImplementation::GetProperties(SemanticId domain) const
   {
     static const SymbolProperties defaultProperties;
-    return defaultProperties;
+    IdPropertiesMap::const_iterator i = symbolProperties.find(domain);
+    if(i == symbolProperties.end())
+      return defaultProperties;
+    return i->second;
   }
 
   /*SemanticId SemanticDBImplementation::CreateQuery(QueryType type, SemanticId domain, SemanticId argument)
@@ -588,7 +616,14 @@ namespace QSemanticDB
   void SemanticDBImplementation::CreateQuery(QueryType type, SemanticId qualifiedId)
   {
     // Set a flag indicating that the id represents a query
-    symbolProperties.insert(std::make_pair(qualifiedId, SymbolProperties(true, type)));
+    // (Only if the symbol properties do not yet exist in the set, definitions always take precedence to queries).
+
+    /*IdPropertiesIterator i = symbolProperties.find(qualifiedId);
+    if(i == symbolProperties.end())
+    {*/
+      // TODO: What if more than one query is put in the same context... ???? We need some way to resolve that...
+      symbolProperties.insert(std::make_pair(qualifiedId, SymbolProperties(true, type)));
+    /*}*/
   }
 
   SemanticId SemanticDBImplementation::EvalInternal()
@@ -600,7 +635,7 @@ namespace QSemanticDB
       EvalScheduleCodomains();
 
       // Check whether the item represents an atom, a query or a speculative domain
-      IdPropertiesMap::iterator i = symbolProperties.find(evalQueryId);
+      IdPropertiesIterator i = symbolProperties.find(evalQueryId);
       if(i == symbolProperties.end() || (i->second.query == QueryNone && i->second.concrete))
       {
         EvalSymbol(evalQueryId);
@@ -693,7 +728,7 @@ namespace QSemanticDB
     {
       // Test whether this domain is concrete
       /*OLD:
-      IdPropertiesMap::iterator iDomain = symbolProperties.find(domain);
+      IdPropertiesIterator iDomain = symbolProperties.find(domain);
       if(iDomain == symbolProperties.end() || iDomain->second.concrete == true)
         break;*/
       if(GetProperties(domain).concrete)
@@ -783,7 +818,7 @@ namespace QSemanticDB
 
     // Resolve the selection itself
     SemanticId result = OSIX::SEMANTICID_INVALID;
-    while(domainRelation.domain != OSIX::SEMANTICID_INVALID)
+    while(domainRelation.domain != OSIX::SEMANTICID_EPSILON)
     {
       // Find a suitable domain for the query
       domainRelation.domain = GetDomain(domainRelation.domain);
@@ -802,17 +837,12 @@ namespace QSemanticDB
 #endif
 
       // If the query's domain could not be resolved, then the query has failed.
-      if(queryRelation.domain == OSIX::SEMANTICID_EPSILON)
-        return OSIX::SEMANTICID_INVALID;
-
-      return result;
-
-      /*OLD: Test whether the query succeeded in this context
-      if(result != OSIX::SEMANTICID_INVALID)
-        return result;*/
-
-      //domainRelation.domain = GetDomain(domainRelation.domain);
+      if(queryRelation.domain != OSIX::SEMANTICID_EPSILON)
+        return result;
     }
+
+
+    return OSIX::SEMANTICID_INVALID;
 
     /*
     SemanticId concreteDomain = ResolveContext(relation.domain);
@@ -924,7 +954,7 @@ namespace QSemanticDB
         infoStream << i->second;
 
       // Test  whether the qualified codomain is concrete (if not, then this is an (unresolved) query)
-      IdPropertiesMap::iterator iProperties = symbolProperties.find(qualifiedCodomain);
+      IdPropertiesIterator iProperties = symbolProperties.find(qualifiedCodomain);
       bool concrete = iProperties == symbolProperties.end() || iProperties->second.concrete;
       const char* relationOperator = "->";
       switch(iProperties->second.query)
@@ -937,6 +967,7 @@ namespace QSemanticDB
       case QueryMutationExclusiveDisjunct:            relationOperator = "!!"; break;
       case QueryMutationConjunct:                     relationOperator = ".."; break;
       case QueryMutationStrictConjunct:               relationOperator = "::"; break;
+      case QueryNone:                                 break;
       }
 
 
