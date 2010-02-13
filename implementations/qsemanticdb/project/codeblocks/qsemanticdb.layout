@@ -2,7 +2,7 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="c_static_debug_scons" />
 	<File name="../../../../api/osix/semanticdb/semanticdb.h" open="1" top="0" tabpos="7">
-		<Cursor position="2707" topLine="57" />
+		<Cursor position="1697" topLine="28" />
 	</File>
 	<File name="../../../../api/osix/semanticdb/semanticdb.hpp" open="1" top="0" tabpos="6">
 		<Cursor position="0" topLine="0" />
@@ -32,10 +32,10 @@
 		<Cursor position="355" topLine="0" />
 	</File>
 	<File name="../../src/api.h" open="1" top="0" tabpos="2">
-		<Cursor position="2577" topLine="72" />
+		<Cursor position="1671" topLine="47" />
 	</File>
 	<File name="../../src/api.inl" open="1" top="0" tabpos="11">
-		<Cursor position="3159" topLine="110" />
+		<Cursor position="3317" topLine="110" />
 	</File>
 	<File name="../../src/apidbg.inl" open="1" top="0" tabpos="3">
 		<Cursor position="0" topLine="0" />
@@ -44,9 +44,9 @@
 		<Cursor position="627" topLine="0" />
 	</File>
 	<File name="../../src/semanticdb.h" open="1" top="0" tabpos="4">
-		<Cursor position="5687" topLine="138" />
+		<Cursor position="10380" topLine="234" />
 	</File>
 	<File name="../../src/semanticdb.inl" open="1" top="1" tabpos="9">
-		<Cursor position="11237" topLine="315" />
+		<Cursor position="2607" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

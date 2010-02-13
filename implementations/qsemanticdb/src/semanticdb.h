@@ -196,6 +196,7 @@ namespace QSemanticDB
     IdMultiIndex domainIndexQCodomains;                 // All mappings from domain id to qualified codomains
     QueryIndex queries;                                 // All queries in the database (these may be memoized later on)
     IdPropertiesMap symbolProperties;                   // Additional properties for each symbol
+    IdMultiIndex domainIndexSpeculativeQCodomains;      // A mapping (which is a subset of domainIndexQCodomains), that lists only speculative qualified codomains
 
     // Evaluation
     IdStack evaluationQueries;                          // Stack of evaluation queries
