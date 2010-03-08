@@ -745,7 +745,7 @@ namespace QSemanticDB
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
         infoStream << "IGNORE HIDDEN ID (" << evalQueryId << ")" << std::endl;
 #endif
-        //EvalContinue();
+        EvalContinue();
         return EvalInternal();
       }
 
