@@ -2,22 +2,22 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="c_static_debug_scons" />
 	<File name="../../../../api/osix/semanticdb/semanticdb.h" open="1" top="0" tabpos="7">
-		<Cursor position="1697" topLine="28" />
+		<Cursor position="2055" topLine="1" />
 	</File>
 	<File name="../../../../api/osix/semanticdb/semanticdb.hpp" open="1" top="0" tabpos="6">
-		<Cursor position="0" topLine="0" />
+		<Cursor position="3031" topLine="51" />
 	</File>
 	<File name="../../../../api/osix/semanticdb/semanticdbdbg.h" open="1" top="0" tabpos="8">
 		<Cursor position="0" topLine="0" />
 	</File>
 	<File name="../../../../api/osix/semanticdb/semanticdbdbg.hpp" open="1" top="0" tabpos="14">
-		<Cursor position="0" topLine="0" />
+		<Cursor position="973" topLine="0" />
 	</File>
 	<File name="../../../basesemanticdb/src/basesemanticdb/basesemanticdb.h" open="1" top="0" tabpos="15">
-		<Cursor position="838" topLine="0" />
+		<Cursor position="941" topLine="0" />
 	</File>
 	<File name="../../../basesemanticdb/src/basesemanticdb/capi.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="2542" topLine="91" />
+		<Cursor position="1561" topLine="41" />
 	</File>
 	<File name="MakeScons" open="1" top="0" tabpos="10">
 		<Cursor position="643" topLine="0" />
@@ -29,24 +29,24 @@
 		<Cursor position="388" topLine="0" />
 	</File>
 	<File name="../../src/api.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="355" topLine="0" />
+		<Cursor position="1107" topLine="0" />
 	</File>
 	<File name="../../src/api.h" open="1" top="0" tabpos="2">
-		<Cursor position="1671" topLine="47" />
+		<Cursor position="2850" topLine="78" />
 	</File>
 	<File name="../../src/api.inl" open="1" top="0" tabpos="11">
-		<Cursor position="3317" topLine="110" />
+		<Cursor position="2315" topLine="60" />
 	</File>
 	<File name="../../src/apidbg.inl" open="1" top="0" tabpos="3">
-		<Cursor position="0" topLine="0" />
+		<Cursor position="871" topLine="0" />
 	</File>
 	<File name="../../src/functors.h" open="1" top="0" tabpos="13">
 		<Cursor position="627" topLine="0" />
 	</File>
 	<File name="../../src/semanticdb.h" open="1" top="0" tabpos="4">
-		<Cursor position="10380" topLine="234" />
+		<Cursor position="3751" topLine="78" />
 	</File>
 	<File name="../../src/semanticdb.inl" open="1" top="1" tabpos="9">
-		<Cursor position="2607" topLine="0" />
+		<Cursor position="8192" topLine="203" />
 	</File>
 </CodeBlocks_layout_file>

@@ -50,6 +50,7 @@ namespace OSIX
     /* symbols */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareSymbol(const OSchar* name);
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL GlobalSymbol(const OSchar* name);
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL AnonymousSymbol();
 
     /* relations */
     struct Relation
@@ -69,7 +70,9 @@ namespace OSIX
 
     /* domains */
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL DeclareOpenDomain(const OSchar* name);
-    OSI_DYNAMIC_METHOD void OSI_API_CALL CloseDomain(const OSchar* name);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL OpenDomain(SemanticId domain);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL OpenHiddenDomain(SemanticId domain);
+    OSI_DYNAMIC_METHOD void OSI_API_CALL CloseDomain(SemanticId domain);
     OSI_DYNAMIC_METHOD void OSI_API_CALL CloseDomain();
 
     /* queries */

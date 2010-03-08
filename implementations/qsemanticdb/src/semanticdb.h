@@ -87,6 +87,7 @@ namespace QSemanticDB
   public:
     // Types
     typedef std::vector<SemanticId> IdVector;
+    typedef std::set<SemanticId> IdSet;
     typedef std::stack<SemanticId> IdStack;
 
     // Constructor
@@ -97,13 +98,15 @@ namespace QSemanticDB
 
     SemanticId DeclareSymbol(const char* name);
     SemanticId GlobalSymbol(const char* name);
-    SemanticId DeclareAnonymousSymbol();
+    SemanticId AnonymousSymbol();
     SemanticId DeclareRelation(const Relation& unqualifiedRelation);
     //SemanticId SelectRelation(const Relation& relation);
     void SelectRelation(const Relation& unqualifiedRelation, IdVector& qualifiedCodomains);
     void SelectExtendedRelation(const Relation& unqualifiedRelation, IdVector& qualifiedCodomains);
     SemanticId DeclareOpenDomain(const char* name);
-    void CloseDomain(const char* name);
+    void OpenDomain(SemanticId domain);
+    void OpenHiddenDomain(SemanticId domain);
+    void CloseDomain(SemanticId domain);
     void CloseDomain();
 
     // Builtin morphisms (todo: move this to "queries")
@@ -190,7 +193,8 @@ namespace QSemanticDB
 
     // Indexes / Database
     IdVector epsilonDomain;                             // Global domain of all (named) symbols
-    IdVector anonDomain;                                // Global domain of all anonymous symbols
+    //IdVector anonDomain;                                // Global domain of all anonymous symbols
+    IdSet anonDomain;                                   // Global domain of all anonymous symbols
     RelationIndex relations;                            // Bidirectional mapping between unqualified relations (domain, codomain) pairs and qualified codomain ids.
     IdMultiIndex domainIndexUCodomains;                 // All mappings from domain id to unqualified codomains
     IdMultiIndex domainIndexQCodomains;                 // All mappings from domain id to qualified codomains
@@ -218,6 +222,7 @@ namespace QSemanticDB
     // Constants
     static const char* const epsilonName;               // Name string of the global domain "Epsilon"
     static const SemanticId firstReservedId;            // The first id that is reserved for built-in ids
+    static const SemanticId INTERNALID_HIDDEN;          // The first id that is reserved for built-in ids
 
     // A helper for declaring a relation from an associative pair of ids
     SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
@@ -225,6 +230,11 @@ namespace QSemanticDB
     // Declare a speculative relation from an associative pair of ids
     SemanticId DeclareSpeculativeRelation(SemanticId domain, SemanticId codomain);
     SemanticId DeclareSpeculativeRelation(const Relation& unqualifiedRelation);
+
+    // Declare a speculative relation for an anonymous id
+    // This method does not create a new id to represent domain -> anonymousCodomain. The result is still anonymousCodomain.
+    SemanticId DeclareSpeculativeAnonymousRelation(SemanticId domain, SemanticId anonymousCodomain);
+    SemanticId DeclareSpeculativeAnonymousRelation(const Relation& unqualifiedRelation);
 
     // Put the builder into the correct state for accepting query arguments
     void OpenQueryArgument(QueryType queryType);

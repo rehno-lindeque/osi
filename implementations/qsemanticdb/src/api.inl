@@ -49,6 +49,11 @@ OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::GlobalSymbol(const OSchar* name)
   return _this->GlobalSymbol(name);
 }
 
+OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::AnonymousSymbol()
+{
+  return _this->AnonymousSymbol();
+}
+
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareRelation(const Relation& relation)
 {
   return _this->DeclareRelation(relation);
@@ -68,9 +73,19 @@ OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::DeclareOpenDomain(const OSchar* 
   return _this->DeclareOpenDomain(name);
 }
 
-void OSI_API_CALL OSIX::SemanticDB::CloseDomain(const OSchar* name)
+void OSI_API_CALL OSIX::SemanticDB::OpenDomain(SemanticId domain)
 {
-  _this->CloseDomain(name);
+  return _this->OpenDomain(domain);
+}
+
+void OSI_API_CALL OSIX::SemanticDB::OpenHiddenDomain(SemanticId domain)
+{
+  return _this->OpenHiddenDomain(domain);
+}
+
+void OSI_API_CALL OSIX::SemanticDB::CloseDomain(SemanticId domain)
+{
+  _this->CloseDomain(domain);
 }
 
 void OSI_API_CALL OSIX::SemanticDB::CloseDomain()

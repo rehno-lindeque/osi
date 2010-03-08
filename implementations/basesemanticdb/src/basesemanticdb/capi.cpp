@@ -34,6 +34,11 @@ SemanticId OSI_API_C_CALL GlobalSymbol(const OSchar* name)
   return semanticDB->GlobalSymbol(name);
 }
 
+SemanticId OSI_API_C_CALL AnonymousSymbol()
+{
+  return semanticDB->AnonymousSymbol();
+}
+
 //SemanticId OSI_API_C_CALL DeclareRelation(const Relation& relation);
 
 SemanticId DeclareRelation(SemanticId domain, SemanticId codomain)
@@ -51,12 +56,19 @@ SemanticId OSI_API_C_CALL DeclareOpenDomain(const OSchar* name)
   return semanticDB->DeclareOpenDomain(name);
 }
 
-void OSI_API_C_CALL CloseDomain(const OSchar* name)
+void OSI_API_C_CALL OpenDomain(SemanticId domain)
 {
-  if (name == 0)
-    semanticDB->CloseDomain();
-  else
-    semanticDB->CloseDomain(name);
+  semanticDB->OpenDomain(domain);
+}
+
+void OSI_API_C_CALL OpenHiddenDomain(SemanticId domain)
+{
+  semanticDB->OpenHiddenDomain(domain);
+}
+
+void OSI_API_C_CALL CloseDomain(SemanticId domain)
+{
+  semanticDB->CloseDomain(domain);
 }
 
 void OSI_API_C_CALL BeginQuery()

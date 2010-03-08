@@ -76,6 +76,9 @@ foreign import ccall unsafe "semanticdb.h DeclareSymbol"
 foreign import ccall unsafe "semanticdb.h GlobalSymbol"
   c_GlobalSymbol :: CString -> IO SemanticId
 
+foreign import ccall unsafe "semanticdb.h AnonymousSymbol"
+  c_AnonymousSymbol :: IO SemanticId
+
 {- relations -}
 
 {-- declarations --}
@@ -90,8 +93,14 @@ foreign import ccall unsafe "semanticdb.h SelectRelation"
 foreign import ccall unsafe "semanticdb.h DeclareOpenDomain"
   c_DeclareOpenDomain :: CString -> IO SemanticId
 
+foreign import ccall unsafe "semanticdb.h OpenDomain"
+  c_OpenDomain :: SemanticId -> IO ()
+
+foreign import ccall unsafe "semanticdb.h OpenHiddenDomain"
+  c_OpenHiddenDomain :: SemanticId -> IO ()
+
 foreign import ccall unsafe "semanticdb.h CloseDomain"
-  c_CloseDomain :: CString -> IO ()
+  c_CloseDomain :: SemanticId -> IO ()
 
 {-- queries --}
 foreign import ccall unsafe "semanticdb.h BeginQuery"

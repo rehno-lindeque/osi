@@ -43,6 +43,7 @@ typedef OSuint32 SemanticId;
 /* symbols */
 SemanticId OSI_API_C_CALL DeclareSymbol(const OSchar* name);
 SemanticId OSI_API_C_CALL GlobalSymbol(const OSchar* name);
+SemanticId OSI_API_C_CALL AnonymousSymbol();
 
 /* relations */
 
@@ -55,7 +56,9 @@ SemanticId OSI_API_C_CALL SelectRelation(SemanticId domain, SemanticId codomain)
 
 /* domains */
 SemanticId OSI_API_C_CALL DeclareOpenDomain(const OSchar* name);
-void OSI_API_C_CALL CloseDomain(const OSchar* name = 0);
+void OSI_API_C_CALL OpenDomain(SemanticId domain);
+void OSI_API_C_CALL OpenHiddenDomain(SemanticId domain);
+void OSI_API_C_CALL CloseDomain(SemanticId domain);
 
 /* builtin morphisms */
 //SemanticId OSI_API_C_CALL AdditiveMutation(SemanticId domain, SemanticId crossSection);
