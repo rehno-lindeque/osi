@@ -32,10 +32,10 @@
 		<Cursor position="1107" topLine="0" />
 	</File>
 	<File name="../../src/api.h" open="1" top="0" tabpos="2">
-		<Cursor position="2850" topLine="78" />
+		<Cursor position="2596" topLine="79" />
 	</File>
 	<File name="../../src/api.inl" open="1" top="0" tabpos="11">
-		<Cursor position="2315" topLine="60" />
+		<Cursor position="2327" topLine="60" />
 	</File>
 	<File name="../../src/apidbg.inl" open="1" top="0" tabpos="3">
 		<Cursor position="871" topLine="0" />
@@ -44,9 +44,9 @@
 		<Cursor position="627" topLine="0" />
 	</File>
 	<File name="../../src/semanticdb.h" open="1" top="0" tabpos="4">
-		<Cursor position="3751" topLine="78" />
+		<Cursor position="12659" topLine="258" />
 	</File>
 	<File name="../../src/semanticdb.inl" open="1" top="1" tabpos="9">
-		<Cursor position="8192" topLine="203" />
+		<Cursor position="33598" topLine="950" />
 	</File>
 </CodeBlocks_layout_file>

@@ -295,7 +295,10 @@ namespace QSemanticDB
     SemanticId ResolveRelation(OrderedRelation& relation);
 
     // Resolve a selection at compile-time
-    SemanticId ResolveConjunctSelection(SemanticId symbol);
+    SemanticId ResolveSelectionConjunct(SemanticId symbol);
+
+    // Resolve a mutation at compile-time
+    SemanticId ResolveMutationConjunct(SemanticId symbol);
 
     // Declare a speculative Id
     //DeclareSpeculativeId(QueryType)

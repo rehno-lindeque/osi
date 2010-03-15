@@ -773,8 +773,22 @@ namespace QSemanticDB
 #endif
 
         // Get the domain and the unqualified codomain of the query (i.e. as an unqualified relation)
-        evalQueryId = ResolveConjunctSelection(evalQueryId);
+        evalQueryId = ResolveSelectionConjunct(evalQueryId);
         if (evalQueryId == OSIX::SEMANTICID_INVALID && i->second.query == QuerySelectionStrictConjunct)
+        {
+          //errorStream << "TODO: Assertion failed...";
+          infoStream << " TODO: Assertion failed...";
+        }
+      }
+      else if (i->second.query == QueryMutationConjunct || i->second.query == QueryMutationStrictConjunct)
+      {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+        infoStream << "MUTATION CONJUNCT";
+        if(i->second.query == QueryMutationStrictConjunct)
+          infoStream << " (STRICT)";
+#endif
+        evalQueryId = ResolveMutationConjunct(evalQueryId);
+        if (evalQueryId == OSIX::SEMANTICID_INVALID && i->second.query == QueryMutationStrictConjunct)
         {
           //errorStream << "TODO: Assertion failed...";
           infoStream << " TODO: Assertion failed...";
@@ -784,6 +798,10 @@ namespace QSemanticDB
       {
         // TODO: Unhandled type of query....
         evalQueryId = OSIX::SEMANTICID_INVALID;
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+        infoStream << "Unhandled type of query...";
+#endif
       }
     }
 
@@ -835,6 +853,7 @@ namespace QSemanticDB
     }
 #endif
     evalQueryId = unqualifiedCodomain;//*/
+    return evalQueryId;
   }
 
   SemanticId SemanticDBImplementation::ResolveContext(SemanticId domain)
@@ -890,7 +909,8 @@ namespace QSemanticDB
     return relation.codomain;
   }
 
-  SemanticId SemanticDBImplementation::ResolveConjunctSelection(SemanticId query)
+
+  SemanticId SemanticDBImplementation::ResolveSelectionConjunct(SemanticId query)
   {
     // Split the query into a speculative domain and an unqualified query argument
     RelationIndex::left_const_iterator iQueryRelation = relations.left.find(query);
@@ -965,6 +985,16 @@ namespace QSemanticDB
 #endif
 
       result = ResolveRelation(queryRelation);
+      /*while ()
+      {
+        TODO: BUSY HERE....
+        SemanticId qualifiedDomain = GetQualifiedCodomain(domainRelation);
+        SemanticId result = EvalInternal(qualifiedDomain);
+        if (result == queryRelation.codomain)
+        {
+
+        }
+      }*/
 
 #if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
       infoStream << "(TEMPORARY NOTE: QUERY = " << queryRelation.domain << "->" << queryRelation.codomain << ")" << std::endl;
@@ -975,6 +1005,57 @@ namespace QSemanticDB
       if(queryRelation.domain != OSIX::SEMANTICID_EPSILON)
         return result;
     }
+
+    return OSIX::SEMANTICID_INVALID;
+  }
+
+  SemanticId SemanticDBImplementation::ResolveMutationConjunct(SemanticId query)
+  {
+    /*// Split the query into a speculative domain and an unqualified query argument
+    RelationIndex::left_const_iterator iQueryRelation = relations.left.find(query);
+    if(iQueryRelation == relations.left.end())
+    {
+      errorStream << "FATAL ERROR: Could not find the relation for a query in the database. This should never happen and should be reported as bug!" << std::endl;
+      return OSIX::SEMANTICID_INVALID;
+    }
+    OrderedRelation queryRelation = iQueryRelation->second;
+
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+    infoStream << std::endl << "(TEMPORARY NOTE: Query relation = " << queryRelation.domain << "->" << queryRelation.codomain << ")" << std::endl;
+#endif
+
+    // If the domain has a hidden domain, then perform the query on the hidden domain instead
+    SemanticId hiddenCodomain = GetQualifiedCodomain(OrderedRelation(queryRelation.domain, INTERNALID_HIDDEN));
+    if (hiddenCodomain != OSIX::SEMANTICID_INVALID)
+    {
+      queryRelation.domain = hiddenCodomain;
+
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+      infoStream << "(TEMPORARY NOTE: Resolving relation in the hidden domain (" << hiddenCodomain << "))" << std::endl;
+      infoStream << "(TEMPORARY NOTE: QUERY = " << queryRelation.domain << "->" << queryRelation.codomain << ")" << std::endl;
+#endif
+
+      // Try to find the relation
+      SemanticId result = OSIX::SEMANTICID_INVALID;
+      RelationIndex::right_const_iterator i = relations.right.find(queryRelation);
+      if(i != relations.right.end())
+        result = i->second;
+
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+      infoStream << "(TEMPORARY NOTE: QUERY RESULT = " << result << ")" << std::endl;
+#endif
+
+      return result;
+    }*/
+
+    // First select the query argument (RHS) from the query source (LHS) to check for its existence
+    SemanticId selection = ResolveSelectionConjunct(query);
+    if(selection == OSIX::SEMANTICID_INVALID)
+      return OSIX::SEMANTICID_INVALID; // Could not find the symbol
+
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+    infoStream << "(TEMPORARY NOTE: BUSY HERE...........................)" << std::endl;
+#endif
 
     return OSIX::SEMANTICID_INVALID;
   }
@@ -1014,12 +1095,14 @@ namespace QSemanticDB
     infoStream << "Environment: (domain -> (qualifiedCodomain = domain.unqualifiedCodomain))" << endl
                << "------------" << endl;
     infoStream << epsilonName << '(' << OSIX::SEMANTICID_EPSILON << ") -> " << endl
-               << "[" << endl;
+               << '{';
     for(IdVector::iterator i = epsilonDomain.begin(); i != epsilonDomain.end(); ++i)
     {
+      infoStream << endl;
+      for(uint c = 0; c < 1; ++c) infoStream << "  ";
       DebugOutputSymbolEnvironment(OSIX::SEMANTICID_EPSILON, *i, 1);
     }
-    infoStream << "]" << endl;
+    infoStream << endl << '}' << endl;
   }
 
   void SemanticDBImplementation::DebugOutputSymbolEnvironment(SemanticId domain, SemanticId qualifiedCodomain, uint indent)
@@ -1029,7 +1112,6 @@ namespace QSemanticDB
     SemanticId unqualifiedCodomain = GetUnqualifiedCodomain(qualifiedCodomain);
 
     // Write the symbol
-    for(uint c = 0; c < indent*2; ++c) infoStream << ' ';
     if(domain == OSIX::SEMANTICID_EPSILON)
     {
       //infoStream << epsilonName << ".";
@@ -1046,7 +1128,12 @@ namespace QSemanticDB
     {
       IdStringMap::iterator i = epsilonStrings.find(unqualifiedCodomain);
       if(i == epsilonStrings.end())
-        infoStream << "Anonymous";
+      {
+        if(unqualifiedCodomain == INTERNALID_HIDDEN)
+          infoStream << "Hidden";
+        else
+          infoStream << "Anonymous";
+      }
       else
         infoStream << i->second;
 
@@ -1074,32 +1161,37 @@ namespace QSemanticDB
     // Check whether the qualified codomain has relations to other codomains (I.e. whether qualifiedCodomain is a domain in another context)
     const IdMultiIndexRange r = domainIndexQCodomains.equal_range(qualifiedCodomain);
     if(r.first == r.second)
-    {
-      infoStream << endl;
       return;
-    }
-
-    // Recursively output the child relations
-    infoStream << " -> ";
 
     // Determine whether there is more than one relation from this symbol
     IdMultiIndexIterator iNext = r.first; ++iNext;
     bool hasMultipleRelations = (r.second != iNext);
 
+    // Recursively output the child relations
+    infoStream << " -> ";
+
     if(hasMultipleRelations)
     {
       infoStream << endl;
       for(uint c = 0; c < indent; ++c) infoStream << "  ";
-      infoStream << '[' << endl;
+      infoStream << '{';
     }
 
     for(IdMultiIndexIterator i = r.first; i != r.second; ++i)
-      DebugOutputSymbolEnvironment(qualifiedCodomain, i->second, hasMultipleRelations? indent+1 : 0);
+    {
+      if(hasMultipleRelations)
+      {
+        infoStream << endl;
+        for(uint c = 0; c < indent+1; ++c) infoStream << "  ";
+      }
+      DebugOutputSymbolEnvironment(qualifiedCodomain, i->second, hasMultipleRelations? indent+1 : indent);
+    }
 
     if(hasMultipleRelations)
     {
+      infoStream << endl;
       for(uint c = 0; c < indent; ++c) infoStream << "  ";
-      infoStream << ']' << endl;
+      infoStream << '}';
     }
   }
 #endif
