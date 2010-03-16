@@ -50,6 +50,7 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <queue>
 
 // C++ Std extensions
 #ifdef _MSC_VER
@@ -81,6 +82,7 @@ namespace QSemanticDB
 
 /*                                   INCLUDES                               */
 // QSemanticDB
+#include "schedule.h"
 #include "semanticdb.h"
 
 /*                                  CLASSES                                 */

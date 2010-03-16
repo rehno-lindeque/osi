@@ -1,6 +1,3 @@
-
-#include "semanticdb.h"
-
 #ifdef  __QSEMANTICDB_SEMANTICDB_H__
 #ifndef __QSEMANTICDB_SEMANTICDB_INL__
 #define __QSEMANTICDB_SEMANTICDB_INL__
