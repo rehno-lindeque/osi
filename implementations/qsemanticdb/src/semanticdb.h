@@ -130,7 +130,7 @@ namespace QSemanticDB
     void BeginEvaluation(SemanticId root);
     SemanticId Eval();
     void EndEvaluation();
-    SemanticId GetActiveQuery();
+    //SemanticId GetActiveQuery();
 
     SemanticId GetDomain(SemanticId symbol);
     const char* GetString(SemanticId symbol);
@@ -203,9 +203,10 @@ namespace QSemanticDB
     IdMultiIndex domainIndexSpeculativeQCodomains;      // A mapping (which is a subset of domainIndexQCodomains), that lists only speculative qualified codomains
 
     // Evaluation
-    IdStack evaluationQueries;                          // Stack of evaluation queries
+    Scheduler evalScheduler;                            // The evaluation scheduler maintaining the state of evaluation
+    //IdStack evaluationQueries;                          // Stack of evaluation queries
     //IdStack activeQueries;                              // Stack of queries in progress
-    SemanticId evalQueryId;                           // The last query returned by Eval
+    //SemanticId evalId;                                  // The currently active eval id
 
     // Environment
     IdStack domainEnvironment;                          // Environment of open domains

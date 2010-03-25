@@ -130,6 +130,18 @@
 		<Unit filename="../../src/functors.h">
 			<Option virtualFolder="src/" />
 		</Unit>
+		<Unit filename="../../src/schedule.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/schedule.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/scheduler.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/scheduler.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
 		<Unit filename="../../src/semanticdb.h">
 			<Option virtualFolder="src/" />
 		</Unit>

@@ -83,6 +83,7 @@ namespace QSemanticDB
 /*                                   INCLUDES                               */
 // QSemanticDB
 #include "schedule.h"
+#include "scheduler.h"
 #include "semanticdb.h"
 
 /*                                  CLASSES                                 */

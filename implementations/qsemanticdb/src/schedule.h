@@ -20,89 +20,76 @@ namespace QSemanticDB
     friend class Schedule;
   public:
     // Types
-    typedef std::deque<SemanticId> SymbolDeque;
+    typedef std::vector<SemanticId> SymbolQueue;
 
     // Construction / Destruction
-    ScheduleQueue(SymbolDeque* deque) : deque(deque), numberOfChildren(0) {}
+    ScheduleQueue(SymbolQueue* deque, uint queryDepth);
     ScheduleQueue() = delete;
     ScheduleQueue(const ScheduleQueue&) = default;
     ScheduleQueue& operator=(const ScheduleQueue&) = default;
 
     // Operations
-    void PushBack(SemanticId symbol)
-    {
-      deque->push_back(symbol);
-    }
-
-    void PopFront()
-    {
-      deque->pop_front();
-    }
-
-    void Clear()
-    {
-      deque->clear();
-    }
+    void PushBack(SemanticId symbol);
+    void PopFront();
+    void Clear();
+    void Commit();
 
     // Accessors
-    SemanticId Front() const
-    {
-      return deque->front();
-    }
-
-    bool Empty() const
-    {
-      return deque->empty();
-    }
+    SemanticId Front() const;
+    bool Empty() const;
+    int Branches() const;
+    int QueryDepth() const;
 
   protected:
-    SymbolDeque* deque;
-    uint numberOfChildren;
+    SymbolQueue* queue;
+    int queryDepth;         // The number of queries this queue is involved in. Every time a query is completed, the count goes down by one. If the count is 0, the queue may be fully evaluated.
+    int numberOfChildren;   // Number of child branches
+    int frontIndex;
   };
 
   class Schedule
   {
   public:
     // Types
-    typedef std::deque<SemanticId> SymbolDeque;
+    //typedef std::deque<SemanticId> SymbolDeque;
+    typedef std::vector<SemanticId> SymbolQueue;
+    typedef std::list<ScheduleQueue> Tree;
+    typedef Tree::iterator TreeIterator;
+    typedef Tree::const_iterator TreeConstIterator;
 
     // Construction / Destruction
-    Schedule() : root(AllocDeque()) { branches.push_back(ScheduleQueue(root)); }
+    Schedule();
     Schedule(const Schedule&) = delete;
     Schedule & operator=(const Schedule&) = delete;
 
-    ~Schedule() { Clear(); }
+    ~Schedule();
 
     // Operations
-    void Clear()
-    {
-      while(!dequePool.empty())
-      {
-        delete dequePool.top();
-        dequePool.pop();
-      }
-    }
+    void Clear();
+
+    TreeIterator InsertBranch(TreeIterator i);
+
+    void RemoveRootBranch(TreeIterator iChild);
 
     // Accessors
-    SemanticId Front() const
-    {
-      if(!Root().Empty())
-        return Root().Front();
-      else
-        return OSIX::SEMANTICID_INVALID;
-    }
+    SemanticId Front() const;
 
     //SymbolDeque& Root() { return *root; }
     //const SymbolDeque& Root() const { return *root; }
 
-    ScheduleQueue& Root() { return branches.front(); }
-    const ScheduleQueue& Root() const { return branches.front(); }
+    ScheduleQueue& Root() { return tree.front(); }
+    const ScheduleQueue& Root() const { return tree.front(); }
+
+    TreeConstIterator Begin() const { return tree.begin(); }
+    TreeConstIterator End() const { return tree.end(); }
+    TreeIterator Begin() { return tree.begin(); }
+    TreeIterator End() { return tree.end(); }
 
   protected:
 
     // The root of the hierarchy
-    SymbolDeque *root;
-    std::list<ScheduleQueue> branches;
+    SymbolQueue *root;
+    Tree tree;
 
     // Pool of deques
     /*struct DequePoolElement
@@ -111,24 +98,18 @@ namespace QSemanticDB
       SymbolDeque *deque;
       bool isInUse;
     };*/
-    typedef SymbolDeque* DequePoolElement;
-    typedef std::priority_queue<DequePoolElement> DequePool;
-    DequePool dequePool;
+    struct lessPriority : public std::binary_function<SymbolQueue*, SymbolQueue*, bool>
+    {
+      bool operator()(const SymbolQueue* arg1, const SymbolQueue* arg2) const { return arg1->capacity() < arg2->capacity(); }
+    };
+
+    typedef SymbolQueue* PoolElement;
+    typedef std::priority_queue<PoolElement, std::vector<PoolElement>, lessPriority> Pool;
+    Pool pool;
 
     // Memory allocation
-    SymbolDeque *AllocDeque()
-    {
-      // First try to find a deque in the pool of previously allocated deques
-      if(!dequePool.empty())
-      {
-        SymbolDeque *result = dequePool.top();
-        dequePool.pop();
-        return result;
-      }
-
-      // Allocate a new deque if the pool is empty
-      return new SymbolDeque;
-    }
+    SymbolQueue *AllocQueue();
+    void DeallocQueue(SymbolQueue *queue);
   };
 }
 
