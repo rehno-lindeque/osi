@@ -11,7 +11,7 @@
 
 namespace QSemanticDB
 {
-  ScheduleQueue::ScheduleQueue(SymbolQueue* deque, uint queryDepth) : queue(queue), numberOfChildren(0), frontIndex(0), queryDepth(queryDepth)
+  ScheduleQueue::ScheduleQueue(SymbolQueue* queue, uint queryDepth, const TreeIterator& iSibling) : queue(queue), numberOfChildren(0), frontIndex(0), queryDepth(queryDepth), iSibling(iSibling)
   {}
 
   void ScheduleQueue::PushBack(SemanticId symbol)
@@ -46,9 +46,21 @@ namespace QSemanticDB
     return (*queue)[frontIndex];
   }
 
+  SemanticId ScheduleQueue::Back() const
+  {
+    // Pre-condition: queue must not be empty
+    OSI_ASSERT(!Empty());
+    return queue->back();
+  }
+
   bool ScheduleQueue::Empty() const
   {
     return frontIndex == queue->size();
+  }
+
+  size_t ScheduleQueue::Size() const
+  {
+    return queue->size() - frontIndex;
   }
 
   int ScheduleQueue::Branches() const
@@ -61,10 +73,20 @@ namespace QSemanticDB
     return queryDepth;
   }
 
-
-  Schedule::Schedule() : root(AllocQueue())
+  const ScheduleQueue::TreeIterator& ScheduleQueue::Sibling()
   {
-    tree.push_back(ScheduleQueue(root, true));
+    return iSibling;
+  }
+
+  ScheduleQueue::TreeConstIterator ScheduleQueue::Sibling() const
+  {
+    return iSibling;
+  }
+
+  Schedule::Schedule() : /*root(AllocQueue())*/ nRootBranches(1)
+  {
+    //OLD: tree.push_back(ScheduleQueue(root, 0));
+    tree.push_back(ScheduleQueue(AllocQueue(), 0, tree.end()));
   }
 
   Schedule::~Schedule()
@@ -84,24 +106,104 @@ namespace QSemanticDB
   Schedule::TreeIterator Schedule::InsertBranch(Schedule::TreeIterator i)
   {
     ++i->numberOfChildren;
-    tree.insert(i, ScheduleQueue(AllocQueue(), i->queryDepth));
+    auto iNext = i; ++iNext;
+    if(i->numberOfChildren > 1)
+    {
+      // Invariant Condition: If this node is a parent to some other node, then it must precede it in the list
+      OSI_ASSERT(iNext != tree.end());
+      return tree.insert(iNext, ScheduleQueue(AllocQueue(), i->queryDepth, iNext));
+    }
+    else
+    {
+      return tree.insert(iNext, ScheduleQueue(AllocQueue(), i->queryDepth, tree.end()));
+    }
   }
 
-  void Schedule::RemoveRootBranch(Schedule::TreeIterator iChild)
+  void Schedule::PopFront()
   {
-    // Note: this function is only intended for nodes branching directly from the root node
-    --Begin()->numberOfChildren;
-    OSI_ASSERT(Begin()->numberOfChildren >= 0);
-    DeallocQueue(iChild->queue);
-    tree.erase(iChild);
+    /* OLD: If the root node is not empty, then pop it
+    if(!Root().Empty())
+    {
+      Root().PopFront();
+      return;
+    }*/
+
+    // If the number of branches is 0, then the tree is empty, so nothing can be done.
+    // TODO: perhaps make it an invariant condition that the tree can't be popped when it is empty
+    //if(Root().Branches() == 0)
+    if(Empty())
+      return;
+
+    // Continue with the next available branch
+    //auto iTree = Begin(); ++iTree;
+    auto iTree = Begin();
+
+    // Invariant Condition: Since there is always a root and the number of branches > 0, the iterator should not be at the end of the list
+    //OLD: OSI_ASSERT(iTree != End());
+
+    /* OLD: Find a queue that can be committed
+    while(iTree->QueryDepth() != 0 && iTree != End())
+      ++iTree;//*/
+
+    // If the first branch cannot be commited, then we should complete it first
+    // Note: We are ignoring the possibility for concurrency here. If concurrent execution is desired we might pass in the branch we wish to use for the given thread (as a sort of environment).
+    if(iTree->QueryDepth() != 0)
+      return;
+
+    /* OLD: No branch found that can be committed
+    // TODO: Investigate whether this could ever happend (it probably shouldn't)
+    // NOTE: (Currently all branches must be committed before a symbol can be popped.
+    if(iTree == End())
+      return;//*/
+
+    // Found a branch that can be popped
+    //  Invariant Condition: No branch may have 0 symbols since such a branch is immediately removed from the tree unless it is the only remaining branch.
+    OSI_ASSERT(!iTree->Empty() && !Empty());
+    iTree->PopFront();
+    /*if(iTree->Empty())
+      CollapseRootBranch(iTree);    // (If the branch is empty, it should be replaced by its child branches)*/
+    if(RootBranches() > 1 && iTree->Empty())
+      CollapseFirstBranch();
+
+
+    /*
+    // Condition: No queue that is not the root should ever be empty, hence the first symbol should probably not be invalid either
+    OSI_ASSERT(nextSymbol != OSIX::SEMANTICID_INVALID);
+    return nextSymbol;
+
+    else
+      return OSIX::SEMANTICID_INVALID;*/
   }
 
   SemanticId Schedule::Front() const
   {
-    if(!Root().Empty())
-      return Root().Front();
-    else
+    // If the tree is empty then the invalid symbol should be returned.
+    if(Empty())
       return OSIX::SEMANTICID_INVALID;
+
+    // Continue with the next available branch
+    auto iTree = Begin();
+
+    // Invariant Condition: Since there is always a root and the number of branches > 0, the iterator should not be at the end of the list
+    OSI_ASSERT(iTree != End());
+
+    /* OLD: Find a queue that can be committed
+    while(iTree->QueryDepth() != 0 && iTree != End())
+      ++iTree;//*/
+
+    // Invariant Condition: No branch should ever be empty
+    OSI_ASSERT(!iTree->Empty());
+    return iTree->Front();
+  }
+
+  int Schedule::RootBranches() const
+  {
+    return nRootBranches;
+  }
+
+  bool Schedule::Empty() const
+  {
+    return RootBranches() == 1 && Begin()->Size() == 0;
   }
 
   Schedule::SymbolQueue* Schedule::AllocQueue()
@@ -117,6 +219,30 @@ namespace QSemanticDB
     // Allocate a new queue if the pool is empty
     return new SymbolQueue;
   }
+
+  //void Schedule::PopRoot() { }
+
+  void Schedule::CollapseFirstBranch()
+  {
+    // Pre-condition: The tree should not be empty
+    OSI_ASSERT(RootBranches() > 1);
+    nRootBranches -= 1;
+    nRootBranches += Begin()->Branches();
+    DeallocQueue(Begin()->queue);
+    tree.pop_front();
+  }
+
+  /*void Schedule::CollapseRootBranch(Schedule::TreeIterator iBranch)
+  {
+    // Pre-condition: The tree should not be empty
+    OSI_ASSERT(!Empty());
+    nRootBranches -= 1;
+    nRootBranches += iBranch->Branches();
+    DeallocQueue(iBranch->queue);
+    if(iBranch != tree.begin())
+      (iBranch-1)->iSibling = iBranch->Sibling();
+    tree.erase(iBranch);
+  }*/
 
   void Schedule::DeallocQueue(SymbolQueue *queue)
   {

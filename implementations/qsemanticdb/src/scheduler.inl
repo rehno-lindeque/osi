@@ -11,84 +11,87 @@
 
 namespace QSemanticDB
 {
-  Scheduler::Scheduler() : schedule(), evalSymbol(OSIX::SEMANTICID_INVALID)
+  Scheduler::Scheduler(Schedule& schedule) : schedule(schedule), /*frontSymbol(OSIX::SEMANTICID_INVALID),*/ currentSymbol(OSIX::SEMANTICID_INVALID)
   {
+    OSI_ASSERT(schedule.Begin() != schedule.End());
     activeQueue.push_back(schedule.Begin());
   }
 
   void Scheduler::Push(SemanticId symbol)
   {
+    // Pre-condition: There should be at least one queue in the stack at the beginning
+    OSI_ASSERT(!activeQueue.empty());
+
     // todo: check this
     activeQueue.back()->PushBack(symbol);
-    if(evalSymbol == OSIX::SEMANTICID_INVALID)
-      evalSymbol = symbol;
+    //currentSymbol = symbol;
   }
 
-  void Scheduler::PushBranch(SemanticId symbol)
+  void Scheduler::PushInnerBranch(SemanticId symbol)
   {
-    activeQueue.push_back(schedule.InsertBranch(activeQueue.back()));
-    Push(symbol);
+    //activeQueue.push_back(schedule.InsertBranch(activeQueue.back())); (Note: pushing a branch does not mean that we will evaluate it next! Indeed we are simply adding it to the schedule of branches yet to be evaluated)
+    auto iBranch = schedule.InsertBranch(activeQueue.back());
+    iBranch->PushBack(symbol);
   }
 
-  void Scheduler::CommitBranch()
+  void Scheduler::PushOuterBranch(SemanticId symbol)
   {
+    //activeQueue.push_back(schedule.InsertBranch(activeQueue.back())); (Note: pushing a branch does not mean that we will evaluate it next! Indeed we are simply adding it to the schedule of branches yet to be evaluated)
+    auto iBranch = schedule.InsertBranch(activeQueue.back());
+    iBranch->PushBack(symbol);
+  }
+
+  void Scheduler::Commit()
+  {
+    // Mark this branch and all parent branches as committed...
     for(auto i = activeQueue.rbegin(); i != activeQueue.rend(); ++i)
     {
       if((**i).QueryDepth() == 0)
         break;
       (**i).Commit();
     }
+    // Continue to the next branch in the schedule tree
+    while(activeQueue.size() > 0)
+    {
+      if(activeQueue.back()->Sibling() != schedule.End())
+      {
+        // Go to the next sibling
+        activeQueue.back() = activeQueue.back()->Sibling();
+        break;
+      }
+
+      // Go to the parent's next sibling (in the next iteration of this loop)
+      activeQueue.pop_back();
+    }
   }
 
-  void Scheduler::RollbackBranch()
+  void Scheduler::Rollback()
   {
+    // todo ....
     activeQueue.back()->Clear();
   }
 
-  SemanticId Scheduler::Front()
+  SemanticId Scheduler::Get()
+  {
+    activeQueue.back()->Back();
+  }
+
+  /*SemanticId Scheduler::Front()
   {
     //return schedule.Front();
     return evalSymbol;
-  }
+  }*/
 
-  SemanticId Scheduler::Pop()
+  /*SemanticId Scheduler::Pop()
   {
-    // Get the next symbol in the root queue
-    if(!schedule.Root().Empty())
-    {
-      SemanticId nextSymbol = schedule.Root().Front();
-      schedule.Root().PopFront();
-      return nextSymbol;
-    }
+    SemanticId prevEvalSymbol = evalSymbol;
 
-    // If the symbol invalid, then the root queue is empty, so continue with the next available child branch
-    // However, if the number of branches is 0, then the tree is empty, so the invalid symbol should be returned.
-    if(schedule.Root().Branches() == 0)
-      return OSIX::SEMANTICID_INVALID;
-
-    // Continue with the next available branch
-    auto iTree = schedule.Begin();
-    ++iTree;
-
-    // Condition: Since the number of branches > 0, the iterator should not be at the end of the list
-    OSI_ASSERT(iTree != schedule.End());
-
-    // Find a queue that can be committed
-    while(iTree->QueryDepth() != 0 && iTree != schedule.End())
-      ++iTree;
-
-    if(iTree == schedule.End())
-      return OSIX::SEMANTICID_INVALID;
-
-    nextSymbol = iTree->Front();
-    iTree->PopFront();
-    if(iTree->Empty())
-      schedule.RemoveRootBranch(iTree);
-
-    // Condition: No queue that is not the root should ever be empty, hence the first symbol should probably not be invalid either
-    OSI_ASSERT(nextSymbol != OSIX::SEMANTICID_INVALID);
-    return nextSymbol;
-  }
+    // Get the next symbol in the schedule
+    OSI_ASSERT(prevEvalSymbol == schedule.Front());
+    schedule.PopFront();
+    evalSymbol = schedule.Front();
+    return prevEvalSymbol;
+  }*/
 }
 
 #endif

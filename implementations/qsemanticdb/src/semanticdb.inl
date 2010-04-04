@@ -17,7 +17,8 @@ namespace QSemanticDB
     activeDomainId(OSIX::SEMANTICID_EPSILON),
     errorStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
     warnStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
-    infoStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out))
+    infoStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
+    scheduler(schedule)
   {
       domainEnvironment.push(OSIX::SEMANTICID_EPSILON);
       environmentState.push(BUILD_DECLARATION);
@@ -432,7 +433,9 @@ namespace QSemanticDB
 
 
     //evalId = root;
-    evalScheduler.Push(root);
+    scheduler.Reset();
+    scheduler.Push(root);
+    scheduler.Commit();
   }
 
   SemanticId SemanticDBImplementation::Eval()
@@ -441,13 +444,49 @@ namespace QSemanticDB
     infoStream << "  Eval: ";
 #endif
 
-    SemanticId result = EvalInternal();
+    // Invariant Condition: The scheduler should always be finished with its previous iteration of work when the next iteration begins.
+    OSI_ASSERT(scheduler.Done());
+
+    // If the schedule is empty we are done
+    if(schedule.Empty())
+    {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << "(Finished)" << std::endl;
+#endif
+      return OSIX::SEMANTICID_INVALID;
+    }
+
+    // Fetch the next symbol to return to the evaluator from the scheduler
+    SemanticId evalId = schedule.Front();
+
+    // If the fetched symbol needs to be evaluated internally for the next iteration, then evaluate it
+    if(schedule.RootBranches() == 1 && schedule.Begin()->Size() == 1)
+    {
+      // Reset the scheduler
+      scheduler.Reset();
+
+      // Invariant Condition: When the branch only has one symbol and no branches, then Front() (i.e. the next symbol to return to the evaluator) is the same as Back() (i.e. the next symbol to evaluate internally).
+      //OSI_ASSERT(schedule.Front() == scheduler.Back());
+      EvalInternal(evalId);
+    }
+
+    // Remove the symbol to be returned from the schedule
+    infoStream << schedule.Begin()->Size() << '-';
+    schedule.PopFront();
+    infoStream << schedule.Begin()->Size();
 
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
+    infoStream << '(' << evalId << ')';
+    //infoStream << ' ' << schedule.RootBranches();
     infoStream << std::endl;
 #endif
 
-    return result;
+    return evalId;
+  }
+
+  SemanticId SemanticDBImplementation::GetEvalSymbol()
+  {
+    return schedule.Front();
   }
 
   void SemanticDBImplementation::EndEvaluation()
@@ -467,7 +506,7 @@ namespace QSemanticDB
     if(!evaluationQueries.empty())
       evaluationQueries.pop();*/
     /* NEW:
-    evalScheduler.Pop();//*/
+    scheduler.Pop();//*/
   }
 
 
@@ -737,86 +776,83 @@ namespace QSemanticDB
     /*}*/
   }
 
-  SemanticId SemanticDBImplementation::EvalInternal()
+  void SemanticDBImplementation::EvalInternal(SemanticId evalId)
   {
-    SemanticId currentEvalId = evalId;
-
-    if(evalId != OSIX::SEMANTICID_INVALID)
+    // Ignore hidden domains
+    if(GetUnqualifiedCodomain(evalId) == INTERNALID_HIDDEN)
     {
-      // Ignore hidden domains
-      if (GetUnqualifiedCodomain(evalId) == INTERNALID_HIDDEN)
-      {
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
-        infoStream << "IGNORE HIDDEN ID (" << evalId << ")" << std::endl;
+      infoStream << "IGNORE HIDDEN ID (" << evalId << ")" << std::endl;
 #endif
-        EvalContinue();
-        return EvalInternal();
-      }
+      //SemanticId evalId = scheduler.Back();
+      //EvalInternal(evalId);
+      //scheduler.Pop();
+      return;
+    }
+
+    // Check whether the item represents an atom, a query, a speculative domain or a hidden id
+    IdPropertiesIterator i = symbolProperties.find(evalId);
+
+    if(i == symbolProperties.end() || (i->second.query == QueryNone && i->second.concrete))
+    {
+      EvalSymbol(evalId);
 
       // Add parent codomain edges of this id to the evaluation stack
-      EvalScheduleCodomains();
-
-      // Check whether the item represents an atom, a query, a speculative domain or a hidden id
-      IdPropertiesIterator i = symbolProperties.find(evalId);
-
-      if(i == symbolProperties.end() || (i->second.query == QueryNone && i->second.concrete))
-      {
-        EvalSymbol(evalId);
-      }
-      else if(!i->second.concrete)
-      {
-        EvalContinue();
-        EvalInternal();
-      }
-      else if(i->second.query == QuerySelectionConjunct || i->second.query == QuerySelectionStrictConjunct)
-      {
+      EvalScheduleCodomains(evalId);
+    }
+/*    else if(!i->second.concrete)
+    {
+      EvalContinue();
+      EvalInternal();
+    }
+    else if(i->second.query == QuerySelectionConjunct || i->second.query == QuerySelectionStrictConjunct)
+    {
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
-        infoStream << "SELECT CONJUNCT";
-        if(i->second.query == QuerySelectionStrictConjunct)
-          infoStream << " (STRICT)";
+      infoStream << "SELECT CONJUNCT";
+      if(i->second.query == QuerySelectionStrictConjunct)
+        infoStream << " (STRICT)";
 #endif
 
-        // Get the domain and the unqualified codomain of the query (i.e. as an unqualified relation)
-        evalId = ResolveSelectionConjunct(evalId);
-        if (evalId == OSIX::SEMANTICID_INVALID && i->second.query == QuerySelectionStrictConjunct)
-        {
-          //errorStream << "TODO: Assertion failed...";
-          infoStream << " TODO: Assertion failed...";
-        }
-      }
-      else if (i->second.query == QueryMutationConjunct || i->second.query == QueryMutationStrictConjunct)
+      // Get the domain and the unqualified codomain of the query (i.e. as an unqualified relation)
+      evalId = ResolveSelectionConjunct(evalId);
+      if (evalId == OSIX::SEMANTICID_INVALID && i->second.query == QuerySelectionStrictConjunct)
       {
+        //errorStream << "TODO: Assertion failed...";
+        infoStream << " TODO: Assertion failed...";
+      }
+    }
+    else if (i->second.query == QueryMutationConjunct || i->second.query == QueryMutationStrictConjunct)
+    {
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
-        infoStream << "MUTATION CONJUNCT";
-        if(i->second.query == QueryMutationStrictConjunct)
-          infoStream << " (STRICT)";
+      infoStream << "MUTATION CONJUNCT";
+      if(i->second.query == QueryMutationStrictConjunct)
+        infoStream << " (STRICT)";
 #endif
-        evalId = ResolveMutationConjunct(evalId);
-        if (evalId == OSIX::SEMANTICID_INVALID && i->second.query == QueryMutationStrictConjunct)
-        {
-          //errorStream << "TODO: Assertion failed...";
-          infoStream << " TODO: Assertion failed...";
-        }
-      }
-      else
+      evalId = ResolveMutationConjunct(evalId);
+      if (evalId == OSIX::SEMANTICID_INVALID && i->second.query == QueryMutationStrictConjunct)
       {
-        // TODO: Unhandled type of query....
-        evalId = OSIX::SEMANTICID_INVALID;
+        //errorStream << "TODO: Assertion failed...";
+        infoStream << " TODO: Assertion failed...";
+      }
+    }
+    else
+    {
+      // TODO: Unhandled type of query....
+      evalId = OSIX::SEMANTICID_INVALID;
 
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
-        infoStream << "Unhandled type of query...";
+      infoStream << "Unhandled type of query...";
 #endif
-      }
     }
 
     // Set up for the next evaluation
     if(evalId == OSIX::SEMANTICID_INVALID)
       EvalContinue();
 
-    return evalId;
+    return evalId;*/
   }
 
-  void SemanticDBImplementation::EvalContinue()
+  /*void SemanticDBImplementation::EvalContinue()
   {
     /* OLD:
     if (evaluationQueries.empty())
@@ -827,13 +863,13 @@ namespace QSemanticDB
 
     /* If there are any queries left on the evaluation stack, then evaluate them
     evalId = evaluationQueries.top();
-    evaluationQueries.pop();//*/
+    evaluationQueries.pop();//* /
 
     //* NEW:
-    evalId = evalScheduler.Pop(); //*/
-  }
+    evalId = scheduler.Pop(); //* /
+  }*/
 
-  void SemanticDBImplementation::EvalScheduleCodomains()
+  void SemanticDBImplementation::EvalScheduleCodomains(SemanticId evalId)
   {
     const IdMultiIndexRange r = domainIndexQCodomains.equal_range(evalId);
 
@@ -842,38 +878,50 @@ namespace QSemanticDB
       evaluationQueries.push(i->second);//*/
 
     //* NEW: Using the eval schedules
-    for(IdMultiIndexIterator i = r.first; i != r.second; ++i)
+    if (r.first == r.second)
+      return;
+
+    IdMultiIndexIterator iNext = r.first; ++iNext;
+    if (iNext == r.second)
     {
-      if (i == r.first)
-        evalScheduler.Push(i->second);
-      else
-        evalScheduler.PushBranch(i->second);
+#ifdef QSEMANTICDB_DEBUG_DETAILEDEVAL
+      infoStream << " scheduler.Push(" << r.first->second << ") ";
+#endif
+      scheduler.Push(r.first->second);
     }
-    //*/
+    else
+    {
+      for(IdMultiIndexIterator i = r.first; i != r.second; ++i)
+      {
+#ifdef QSEMANTICDB_DEBUG_DETAILEDEVAL
+      infoStream << " scheduler.PushOuterBranch(" << i->second << ") ";
+#endif
+        scheduler.PushOuterBranch(i->second);
+      }
+    }//*/
   }
 
   SemanticId SemanticDBImplementation::EvalSymbol(SemanticId symbol)
   {
     //* Determine whether this id has child codomains and evaluate them
     SemanticId unqualifiedCodomain = GetUnqualifiedCodomain(symbol);
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
     if(unqualifiedCodomain == OSIX::SEMANTICID_INVALID)
     {
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
       IdStringMap::iterator i = epsilonStrings.find(symbol);
       if(i == epsilonStrings.end())
         infoStream << "(Unknown Atom Id)";
       else
         infoStream << "(Atom: " << i->second << ")";
-#endif
     }
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
     else
     {
       infoStream << "(Qualified Id: " << symbol << ")";
     }
 #endif
-    evalId = unqualifiedCodomain;//*/
-    return evalId;
+
+
+    //return unqualifiedCodomain;//*/
   }
 
   SemanticId SemanticDBImplementation::ResolveContext(SemanticId domain)
@@ -893,6 +941,9 @@ namespace QSemanticDB
 
   SemanticId SemanticDBImplementation::ResolveRelation(OrderedRelation& relation)
   {
+    /* TODO: BUSY HERE...
+
+
     // Try to find a concrete relation
     RelationIndex::right_const_iterator i = relations.right.find(relation);
     if(i != relations.right.end())
@@ -927,6 +978,10 @@ namespace QSemanticDB
 
     // All symbols exist in the global domain epsilon, so just return the unqualified codomain itself if no qualified codomain could be found
     return relation.codomain;
+
+    */
+
+    return OSIX::SEMANTICID_INVALID;
   }
 
 

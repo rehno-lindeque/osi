@@ -129,6 +129,7 @@ namespace QSemanticDB
     // Evaluation
     void BeginEvaluation(SemanticId root);
     SemanticId Eval();
+    SemanticId GetEvalSymbol();
     void EndEvaluation();
     //SemanticId GetActiveQuery();
 
@@ -203,10 +204,11 @@ namespace QSemanticDB
     IdMultiIndex domainIndexSpeculativeQCodomains;      // A mapping (which is a subset of domainIndexQCodomains), that lists only speculative qualified codomains
 
     // Evaluation
-    Scheduler evalScheduler;                            // The evaluation scheduler maintaining the state of evaluation
-    //IdStack evaluationQueries;                          // Stack of evaluation queries
-    //IdStack activeQueries;                              // Stack of queries in progress
-    //SemanticId evalId;                                  // The currently active eval id
+    Schedule schedule;                                  // The evaluation schedule (used to delay strings from being evaluated )
+    Scheduler scheduler;                                // The evaluation scheduler used to build up the evaluation schedule
+    //IdStack evaluationQueries;                        // Stack of evaluation queries
+    //IdStack activeQueries;                            // Stack of queries in progress
+    //SemanticId evalId;                                // The currently active eval id
 
     // Environment
     IdStack domainEnvironment;                          // Environment of open domains
@@ -276,13 +278,16 @@ namespace QSemanticDB
 // EVALUATION stuff
 
     // Internal eval function
-    SemanticId EvalInternal();
+    // Note: This function is used to push symbols onto the scheduler's active queue.
+    //       It will never pop ids from the front of the scheduler.
+    //       This only ever occurs in the the external Eval() function.
+    void EvalInternal(SemanticId symbol);
 
     // Continue evaluation (set up for the next iteration)
-    void EvalContinue();
+    //void EvalContinue();
 
     // Schedule codomain edges for later evaluation (push it onto the evaluation stack)
-    void EvalScheduleCodomains();
+    void EvalScheduleCodomains(SemanticId evalId);
 
     // Evaluate a symbol (non-query)
     SemanticId EvalSymbol(SemanticId symbol);

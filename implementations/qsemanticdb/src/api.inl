@@ -157,37 +157,37 @@ OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::Eval()
 OSIX::SemanticId OSI_API_CALL OSIX::SemanticDB::GetEvalDomain()
 {
   //return _this->GetDomain(_this->GetEvalQuery());
-  return _this->GetDomain(_this->GetActiveQuery());
+  return _this->GetDomain(_this->GetEvalSymbol());
 }
 
 const OSchar* OSI_API_CALL OSIX::SemanticDB::GetEvalString()
 {
-  return _this->GetString(_this->GetActiveQuery());
+  return _this->GetString(_this->GetEvalSymbol());
 }
 
 OSint16 OSI_API_CALL OSIX::SemanticDB::GetEvalInt16()
 {
-  return _this->GetInt16(_this->GetActiveQuery());
+  return _this->GetInt16(_this->GetEvalSymbol());
 }
 
 OSint32 OSI_API_CALL OSIX::SemanticDB::GetEvalInt32()
 {
-  return _this->GetInt32(_this->GetActiveQuery());
+  return _this->GetInt32(_this->GetEvalSymbol());
 }
 
 OSint64 OSI_API_CALL OSIX::SemanticDB::GetEvalInt64()
 {
-  return _this->GetInt64(_this->GetActiveQuery());
+  return _this->GetInt64(_this->GetEvalSymbol());
 }
 
 OSfloat OSI_API_CALL OSIX::SemanticDB::GetEvalFloat()
 {
-  return _this->GetFloat(_this->GetActiveQuery());
+  return _this->GetFloat(_this->GetEvalSymbol());
 }
 
 OSdouble OSI_API_CALL OSIX::SemanticDB::GetEvalDouble()
 {
-  return _this->GetDouble(_this->GetActiveQuery());
+  return _this->GetDouble(_this->GetEvalSymbol());
 }
 
 void OSI_API_CALL OSIX::SemanticDB::EndEvaluation(OSobject evaluation)
