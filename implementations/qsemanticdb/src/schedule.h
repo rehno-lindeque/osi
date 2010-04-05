@@ -46,6 +46,7 @@ namespace QSemanticDB
     int InnerBranches() const;
     int OuterBranches() const;
     int QueryDepth() const;
+    void QueryDepth(int depth);
     const TreeIterator& Sibling();
     TreeConstIterator Sibling() const;
 
@@ -54,7 +55,7 @@ namespace QSemanticDB
     int queryDepth;         // The number of queries this queue is involved in. Every time a query is completed, the count goes down by one. If the count is 0, the queue may be fully evaluated.
     int nInnerBranches;     // Number of "inner" (child) branches
     int nOuterBranches;     // Number of "outer" (parent) branches
-    int frontIndex;         // Index of the first symbol (since this is implemented using a vector, the front elements are not deleted when they get popped from the front of the queue. Instead the index is moved forward).
+    size_t frontIndex;      // Index of the first symbol (since this is implemented using a vector, the front elements are not deleted when they get popped from the front of the queue. Instead the index is moved forward).
     TreeIterator iSibling;  // Iterator to the next sibling in the tree
   };
 
@@ -78,7 +79,10 @@ namespace QSemanticDB
 
     // Operations
     void Clear();
-    TreeIterator InsertBranch(TreeIterator i);
+    //TreeIterator InsertBranch(TreeIterator iBranch);
+    TreeIterator InsertInnerBranch(TreeIterator iBranch);
+    TreeIterator InsertOuterBranch(TreeIterator iBranch);
+    void RemoveLeafBranch(const TreeIterator& iBranch);
     void PopFront();
 
     // Accessors

@@ -11,7 +11,7 @@
 
 namespace QSemanticDB
 {
-  ScheduleQueue::ScheduleQueue(SymbolQueue* queue, uint queryDepth, const TreeIterator& iSibling) : queue(queue), numberOfChildren(0), frontIndex(0), queryDepth(queryDepth), iSibling(iSibling)
+  ScheduleQueue::ScheduleQueue(SymbolQueue* queue, uint queryDepth, const TreeIterator& iSibling) : queue(queue), queryDepth(queryDepth), nInnerBranches(0), nOuterBranches(0), frontIndex(0), iSibling(iSibling)
   {}
 
   void ScheduleQueue::PushBack(SemanticId symbol)
@@ -63,14 +63,29 @@ namespace QSemanticDB
     return queue->size() - frontIndex;
   }
 
-  int ScheduleQueue::Branches() const
+  /*int ScheduleQueue::Branches() const
   {
     return numberOfChildren;
+  }*/
+
+  int ScheduleQueue::InnerBranches() const
+  {
+    return nInnerBranches;
+  }
+
+  int ScheduleQueue::OuterBranches() const
+  {
+    return nOuterBranches;
   }
 
   int ScheduleQueue::QueryDepth() const
   {
     return queryDepth;
+  }
+
+  void ScheduleQueue::QueryDepth(int queryDepth)
+  {
+    ScheduleQueue::queryDepth = queryDepth;
   }
 
   const ScheduleQueue::TreeIterator& ScheduleQueue::Sibling()
@@ -103,7 +118,7 @@ namespace QSemanticDB
     }
   }
 
-  Schedule::TreeIterator Schedule::InsertBranch(Schedule::TreeIterator i)
+  /*Schedule::TreeIterator Schedule::InsertBranch(Schedule::TreeIterator iBranch)
   {
     ++i->numberOfChildren;
     auto iNext = i; ++iNext;
@@ -117,6 +132,50 @@ namespace QSemanticDB
     {
       return tree.insert(iNext, ScheduleQueue(AllocQueue(), i->queryDepth, tree.end()));
     }
+  }*/
+
+  Schedule::TreeIterator Schedule::InsertInnerBranch(TreeIterator iBranch)
+  {
+    // Inner branches are always placed before the outer branches in the list
+    ++iBranch->nInnerBranches;
+    auto iNext = iBranch; ++iNext;
+    if(iBranch->InnerBranches() > 1)
+    {
+      // Invariant Condition: If this node is a parent to some other node, then it must precede it in the list
+      OSI_ASSERT(iNext != tree.end());
+      return tree.insert(iNext, ScheduleQueue(AllocQueue(), iBranch->queryDepth, iNext));
+    }
+    else
+    {
+      return tree.insert(iNext, ScheduleQueue(AllocQueue(), iBranch->queryDepth, tree.end()));
+    }
+  }
+
+  Schedule::TreeIterator Schedule::InsertOuterBranch(TreeIterator iBranch)
+  {
+    // Outer branches are always placed after the inner branches in the list
+    ++iBranch->nOuterBranches;
+    auto iNext = iBranch; ++iNext;
+    for(int c = 0; c < iBranch->InnerBranches(); ++c)
+      ++iNext;
+    if(iBranch->OuterBranches() > 1)
+    {
+      // Invariant Condition: If this node is a parent to some other node, then it must precede it in the list
+      OSI_ASSERT(iNext != tree.end());
+      return tree.insert(iNext, ScheduleQueue(AllocQueue(), iBranch->queryDepth, iNext));
+    }
+    else
+    {
+      return tree.insert(iNext, ScheduleQueue(AllocQueue(), iBranch->queryDepth, tree.end()));
+    }
+  }
+
+  void Schedule::RemoveLeafBranch(const TreeIterator& iBranch)
+  {
+    // Pre-condition: This must be a leaf branch, hence must have no inner or outer branches
+    OSI_ASSERT(iBranch->InnerBranches() == 0 && iBranch->OuterBranches() == 0);
+    DeallocQueue(iBranch->queue);
+    tree.erase(iBranch);
   }
 
   void Schedule::PopFront()
@@ -226,8 +285,13 @@ namespace QSemanticDB
   {
     // Pre-condition: The tree should not be empty
     OSI_ASSERT(RootBranches() > 1);
+
+    // Pre-condition: Inner branches are not yet supported!!
+    OSI_ASSERT(Begin()->InnerBranches() == 0);
+
+
     nRootBranches -= 1;
-    nRootBranches += Begin()->Branches();
+    nRootBranches += Begin()->OuterBranches();
     DeallocQueue(Begin()->queue);
     tree.pop_front();
   }

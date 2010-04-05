@@ -82,6 +82,7 @@ void OSI_API_C_CALL MutationStrictConjunct();
 /* evaluation */
 OSobject OSI_API_C_CALL BeginEvaluation(SemanticId root);
 SemanticId OSI_API_C_CALL Eval();
+SemanticId OSI_API_C_CALL GetEvalSymbol();
 SemanticId OSI_API_C_CALL GetEvalDomain();
 const OSchar* OSI_API_C_CALL GetEvalString();
 OSint16 OSI_API_C_CALL GetEvalInt16();

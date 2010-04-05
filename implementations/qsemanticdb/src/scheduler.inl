@@ -11,7 +11,7 @@
 
 namespace QSemanticDB
 {
-  Scheduler::Scheduler(Schedule& schedule) : schedule(schedule), /*frontSymbol(OSIX::SEMANTICID_INVALID),*/ currentSymbol(OSIX::SEMANTICID_INVALID)
+  Scheduler::Scheduler(Schedule& schedule) : schedule(schedule), /*frontSymbol(OSIX::SEMANTICID_INVALID),*/ currentSymbol(OSIX::SEMANTICID_INVALID), queryDepth(0)
   {
     OSI_ASSERT(schedule.Begin() != schedule.End());
     activeQueue.push_back(schedule.Begin());
@@ -30,14 +30,14 @@ namespace QSemanticDB
   void Scheduler::PushInnerBranch(SemanticId symbol)
   {
     //activeQueue.push_back(schedule.InsertBranch(activeQueue.back())); (Note: pushing a branch does not mean that we will evaluate it next! Indeed we are simply adding it to the schedule of branches yet to be evaluated)
-    auto iBranch = schedule.InsertBranch(activeQueue.back());
+    auto iBranch = schedule.InsertInnerBranch(activeQueue.back());
     iBranch->PushBack(symbol);
   }
 
   void Scheduler::PushOuterBranch(SemanticId symbol)
   {
     //activeQueue.push_back(schedule.InsertBranch(activeQueue.back())); (Note: pushing a branch does not mean that we will evaluate it next! Indeed we are simply adding it to the schedule of branches yet to be evaluated)
-    auto iBranch = schedule.InsertBranch(activeQueue.back());
+    auto iBranch = schedule.InsertOuterBranch(activeQueue.back());
     iBranch->PushBack(symbol);
   }
 
@@ -50,6 +50,7 @@ namespace QSemanticDB
         break;
       (**i).Commit();
     }
+
     // Continue to the next branch in the schedule tree
     while(activeQueue.size() > 0)
     {
@@ -67,13 +68,40 @@ namespace QSemanticDB
 
   void Scheduler::Rollback()
   {
-    // todo ....
+    // Invariant Condition: This always holds, but is rather relevant for the Rollback function
+    OSI_ASSERT(activeQueue.back()->QueryDepth() == queryDepth);
+
     activeQueue.back()->Clear();
+    if (schedule.RootBranches() > 1)
+      schedule.RemoveLeafBranch(activeQueue.back());
+    activeQueue.pop_back();
+
+    // If there are no more queues left, then return
+    if(activeQueue.empty())
+      return;
+
+    if(activeQueue.back()->QueryDepth() == queryDepth
+          && activeQueue.back()->InnerBranches() == 0
+          && activeQueue.back()->OuterBranches() == 0)
+    {
+      Rollback();
+      return;
+    }
+
+    // Go to the next available child branch
+    //todo: perhaps this should be: while(activeQueue.back()->OuterBranches() > 0)
+    //      we should probably find a way of making sure the scheduler is ALWAYS at a leaf node (except when we are busy pushing new branches)
+    if(activeQueue.back()->OuterBranches() > 0)
+    {
+      GotoFirstBranch();
+      OSI_ASSERT(activeQueue.back()->OuterBranches() == 0);
+    }
   }
 
   SemanticId Scheduler::Get()
   {
-    activeQueue.back()->Back();
+    OSI_ASSERT(!activeQueue.back()->Empty());
+    return activeQueue.back()->Back();
   }
 
   /*SemanticId Scheduler::Front()

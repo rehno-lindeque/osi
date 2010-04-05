@@ -209,6 +209,7 @@ namespace QSemanticDB
     //IdStack evaluationQueries;                        // Stack of evaluation queries
     //IdStack activeQueries;                            // Stack of queries in progress
     //SemanticId evalId;                                // The currently active eval id
+    IdStack evalQueryStack;                             // The stack of queries currently being evaluated
 
     // Environment
     IdStack domainEnvironment;                          // Environment of open domains
@@ -283,14 +284,19 @@ namespace QSemanticDB
     //       This only ever occurs in the the external Eval() function.
     void EvalInternal(SemanticId symbol);
 
+    // Evaluate a branch if it is a query
+    void EvalIfQuery(SemanticId symbol);
+
     // Continue evaluation (set up for the next iteration)
     //void EvalContinue();
 
     // Schedule codomain edges for later evaluation (push it onto the evaluation stack)
-    void EvalScheduleCodomains(SemanticId evalId);
+    // Returns true if any codomains were added to the schedule
+    bool EvalScheduleCodomains(SemanticId evalId, bool onlyScheduleBranches);
 
     // Evaluate a symbol (non-query)
-    SemanticId EvalSymbol(SemanticId symbol);
+    //SemanticId EvalSymbol(SemanticId symbol);
+    void EvalSymbol(SemanticId symbol);
 
     // Resolve a speculative context with the first concrete parent context
     SemanticId ResolveContext(SemanticId domain);

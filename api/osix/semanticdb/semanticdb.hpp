@@ -94,6 +94,7 @@ namespace OSIX
     /* evaluation */
     OSI_DYNAMIC_METHOD OSobject OSI_API_CALL BeginEvaluation(SemanticId root);
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL Eval();
+    OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL GetEvalSymbol();
     OSI_DYNAMIC_METHOD SemanticId OSI_API_CALL GetEvalDomain();
     OSI_DYNAMIC_METHOD const OSchar* OSI_API_CALL GetEvalString();
     OSI_DYNAMIC_METHOD OSint16 OSI_API_CALL GetEvalInt16();

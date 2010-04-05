@@ -13,12 +13,12 @@ namespace QSemanticDB
 {
   SemanticDBImplementation::SemanticDBImplementation() :
     nextSymbolId(0),
+    scheduler(schedule),
     //evalId(OSIX::SEMANTICID_INVALID),
     activeDomainId(OSIX::SEMANTICID_EPSILON),
     errorStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
     warnStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
-    infoStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
-    scheduler(schedule)
+    infoStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out))
   {
       domainEnvironment.push(OSIX::SEMANTICID_EPSILON);
       environmentState.push(BUILD_DECLARATION);
@@ -457,6 +457,9 @@ namespace QSemanticDB
     }
 
     // Fetch the next symbol to return to the evaluator from the scheduler
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      //infoStream << "FrontFront " << schedule.Begin()->frontIndex << ' ' << schedule.Begin()->queue << ' ' << schedule.Begin()->queue->size() << " " << schedule.RootBranches() << " " << schedule.Begin()->Size() << std::endl;
+#endif
     SemanticId evalId = schedule.Front();
 
     // If the fetched symbol needs to be evaluated internally for the next iteration, then evaluate it
@@ -793,19 +796,32 @@ namespace QSemanticDB
     // Check whether the item represents an atom, a query, a speculative domain or a hidden id
     IdPropertiesIterator i = symbolProperties.find(evalId);
 
+    // Evaluate simple symbols
     if(i == symbolProperties.end() || (i->second.query == QueryNone && i->second.concrete))
     {
       EvalSymbol(evalId);
 
       // Add parent codomain edges of this id to the evaluation stack
-      EvalScheduleCodomains(evalId);
+      if(EvalScheduleCodomains(evalId, false))
+      {
+        if(scheduler.OuterBranches() > 0)
+          scheduler.GotoFirstBranch();
+        do
+        {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+          infoStream << "EvalIfQuery...." << std::endl;
+#endif
+          EvalIfQuery(scheduler.Get());
+        } while(!scheduler.Done());
+      }
+      return;
     }
-/*    else if(!i->second.concrete)
-    {
-      EvalContinue();
-      EvalInternal();
-    }
-    else if(i->second.query == QuerySelectionConjunct || i->second.query == QuerySelectionStrictConjunct)
+
+    // Evaluate a speculative symbol (speculative symbols should never be evaluated here..
+    OSI_ASSERT(i->second.concrete);
+
+    // Evaluate a query
+    /*else if(i->second.query == QuerySelectionConjunct || i->second.query == QuerySelectionStrictConjunct)
     {
 #ifdef QSEMANTICDB_DEBUG_VERBOSE
       infoStream << "SELECT CONJUNCT";
@@ -869,7 +885,69 @@ namespace QSemanticDB
     evalId = scheduler.Pop(); //* /
   }*/
 
-  void SemanticDBImplementation::EvalScheduleCodomains(SemanticId evalId)
+  void SemanticDBImplementation::EvalIfQuery(SemanticId symbol)
+  {
+    IdPropertiesIterator iProperties = symbolProperties.find(symbol);
+    SymbolProperties &properties = iProperties->second;
+
+    // Invariant Condition: Speculative symbols are never added to the schedule
+    OSI_ASSERT(properties.concrete);
+
+    // If the symbol is not a query we simply commit it and continue with the next branch (see EvalInternal)
+    if(properties.query == QueryNone)
+    {
+      // (todo: unless we are currently in a query?)
+      scheduler.Commit();
+      return;
+    }
+
+    // Increment the scheduler's query depth
+    scheduler.BeginQuery();
+
+    // Add the query to a stack
+    evalQueryStack.push(symbol);
+
+    if(properties.query == QuerySelectionConjunct || properties.query == QuerySelectionStrictConjunct)
+    {
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+      infoStream << "SELECT CONJUNCT";
+      if(properties.query == QuerySelectionStrictConjunct)
+        infoStream << " (STRICT)";
+#endif
+      // Get the domain and the unqualified codomain of the query (i.e. as an unqualified relation)
+      SemanticId result = ResolveSelectionConjunct(symbol);
+      if(result != OSIX::SEMANTICID_INVALID)
+      {
+        scheduler.Commit();
+        evalQueryStack.pop();
+        return;
+      }
+
+      // Check whether an assertion error message should be triggered
+      if(result == OSIX::SEMANTICID_INVALID && properties.query == QuerySelectionStrictConjunct)
+      {
+        //errorStream << "TODO: Assertion failed...";
+        infoStream << " TODO: Assertion failed...";
+      }
+    }
+    else if(properties.query == QueryMutationConjunct || properties.query == QueryMutationStrictConjunct)
+    {
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+      infoStream << "MUTATION CONJUNCT";
+      if(properties.query == QueryMutationStrictConjunct)
+        infoStream << " (STRICT)";
+#endif
+    }
+
+    // Roll back the evaluation if the query did not succeed
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+    infoStream << "Rollback...." << std::endl;
+#endif
+    scheduler.Rollback();
+    evalQueryStack.pop();
+  }
+
+  bool SemanticDBImplementation::EvalScheduleCodomains(SemanticId evalId, bool onlyScheduleBranches)
   {
     const IdMultiIndexRange r = domainIndexQCodomains.equal_range(evalId);
 
@@ -879,29 +957,64 @@ namespace QSemanticDB
 
     //* NEW: Using the eval schedules
     if (r.first == r.second)
-      return;
+      return false;
 
     IdMultiIndexIterator iNext = r.first; ++iNext;
-    if (iNext == r.second)
+    if(iNext == r.second && scheduler.InnerBranches() == 0 && !onlyScheduleBranches)
     {
-#ifdef QSEMANTICDB_DEBUG_DETAILEDEVAL
-      infoStream << " scheduler.Push(" << r.first->second << ") ";
+      IdPropertiesIterator iProperties = symbolProperties.find(r.first->second);
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << "Scheduler.Push(";
 #endif
-      scheduler.Push(r.first->second);
+
+      // If the symbol is speculative, we don't schedule it, but instead schedule all the queries that follow on it
+      if(iProperties->second.concrete)
+      {
+        scheduler.Push(r.first->second);
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+        infoStream << r.first->second;
+#endif
+      }
+      else
+        EvalScheduleCodomains(r.first->second, false);
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << ")";
+#endif
     }
     else
     {
       for(IdMultiIndexIterator i = r.first; i != r.second; ++i)
       {
-#ifdef QSEMANTICDB_DEBUG_DETAILEDEVAL
-      infoStream << " scheduler.PushOuterBranch(" << i->second << ") ";
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << "Scheduler.PushOuterBranch(";
 #endif
-        scheduler.PushOuterBranch(i->second);
+        IdPropertiesIterator iProperties = symbolProperties.find(i->second);
+        if(iProperties->second.concrete)
+        {
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+          infoStream << i->second;
+#endif
+          scheduler.PushOuterBranch(i->second);
+        }
+        else
+          EvalScheduleCodomains(i->second, true);
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << ")";
+#endif
       }
     }//*/
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+      infoStream << std::endl;
+#endif
+
+    return true;
   }
 
-  SemanticId SemanticDBImplementation::EvalSymbol(SemanticId symbol)
+  //SemanticId SemanticDBImplementation::EvalSymbol(SemanticId symbol)
+  void SemanticDBImplementation::EvalSymbol(SemanticId symbol)
   {
     //* Determine whether this id has child codomains and evaluate them
     SemanticId unqualifiedCodomain = GetUnqualifiedCodomain(symbol);
@@ -1141,8 +1254,8 @@ namespace QSemanticDB
     Relation splitRelation(id, invalidId);
     do
     {
-        UnqualifiedSplit(splitRelation.domain, splitRelation);
-        OSI_ASSERT(splitRelation.domain >= id && splitRelation.domain != invalidId); // Make some assumptions based on the id assignment algorithm
+      UnqualifiedSplit(splitRelation.domain, splitRelation);
+      OSI_ASSERT(splitRelation.domain >= id && splitRelation.domain != invalidId); // Make some assumptions based on the id assignment algorithm
     } while (splitRelation.domain != relation.domain);
     return (splitRelation.codomain == id);
     infoStream << "TODO..." << std::endl;
