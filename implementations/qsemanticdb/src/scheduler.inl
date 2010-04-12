@@ -98,17 +98,17 @@ namespace QSemanticDB
     }
   }
 
-  SemanticId Scheduler::Get()
-  {
-    OSI_ASSERT(!activeQueue.back()->Empty());
-    return activeQueue.back()->Back();
-  }
-
   /*SemanticId Scheduler::Front()
   {
     //return schedule.Front();
     return evalSymbol;
   }*/
+
+  SemanticId Scheduler::Get()
+  {
+    OSI_ASSERT(!activeQueue.back()->Empty());
+    return activeQueue.back()->Back();
+  }
 
   /*SemanticId Scheduler::Pop()
   {
@@ -120,6 +120,41 @@ namespace QSemanticDB
     evalSymbol = schedule.Front();
     return prevEvalSymbol;
   }*/
+
+
+  void Scheduler::Reset()
+  {
+    activeQueue.clear();
+    activeQueue.push_back(schedule.Begin());
+  }
+
+  bool Scheduler::Done() const
+  {
+    return activeQueue.empty();
+  }
+
+  int Scheduler::InnerBranches() const
+  {
+    return activeQueue.back()->InnerBranches();
+  }
+
+  int Scheduler::OuterBranches() const
+  {
+    return activeQueue.back()->OuterBranches();
+  }
+
+  int Scheduler::QueryDepth() const
+  {
+    return queryDepth;
+  }
+
+  Scheduler::Visitor Scheduler::GetVisitor()
+  {
+    // Pre-condition: Current branch must have at least 1 symbol
+    OSI_ASSERT(activeQueue.size() > 1 && activeQueue.back()->Size() > 0);
+    return Visitor(*this, activeQueue.size()-1, activeQueue.back()->Size()-1);
+  }
+
 }
 
 #endif

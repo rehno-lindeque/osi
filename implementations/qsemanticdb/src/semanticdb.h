@@ -85,16 +85,15 @@ namespace QSemanticDB
     friend class ::OSIX::SemanticDBDbg;
 #endif
   public:
-    // Types
-    typedef std::vector<SemanticId> IdVector;
-    typedef std::set<SemanticId> IdSet;
-    typedef std::stack<SemanticId> IdStack;
-
     // Constructor
     INLINE SemanticDBImplementation();
 
     //Destructor
     virtual ~SemanticDBImplementation();
+
+    ////
+    //// API
+    ////
 
     SemanticId DeclareSymbol(const char* name);
     SemanticId GlobalSymbol(const char* name);
@@ -150,6 +149,11 @@ namespace QSemanticDB
     INLINE void SetInfoStream(FILE* stream);
 
   protected:
+
+    ////
+    //// Internal types
+    ////
+
     // (string, SemanticID) mappings
     typedef std::pair<std::string, SemanticId> StringIdPair;
     typedef std::unordered_map<std::string, SemanticId, std::hash<std::string>, std::equal_to<std::string> > StringIdMap;
@@ -167,7 +171,9 @@ namespace QSemanticDB
     // A mapping from one id to multiple ids
     typedef std::multimap<SemanticId, SemanticId> IdMultiIndex;
     typedef IdMultiIndex::iterator IdMultiIndexIterator;
+    typedef IdMultiIndex::const_iterator IdMultiIndexConstIterator;
     typedef std::pair<IdMultiIndexIterator, IdMultiIndexIterator> IdMultiIndexRange;
+    typedef std::pair<IdMultiIndexConstIterator, IdMultiIndexConstIterator> IdMultiIndexConstRange;
 
     // A bidirectional mapping between unqualified relations (domain, codomain) pairs and qualified codomain ids
     typedef boost::bimaps::bimap<SemanticId, OrderedRelation> RelationIndex;
@@ -182,6 +188,7 @@ namespace QSemanticDB
     typedef std::pair<SemanticId, SymbolProperties> IdPropertiesPair;
     typedef std::map<SemanticId, SymbolProperties> IdPropertiesMap;
     typedef IdPropertiesMap::iterator IdPropertiesIterator;
+    typedef IdPropertiesMap::const_iterator IdPropertiesConstIterator;
 
     // The state of the current building environment
     enum EnvironmentState
@@ -228,6 +235,13 @@ namespace QSemanticDB
     static const SemanticId firstReservedId;            // The first id that is reserved for built-in ids
     static const SemanticId INTERNALID_HIDDEN;          // The first id that is reserved for built-in ids
 
+    ////
+    //// Build
+    ////
+
+    // Create an id for the relation using both the domain and codomain
+    SemanticId CreateQualifiedId(const Relation& relation);
+
     // A helper for declaring a relation from an associative pair of ids
     SemanticId DeclareRelation(SemanticId domain, SemanticId codomain);
 
@@ -243,40 +257,60 @@ namespace QSemanticDB
     // Put the builder into the correct state for accepting query arguments
     void OpenQueryArgument(QueryType queryType);
 
+    // Add a query to the database
+    //SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
+    void CreateQuery(QueryType type, SemanticId relation);
+
+    ////
+    //// Accessors
+    ////
+
+    // Get the unqualified id from a qualified id (i.e. the tail part such that a.b -> b)
+    SemanticId GetUnqualifiedCodomain(SemanticId qualifiedId);
+
+    // Get the unqualified relation
+    bool GetUnqualifiedRelation(SemanticId qualifiedId, Relation& unqualifiedRelation) const;
+
+    // Get the qualified codomain from a unqualified relation
+    // Return invalid id if the relation does not exist
+    SemanticId GetQualifiedCodomain(SemanticId domain, SemanticId unqualifiedCodomain) const;
+    SemanticId GetQualifiedCodomain(const OrderedRelation& unqualifiedRelation) const;
+
+    // Get a concrete qualified codomain
+    // Returns invalid id if the relation does not exist or the relation returns a speculative symbol
+    SemanticId GetConcreteQualifiedCodomain(SemanticId domain, SemanticId unqualifiedCodomain) const;
+    SemanticId GetConcreteQualifiedCodomain(const OrderedRelation& unqualifiedRelation) const;
+
+    // Test whether any relations exist from the given fully qualified domain
+    bool HasStaticRelations(SemanticId domain) const;
+
+    // Get the properties associated with a symbol
+    const SymbolProperties& GetProperties(SemanticId domain) const;
+
+    // Splits any qualified symbol into its composite parts
+    // Returns false if the the symbol is an atom
+    // qualifiedSymbol=( domain, codomain )
+    bool Decompose(QualifiedSymbol& qualifiedSymbol, SemanticId symbolId) const;
+
+    // Splits a query symbol up into its composite parts and stores it in a QuerySymbol structure.
+    // Returns false on failure
+    bool Decompose(QuerySymbol& querySymbol, SemanticId symbolId) const;
+
     // Get the semantic id represention the relation from domain to codomain
     //SemanticId GetRelationId(SemanticId domain, SemanticId codomain);
 
     // Get the semantic id represention the relation from domain to codomain
     //SemanticId GetTailId(SemanticId relationId);
 
-    // Get the unqualified id from a qualified id (i.e. the tail part such that a.b -> b)
-    SemanticId GetUnqualifiedCodomain(SemanticId qualifiedId);
-
-    // Get the unqualified relation
-    bool GetUnqualifiedRelation(SemanticId qualifiedId, Relation& unqualifiedRelation);
-
-    // Get the qualified codomain from a unqualified relation
-    // Return invalid id if the relation does not exist
-    SemanticId GetQualifiedCodomain(const OrderedRelation& unqualifiedRelation) const;
-
-    // Test whether any relations exist from the given fully qualified domain
-    bool HasStaticRelations(SemanticId domain) const;
-
     // Test whether a relation already exists
     //bool DoesRelationExist(const OrderedRelation& unqualifiedRelation) const;
 
-    // Create an id for the relation using both the domain and codomain
-    SemanticId CreateQualifiedId(const Relation& relation);
+    // Test whether an id matches the relation at some point in the relation.domain set of codomains
+    //bool MatchDomain(SemanticId qualifiedCodomain, SemanticId matchDomain);
 
-    // Get the properties associated with a symbol
-    const SymbolProperties& GetProperties(SemanticId domain) const;
-
-    // Add a query to the database
-    //SemanticId CreateQuery(QueryType type,SemanticId domain, SemanticId argument);
-    void CreateQuery(QueryType type, SemanticId relation);
-
-///////////////////////////////////////////////////
-// EVALUATION stuff
+    ////
+    //// Eval
+    ////
 
     // Internal eval function
     // Note: This function is used to push symbols onto the scheduler's active queue.
@@ -301,28 +335,28 @@ namespace QSemanticDB
     // Resolve a speculative context with the first concrete parent context
     SemanticId ResolveContext(SemanticId domain);
 
-    // Resolve a relation
+    // Resolve a relation in the form (domain -> ... -> codomain) where ... may be any sequence of queries
     // Modifies the domain part of the unqualified relation until the codomain can be found in it
     // Returns the first qualified codomain corresponding to the unqualified codomain in a parent context
     SemanticId ResolveRelation(OrderedRelation& relation);
 
+    // Evaluate the next symbol pointed to by a visitor object (used internally by EvalInternalUntil)
+    SemanticId EvalInternalNext(Scheduler::Visitor& visitor);
+
+    // Evaluate a start symbol internally until all strings are found that matches the end character
+    bool EvalInternalUntil(SemanticId startSymbol, SemanticId endSymbol);
+
     // Resolve a selection at compile-time
-    SemanticId ResolveSelectionConjunct(SemanticId symbol);
+    //SemanticId ResolveSelectionConjunct(SemanticId symbol);
+    bool EvalSelectionConjunct(SemanticId symbol);
 
     // Resolve a mutation at compile-time
-    SemanticId ResolveMutationConjunct(SemanticId symbol);
+    //SemanticId ResolveMutationConjunct(SemanticId symbol);
+    bool EvalMutationConjunct(SemanticId symbol);
 
-    // Declare a speculative Id
-    //DeclareSpeculativeId(QueryType)
-
-    // Test whether an id matches the relation at some point in the relation.domain set of codomains
-    //bool MatchDomain(SemanticId qualifiedCodomain, SemanticId matchDomain);
-
-    /*// Split an id into a qualified relation pair (domain, codomain)
-    void QualifiedSplit(SemanticId relationId, Relation& qualifiedRelation);
-
-    // Split an id into a unqualified relation pair (domain, codomain)
-    void UnqualifiedSplit(SemanticId relationId, Relation& unqualifiedRelation);*/
+    ////
+    //// Debug
+    ////
 
 #ifdef _DEBUG
     // Debugging functions
@@ -333,6 +367,11 @@ namespace QSemanticDB
 }
 
 /*                                   INCLUDES                               */
+// Inline implementation
 #include "semanticdb.inl"
+#include "semanticdb_accessors.inl"
+#include "semanticdb_build.inl"
+#include "semanticdb_eval.inl"
+#include "semanticdb_debug.inl"
 
 #endif

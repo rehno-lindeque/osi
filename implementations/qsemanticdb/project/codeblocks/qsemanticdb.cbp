@@ -148,6 +148,21 @@
 		<Unit filename="../../src/semanticdb.inl">
 			<Option virtualFolder="src/" />
 		</Unit>
+		<Unit filename="../../src/semanticdb_accessors.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/semanticdb_build.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/semanticdb_debug.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/semanticdb_eval.inl">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="../../src/types.h">
+			<Option virtualFolder="src/" />
+		</Unit>
 		<Extensions>
 			<envvars />
 			<code_completion />

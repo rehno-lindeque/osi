@@ -21,6 +21,8 @@ namespace QSemanticDB
   public:
     // Types
     typedef std::vector<SemanticId> SymbolQueue;
+    //typedef SymbolQueue::iterator SymbolIterator;
+    //typedef SymbolQueue::const_iterator SymbolConstIterator;
     typedef std::list<ScheduleQueue> Tree;
     typedef Tree::iterator TreeIterator;
     typedef Tree::const_iterator TreeConstIterator;
@@ -49,6 +51,12 @@ namespace QSemanticDB
     void QueryDepth(int depth);
     const TreeIterator& Sibling();
     TreeConstIterator Sibling() const;
+    int FrontIndex() const;
+    SemanticId operator [] (int index) const;
+    /*SymbolIterator Begin();
+    SymbolConstIterator Begin() const;
+    SymbolIterator End();
+    SymbolConstIterator End() const;*/
 
   protected:
     SymbolQueue* queue;
@@ -137,6 +145,7 @@ namespace QSemanticDB
 }
 
 /*                                   INCLUDES                               */
+// Inline implementation
 #include "schedule.inl"
 
 #endif

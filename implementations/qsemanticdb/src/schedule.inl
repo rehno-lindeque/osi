@@ -98,6 +98,36 @@ namespace QSemanticDB
     return iSibling;
   }
 
+  int ScheduleQueue::FrontIndex() const
+  {
+    return frontIndex;
+  }
+
+  SemanticId ScheduleQueue::operator [] (int index) const
+  {
+    return (*queue)[index];
+  }
+
+  /*ScheduleQueue::SymbolIterator ScheduleQueue::Begin()
+  {
+    return queue.begin() + frontIndex;
+  }
+
+  ScheduleQueue::SymbolConstIterator ScheduleQueue::Begin() const
+  {
+    return queue.begin() + frontIndex;
+  }
+
+  ScheduleQueue::SymbolIterator ScheduleQueue::End()
+  {
+    return queue.end();
+  }
+
+  ScheduleQueue::SymbolConstIterator ScheduleQueue::End() const
+  {
+    return queue.end();
+  }*/
+
   Schedule::Schedule() : /*root(AllocQueue())*/ nRootBranches(1)
   {
     //OLD: tree.push_back(ScheduleQueue(root, 0));
