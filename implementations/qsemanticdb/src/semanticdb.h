@@ -363,6 +363,10 @@ namespace QSemanticDB
     void DebugOutputEnvironment();
     void DebugOutputSymbolEnvironment(SemanticId domain, SemanticId qualifiedCodomain, uint indent);
 #endif
+#ifdef QSEMANTICDB_DEBUG_VISUALIZE
+  SchedulerDebugVisualizer schedulerDebugVisualizer;
+#endif
+
   };
 }
 

@@ -19,6 +19,9 @@ namespace QSemanticDB
     errorStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
     warnStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out)),
     infoStream(new STDEXT_NAMESPACE::stdio_filebuf<char>(stdout, std::ios::out))
+#ifdef QSEMANTICDB_DEBUG_VISUALIZE
+    ,schedulerDebugVisualizer(scheduler)
+#endif
   {
       domainEnvironment.push(OSIX::SEMANTICID_EPSILON);
       environmentState.push(BUILD_DECLARATION);

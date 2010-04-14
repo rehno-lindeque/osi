@@ -26,11 +26,20 @@
 # define QSEMANTICDB_DEBUG_DETAILEDEVAL
 # ifdef QSEMANTICDB_DEBUG_VERBOSE
 #   define QSEMANTICDB_DEBUG_EVALOUTPUT
+#   define QSEMANTICDB_DEBUG_VISUALIZE
 # endif
 #else
 # undef QSEMANTICDB_DEBUG_VERBOSE
 # undef QSEMANTICDB_DEBUG_DETAILEDEVAL
 # undef QSEMANTICDB_DEBUG_EVALOUTPUT
+# undef QSEMANTICDB_DEBUG_VISUALIZE
+#endif
+
+// Debugging macros
+#ifdef QSEMANTICDB_DEBUG_VISUALIZE
+# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE() schedulerDebugVisualizer.Print();
+#else
+# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE()
 #endif
 
 /*                                 INCLUDES                                 */
@@ -51,6 +60,11 @@
 #include <string>
 #include <unordered_map>
 #include <queue>
+#ifdef QSEMANTICDB_DEBUG_VISUALIZE
+//# include <fstream>
+# include <sstream>
+# include <iomanip>
+#endif
 
 // C++ Std extensions
 #ifdef _MSC_VER
@@ -85,6 +99,9 @@ namespace QSemanticDB
 #include "schedule.h"
 #include "scheduler.h"
 #include "types.h"
+#ifdef QSEMANTICDB_DEBUG_VISUALIZE
+# include "schedulerdebugvisualizer.h"
+#endif
 #include "semanticdb.h"
 
 /*                                  CLASSES                                 */
