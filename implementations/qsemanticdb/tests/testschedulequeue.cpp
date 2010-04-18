@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-//    TESTSEMANTICDB.CPP
+//    TESTSCHEDULEQUEUE.CPP
 //
 //    Copyright © 2010, Rehno Lindeque. All rights reserved.
 //
@@ -8,7 +8,7 @@
 /*                               DOCUMENTATION                              */
 /*
     UNIT TEST:
-      Test the semantic db functionality
+      Test the schedule functionality
  */
 
 /*                                 INCLUDES                                 */
@@ -18,7 +18,6 @@ using namespace QSemanticDB;
 
 // QSemanticDB unit tests
 #include "testcommon.h"
-
 
 /*                                DEFINITIONS                               */
 //#define TESTSEMANTICDB_DEBUG_INFO
