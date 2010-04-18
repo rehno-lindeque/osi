@@ -24,13 +24,14 @@ namespace QSemanticDB
     OSI_ASSERT(!Empty());
     ++frontIndex;
     if(Empty())
-      frontIndex = 0;
+      Clear();
   }
 
   void ScheduleQueue::Clear()
   {
     queue->clear();
     frontIndex = 0;
+    OSI_ASSERT(Empty());
   }
 
   void ScheduleQueue::Commit()
@@ -200,7 +201,7 @@ namespace QSemanticDB
     }
   }
 
-  void Schedule::RemoveLeafBranch(const TreeIterator& iBranch)
+  void Schedule::RemoveFirstLeafBranch(const TreeIterator& iBranch)
   {
     // Pre-condition: This must be a leaf branch, hence must have no inner or outer branches
     OSI_ASSERT(iBranch->InnerBranches() == 0 && iBranch->OuterBranches() == 0);
@@ -237,7 +238,10 @@ namespace QSemanticDB
     // If the first branch cannot be commited, then we should complete it first
     // Note: We are ignoring the possibility for concurrency here. If concurrent execution is desired we might pass in the branch we wish to use for the given thread (as a sort of environment).
     if(iTree->QueryDepth() != 0)
+    {
+      OSI_ASSERT(false);
       return;
+    }
 
     /* OLD: No branch found that can be committed
     // TODO: Investigate whether this could ever happend (it probably shouldn't)
@@ -252,7 +256,7 @@ namespace QSemanticDB
     /*if(iTree->Empty())
       CollapseRootBranch(iTree);    // (If the branch is empty, it should be replaced by its child branches)*/
     if(RootBranches() > 1 && iTree->Empty())
-      CollapseFirstBranch();
+      CollapseFirstRootBranch();
 
 
     /*
@@ -311,7 +315,7 @@ namespace QSemanticDB
 
   //void Schedule::PopRoot() { }
 
-  void Schedule::CollapseFirstBranch()
+  void Schedule::CollapseFirstRootBranch()
   {
     // Pre-condition: The tree should not be empty
     OSI_ASSERT(RootBranches() > 1);

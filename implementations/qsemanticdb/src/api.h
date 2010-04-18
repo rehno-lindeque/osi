@@ -37,10 +37,25 @@
 
 // Debugging macros
 #ifdef QSEMANTICDB_DEBUG_VISUALIZE
-# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE() schedulerDebugVisualizer.Print();
+# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE(title) schedulerDebugVisualizer.Print(title);
+# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULEVISITOR(title, visitor) schedulerDebugVisualizer.Print(title, visitor);
 #else
-# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE()
+# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE(title) {}
+# define QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULEVISITOR(title, visitor) {}
 #endif
+
+#ifdef QSEMANTICDB_DEBUG_VERBOSE
+# define QSEMANTICDB_DEBUG_VERBOSE_PRINT(a) infoStream << a;
+#else
+# define QSEMANTICDB_DEBUG_VERBOSE_PRINT(a) {}
+#endif
+
+#if defined(QSEMANTICDB_DEBUG_VERBOSE) && defined(QSEMANTICDB_DEBUG_EVALOUTPUT)
+# define QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT(a) infoStream << a;
+#else
+# define QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT(a) {}
+#endif
+
 
 /*                                 INCLUDES                                 */
 // OpenSemanticDB

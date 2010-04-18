@@ -467,9 +467,7 @@ namespace QSemanticDB
 
   SemanticId SemanticDBImplementation::Eval()
   {
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
-    infoStream << "  Eval: ";
-#endif
+    QSEMANTICDB_DEBUG_VERBOSE_PRINT(infoStream << "  Eval: ")
 
     // Invariant Condition: The scheduler should always be finished with its previous iteration of work when the next iteration begins.
     OSI_ASSERT(scheduler.Done());
@@ -477,16 +475,14 @@ namespace QSemanticDB
     // If the schedule is empty we are done
     if(schedule.Empty())
     {
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
-      infoStream << "(Finished)" << std::endl;
-#endif
+      QSEMANTICDB_DEBUG_VERBOSE_PRINT("(Finished)" << std::endl)
       return OSIX::SEMANTICID_INVALID;
     }
 
+    QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("Eval")
+
     // Fetch the next symbol to return to the evaluator from the scheduler
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
-      //infoStream << "FrontFront " << schedule.Begin()->frontIndex << ' ' << schedule.Begin()->queue << ' ' << schedule.Begin()->queue->size() << " " << schedule.RootBranches() << " " << schedule.Begin()->Size() << std::endl;
-#endif
+    //QSEMANTICDB_DEBUG_VERBOSE_PRINT("FrontFront " << schedule.Begin()->frontIndex << ' ' << schedule.Begin()->queue << ' ' << schedule.Begin()->queue->size() << " " << schedule.RootBranches() << " " << schedule.Begin()->Size() << std::endl)
     SemanticId evalId = schedule.Front();
 
     // If the fetched symbol needs to be evaluated internally for the next iteration, then evaluate it
@@ -501,16 +497,11 @@ namespace QSemanticDB
     }
 
     // Remove the symbol to be returned from the schedule
-    infoStream << schedule.Begin()->Size() << '-';
+    //infoStream << schedule.Begin()->Size() << '-';
     schedule.PopFront();
-    infoStream << schedule.Begin()->Size();
+    //infoStream << schedule.Begin()->Size();
 
-#ifdef QSEMANTICDB_DEBUG_VERBOSE
-    infoStream << '(' << evalId << ')';
-    //infoStream << ' ' << schedule.RootBranches();
-    infoStream << std::endl;
-#endif
-
+    QSEMANTICDB_DEBUG_VERBOSE_PRINT('(' << evalId << ')' << std::endl)
     return evalId;
   }
 

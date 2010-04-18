@@ -17,6 +17,10 @@ namespace QSemanticDB
   class Scheduler
   {
   public:
+#ifdef QSEMANTICDB_DEBUG_VISUALIZE
+    friend class SchedulerDebugVisualizer;
+#endif
+
     //// Types
     typedef std::vector<Schedule::TreeIterator> QueueStack;
     typedef QueueStack::iterator QueueStackIterator;
@@ -101,13 +105,13 @@ namespace QSemanticDB
 
     Visitor GetVisitor();
 
-  protected:
+  //protected:
     Schedule& schedule;                           // The schedule tree structure
     SemanticId currentSymbol;                     // The current symbol being evaluated
     QueueStack activeQueue;                       // The stack of active queues (query strings)
     int queryDepth;                               // The number of nested, but unresolved queries in the activeQueue.
-    // SemanticId frontSymbol;                     // The current external eval symbol. This value is always equal to schedule.Front() but is cached here for efficiency.
-    // SemanticId currentSymbol;                   // The current internal eval symbol (used with queries that require internal evaluation)
+    // SemanticId frontSymbol;                    // The current external eval symbol. This value is always equal to schedule.Front() but is cached here for efficiency.
+    // SemanticId currentSymbol;                  // The current internal eval symbol (used with queries that require internal evaluation)
   };
 }
 

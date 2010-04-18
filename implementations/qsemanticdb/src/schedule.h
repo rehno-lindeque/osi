@@ -90,7 +90,7 @@ namespace QSemanticDB
     //TreeIterator InsertBranch(TreeIterator iBranch);
     TreeIterator InsertInnerBranch(TreeIterator iBranch);
     TreeIterator InsertOuterBranch(TreeIterator iBranch);
-    void RemoveLeafBranch(const TreeIterator& iBranch);
+    void RemoveFirstLeafBranch(const TreeIterator& iBranch);
     void PopFront();
 
     // Accessors
@@ -131,7 +131,7 @@ namespace QSemanticDB
     //void PopRoot();
 
     // Collapse the first branch in the root of the tree (replace it by its child branches)
-    void CollapseFirstBranch();
+    void CollapseFirstRootBranch();
 
     // Collapse any branch in the root of the tree (replace it by its child branches)
     // Note: We're avoiding deleting any root branch since it is expensive to update the previous sibling in the list since the list is only singly-linked

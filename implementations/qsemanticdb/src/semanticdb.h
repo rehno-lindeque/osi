@@ -324,9 +324,9 @@ namespace QSemanticDB
     // Continue evaluation (set up for the next iteration)
     //void EvalContinue();
 
-    // Schedule codomain edges for later evaluation (push it onto the evaluation stack)
-    // Returns true if any codomains were added to the schedule
-    bool EvalScheduleCodomains(SemanticId evalId, bool onlyScheduleBranches);
+    // Schedule defintion edges for later evaluation (push it onto the evaluation stack)
+    // Returns true if any symbols were added to the schedule
+    bool EvalScheduleDefinitions(SemanticId evalId, bool onlyScheduleBranches);
 
     // Evaluate a symbol (non-query)
     //SemanticId EvalSymbol(SemanticId symbol);

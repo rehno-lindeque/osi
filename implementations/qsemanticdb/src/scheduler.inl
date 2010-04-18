@@ -58,11 +58,13 @@ namespace QSemanticDB
       {
         // Go to the next sibling
         activeQueue.back() = activeQueue.back()->Sibling();
+        //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit...Sibling" << std::endl)
         break;
       }
 
       // Go to the parent's next sibling (in the next iteration of this loop)
       activeQueue.pop_back();
+      //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit...Pop" << std::endl)
     }
   }
 
@@ -71,9 +73,22 @@ namespace QSemanticDB
     // Invariant Condition: This always holds, but is rather relevant for the Rollback function
     OSI_ASSERT(activeQueue.back()->QueryDepth() == queryDepth);
 
+    // Remove the branch
     activeQueue.back()->Clear();
-    if (schedule.RootBranches() > 1)
-      schedule.RemoveLeafBranch(activeQueue.back());
+    if (activeQueue.size() > 1)
+    {
+      // TODO: this function does not work correctly
+      // TODO: cannot use remove "First" branch because we're not necessarily at the first branch
+      schedule.RemoveFirstLeafBranch(activeQueue.back());
+      OSI_ASSERT(false);
+    }
+    else if (schedule.RootBranches() > 1)
+    {
+      // TODO: cannot use collapse "First" branch because we're not necessarily at the first branch
+      //schedule.CollapseFirstRootBranch();
+      OSI_ASSERT(false);
+    }
+
     activeQueue.pop_back();
 
     // If there are no more queues left, then return

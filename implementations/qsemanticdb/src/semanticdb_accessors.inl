@@ -46,12 +46,18 @@ namespace QSemanticDB
 
   SemanticId SemanticDBImplementation::GetConcreteQualifiedCodomain(const OrderedRelation& unqualifiedRelation) const
   {
+    // If the domain of the relation is the global domain 'epsilon' then only return the codomain (which is always qualified with regard to epsilon and concrete as well)
+    if(unqualifiedRelation.domain == OSIX::SEMANTICID_EPSILON)
+      return unqualifiedRelation.codomain;
+
+    // Try to find the qualified relation in the database
     RelationIndex::right_const_iterator i = relations.right.find(unqualifiedRelation);
     if(i == relations.right.end())
       return OSIX::SEMANTICID_INVALID;
 
     OSid qualifiedCodomain = i->second;
 
+    // Retrieve the qualified codomain's symbol properties
     IdPropertiesConstIterator iProperties = symbolProperties.find(qualifiedCodomain);
     if(iProperties == symbolProperties.end())
       return qualifiedCodomain; // Symbol is concrete if no codomain could be found

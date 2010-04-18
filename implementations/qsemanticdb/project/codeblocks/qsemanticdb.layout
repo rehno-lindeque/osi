@@ -2,10 +2,10 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="c_static_debug_scons" />
 	<File name="../../../../api/osix/semanticdb/semanticdb.h" open="1" top="0" tabpos="7">
-		<Cursor position="2055" topLine="1" />
+		<Cursor position="2055" topLine="43" />
 	</File>
 	<File name="../../../../api/osix/semanticdb/semanticdb.hpp" open="1" top="0" tabpos="6">
-		<Cursor position="3031" topLine="51" />
+		<Cursor position="3086" topLine="51" />
 	</File>
 	<File name="../../../../api/osix/semanticdb/semanticdbdbg.h" open="1" top="0" tabpos="8">
 		<Cursor position="0" topLine="0" />
@@ -32,10 +32,10 @@
 		<Cursor position="684" topLine="0" />
 	</File>
 	<File name="../../src/api.h" open="1" top="0" tabpos="2">
-		<Cursor position="2656" topLine="82" />
+		<Cursor position="777" topLine="3" />
 	</File>
 	<File name="../../src/api.inl" open="1" top="0" tabpos="11">
-		<Cursor position="2327" topLine="60" />
+		<Cursor position="4482" topLine="160" />
 	</File>
 	<File name="../../src/apidbg.inl" open="1" top="0" tabpos="3">
 		<Cursor position="871" topLine="0" />
@@ -44,33 +44,42 @@
 		<Cursor position="627" topLine="0" />
 	</File>
 	<File name="../../src/schedule.h" open="1" top="0" tabpos="18">
-		<Cursor position="1565" topLine="33" />
+		<Cursor position="3080" topLine="64" />
 	</File>
 	<File name="../../src/schedule.inl" open="1" top="0" tabpos="19">
-		<Cursor position="1452" topLine="40" />
+		<Cursor position="4142" topLine="159" />
 	</File>
 	<File name="../../src/scheduler.h" open="1" top="0" tabpos="16">
-		<Cursor position="1190" topLine="16" />
+		<Cursor position="546" topLine="15" />
 	</File>
 	<File name="../../src/scheduler.inl" open="1" top="0" tabpos="17">
-		<Cursor position="21" topLine="0" />
+		<Cursor position="961" topLine="15" />
+	</File>
+	<File name="../../src/schedulerdebugvisualizer.h" open="1" top="0" tabpos="25">
+		<Cursor position="3027" topLine="72" />
+	</File>
+	<File name="../../src/schedulerdebugvisualizer.inl" open="1" top="0" tabpos="26">
+		<Cursor position="276" topLine="0" />
 	</File>
 	<File name="../../src/semanticdb.h" open="1" top="0" tabpos="4">
-		<Cursor position="13998" topLine="295" />
+		<Cursor position="15380" topLine="336" />
 	</File>
 	<File name="../../src/semanticdb.inl" open="1" top="0" tabpos="9">
-		<Cursor position="17988" topLine="548" />
+		<Cursor position="15338" topLine="459" />
 	</File>
 	<File name="../../src/semanticdb_accessors.inl" open="1" top="0" tabpos="23">
 		<Cursor position="2630" topLine="45" />
 	</File>
 	<File name="../../src/semanticdb_build.inl" open="1" top="0" tabpos="21">
-		<Cursor position="0" topLine="0" />
+		<Cursor position="0" topLine="42" />
 	</File>
 	<File name="../../src/semanticdb_debug.inl" open="1" top="0" tabpos="22">
-		<Cursor position="0" topLine="0" />
+		<Cursor position="1111" topLine="0" />
 	</File>
 	<File name="../../src/semanticdb_eval.inl" open="1" top="1" tabpos="20">
-		<Cursor position="10432" topLine="290" />
+		<Cursor position="3700" topLine="88" />
+	</File>
+	<File name="../../src/types.h" open="1" top="0" tabpos="24">
+		<Cursor position="0" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>
