@@ -255,7 +255,8 @@ namespace QSemanticDB
     iTree->PopFront();
     /*if(iTree->Empty())
       CollapseRootBranch(iTree);    // (If the branch is empty, it should be replaced by its child branches)*/
-    if(RootBranches() > 1 && iTree->Empty())
+
+    if(RootBranches() > 0 && iTree->Empty() && iTree->OuterBranches() > 0)
       CollapseFirstRootBranch();
 
 
@@ -318,7 +319,7 @@ namespace QSemanticDB
   void Schedule::CollapseFirstRootBranch()
   {
     // Pre-condition: The tree should not be empty
-    OSI_ASSERT(RootBranches() > 1);
+    OSI_ASSERT(RootBranches() > 0);
 
     // Pre-condition: Inner branches are not yet supported!!
     OSI_ASSERT(Begin()->InnerBranches() == 0);

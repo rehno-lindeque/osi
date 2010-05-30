@@ -251,6 +251,11 @@ namespace QSemanticDB
     for(auto iQueue = db.scheduler.activeQueue.rbegin(); iQueue != db.scheduler.activeQueue.rend(); ++iQueue)
     {
       fileStream << "    <TR>";
+      if (*iQueue == db.schedule.End())
+      {
+        fileStream << "<TD COLSPAN=\"2\">Invalid Iterator</TD>";
+        continue;
+      }
       auto scheduleQueue = **iQueue;
       fileStream << "<TD>" << scheduleQueue.QueryDepth() << "</TD>";
       for(int c = scheduleQueue.FrontIndex(); c < scheduleQueue.Size(); ++c)
