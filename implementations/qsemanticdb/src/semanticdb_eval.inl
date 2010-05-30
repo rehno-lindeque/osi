@@ -153,7 +153,11 @@ namespace QSemanticDB
     scheduler.BeginQuery();
 
     // Add the query to a stack
+#ifdef _DEBUG
+    evalQueryStack.push_back(symbol);
+#else
     evalQueryStack.push(symbol);
+#endif
 
     if(properties.query == QuerySelectionConjunct || properties.query == QuerySelectionStrictConjunct)
     {
@@ -174,7 +178,11 @@ namespace QSemanticDB
         if (scheduler.activeQueue.size()==0)
         {
           QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("TODO: This is a bug, we should not be able to reach this point" << std::endl)
+#ifdef _DEBUG
+          evalQueryStack.pop_back();
+#else
           evalQueryStack.pop();
+#endif
           return 0;
         }
 
@@ -186,7 +194,11 @@ namespace QSemanticDB
         if(scheduler.activeQueue.size() > 0)
           QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("ActiveQueryDepth = " << scheduler.activeQueue.back()->QueryDepth() << std::endl)
         QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Commit")
+#ifdef _DEBUG
+        evalQueryStack.pop_back();
+#else
         evalQueryStack.pop();
+#endif
         return true;
       }
 
@@ -209,7 +221,11 @@ namespace QSemanticDB
     // Roll back the evaluation if the query did not succeed
     QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Rollback..." << std::endl)
     scheduler.Rollback();
+#ifdef _DEBUG
+    evalQueryStack.pop_back();
+#else
     evalQueryStack.pop();
+#endif
     QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Rollback")
     return true;
   }

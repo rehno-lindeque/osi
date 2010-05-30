@@ -38,6 +38,8 @@ namespace QSemanticDB
     void PrintQueue(std::ofstream &fileStream, const Schedule::TreeIterator &iTree);
     void PrintVisitedNode(std::ofstream &fileStream, const Schedule::TreeIterator &iTree/*, uint cSymbol*/);
     void PrintBranches(Scheduler::QueueStackIterator iEvalStack, std::ofstream &fileStream, const Schedule::TreeIterator &iTree);
+    void PrintQueryStack(std::ofstream &fileStream);
+    void PrintActiveQueue(std::ofstream &fileStream);
   };
 }
 

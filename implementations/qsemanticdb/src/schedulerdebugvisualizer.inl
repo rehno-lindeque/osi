@@ -60,7 +60,14 @@ namespace QSemanticDB
       iTree = iTree->Sibling();
     }
 
+    // Print the query stack
+    PrintQueryStack(fileStream);
+
+    // Print the active queue
+    PrintActiveQueue(fileStream);
+
     // TODO: Write additional info
+
 
     // Write graph title
     fileStream << " label = \"" << title << "\";" << std::endl << "}" << std::endl;
@@ -105,7 +112,8 @@ namespace QSemanticDB
     else
     {
       InternPrintSymbol(fileStream, unqualifiedRelation.domain);
-      fileStream << " -> ";
+      fileStream << " &#8594; ";
+      //fileStream << " -$gt; ";
       InternPrintSymbol(fileStream, unqualifiedRelation.codomain);
     }
   }
@@ -192,20 +200,68 @@ namespace QSemanticDB
         printRed = false;
       }
       PrintQueue(fileStream, iBranch);
-      fileStream << "  }" << std::endl; // close subgraph
+      fileStream << " }" << std::endl; // close subgraph
 
       // Edge from the parent graph to this graph
       if(!tree.Empty() && !branch.Empty())
         fileStream << "  ";
         PrintSymbol(fileStream, tree.Back());
         fileStream << " -> ";
+        //fileStream << "SG" << (subgraphCounter-1) << ':';
         PrintSymbol(fileStream, branch.Front());
+        fileStream << " [lhead=SG" << (subgraphCounter-1) << "]";
         fileStream << ';' << std::endl;
 
       // Branches
       PrintBranches(iEvalStack, fileStream, iBranch);
       iBranch = iBranch->Sibling();
     }
+  }
+
+  void SchedulerDebugVisualizer::PrintQueryStack(std::ofstream &fileStream)
+  {
+    if(db.evalQueryStack.empty())
+      return;
+
+    fileStream  << " subgraph miscQueryStack {" << std::endl;
+    fileStream  << " queryStack [shape=none, margin=0, label=<" << std::endl
+                << "   <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">" << std::endl;
+    for(auto i = db.evalQueryStack.rbegin(); i != db.evalQueryStack.rend(); ++i)
+    {
+      fileStream << "    <TR><TD>";
+      InternPrintSymbol(fileStream, *i);
+      fileStream << "</TD></TR>";
+    }
+    fileStream  << std::endl << "    <TR><TD BGCOLOR=\"lightgrey\">QUERY STACK</TD></TR>";
+    fileStream  << "</TABLE>" << std::endl
+                << " >];" << std::endl;
+    fileStream  << " }" << std::endl;
+  }
+
+  void SchedulerDebugVisualizer::PrintActiveQueue(std::ofstream &fileStream)
+  {
+    if(db.scheduler.activeQueue.empty())
+      return;
+
+    fileStream  << " subgraph miscActiveQueue {" << std::endl;
+    fileStream  << " activeQueue [shape=none, margin=0, label=<" << std::endl
+                << "   <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">" << std::endl;
+    for(auto iQueue = db.scheduler.activeQueue.rbegin(); iQueue != db.scheduler.activeQueue.rend(); ++iQueue)
+    {
+      fileStream << "    <TR>";
+      auto scheduleQueue = **iQueue;
+      for(int c = scheduleQueue.FrontIndex(); c < scheduleQueue.Size(); ++c)
+      {
+        fileStream << "<TD>";
+        InternPrintSymbol(fileStream, scheduleQueue[c]);
+        fileStream << "</TD>";
+      }
+      fileStream << "</TR>";
+    }
+    fileStream  << std::endl << "    <TR><TD BGCOLOR=\"lightgrey\">ACTIVE QUEUES</TD></TR>";
+    fileStream  << "</TABLE>" << std::endl
+                << " >];" << std::endl;
+    fileStream  << " }" << std::endl;
   }
 }
 

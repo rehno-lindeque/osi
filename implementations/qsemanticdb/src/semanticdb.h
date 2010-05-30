@@ -217,7 +217,11 @@ namespace QSemanticDB
     //IdStack evaluationQueries;                        // Stack of evaluation queries
     //IdStack activeQueries;                            // Stack of queries in progress
     //SemanticId evalId;                                // The currently active eval id
+#ifdef _DEBUG
+    IdVector evalQueryStack;                            // The stack of queries currently being evaluated
+#else
     IdStack evalQueryStack;                             // The stack of queries currently being evaluated
+#endif
 
     // Environment
     IdStack domainEnvironment;                          // Environment of open domains
