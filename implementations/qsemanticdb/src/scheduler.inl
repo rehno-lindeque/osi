@@ -162,7 +162,7 @@ namespace QSemanticDB
 
   bool Scheduler::Done() const
   {
-    return activeQueue.empty();
+    return activeQueue.empty() || activeQueue.back()->Empty();
   }
 
   int Scheduler::InnerBranches() const
