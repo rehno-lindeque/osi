@@ -55,11 +55,10 @@ namespace QSemanticDB
 
     // Go to the first branch of the current queue
     // (Currently only outer branches supported)
-    void GotoFirstBranch()
-    {
-      Schedule::TreeIterator iChild = activeQueue.back(); ++iChild;
-      activeQueue.push_back(iChild);
-    }
+    void GotoFirstBranch();
+
+    // Go to the next branch
+    void GotoNextBranch();
 
     //todo: SemanticId Back();
 

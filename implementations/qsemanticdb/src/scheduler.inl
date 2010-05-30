@@ -52,20 +52,7 @@ namespace QSemanticDB
     }
 
     // Continue to the next branch in the schedule tree
-    while(activeQueue.size() > 0)
-    {
-      if(activeQueue.back()->Sibling() != schedule.End())
-      {
-        // Go to the next sibling
-        activeQueue.back() = activeQueue.back()->Sibling();
-        //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit...Sibling" << std::endl)
-        break;
-      }
-
-      // Go to the parent's next sibling (in the next iteration of this loop)
-      activeQueue.pop_back();
-      //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit...Pop" << std::endl)
-    }
+    GotoNextBranch();
   }
 
   void Scheduler::Rollback()
@@ -110,6 +97,30 @@ namespace QSemanticDB
     {
       GotoFirstBranch();
       OSI_ASSERT(activeQueue.back()->OuterBranches() == 0);
+    }
+  }
+
+  void Scheduler::GotoFirstBranch()
+  {
+    Schedule::TreeIterator iChild = activeQueue.back(); ++iChild;
+    activeQueue.push_back(iChild);
+  }
+
+  void Scheduler::GotoNextBranch()
+  {
+    while(activeQueue.size() > 0)
+    {
+      if(activeQueue.back()->Sibling() != schedule.End())
+      {
+        // Go to the next sibling
+        activeQueue.back() = activeQueue.back()->Sibling();
+        //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit...Sibling" << std::endl)
+        break;
+      }
+
+      // Go to the parent's next sibling (in the next iteration of this loop)
+      activeQueue.pop_back();
+      //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit...Pop" << std::endl)
     }
   }
 

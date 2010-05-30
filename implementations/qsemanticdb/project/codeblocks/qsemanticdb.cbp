@@ -7,7 +7,7 @@
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="src/;osix/;basesemanticdb/;osix/semanticdb/;project/;project/codeblocks/;project/scons/;project/make/;" />
+		<Option virtualFolders="src/;osix/;basesemanticdb/;osix/semanticdb/;project/;project/codeblocks/;project/scons/;project/make/;tests/;" />
 		<Build>
 			<Target title="c_static_scons">
 				<Option output="libqsemanticdbc" prefix_auto="1" extension_auto="1" />
@@ -169,6 +169,22 @@
 		<Unit filename="../../src/types.h">
 			<Option virtualFolder="src/" />
 		</Unit>
+		<Unit filename="../../tests/testcommon.h">
+			<Option virtualFolder="tests/" />
+		</Unit>
+		<Unit filename="../../tests/testschedule.cpp">
+			<Option virtualFolder="tests/" />
+		</Unit>
+		<Unit filename="../../tests/testschedulequeue.cpp">
+			<Option virtualFolder="tests/" />
+		</Unit>
+		<Unit filename="../../tests/testscheduler.cpp">
+			<Option virtualFolder="tests/" />
+		</Unit>
+		<Unit filename="../../tests/testsemanticdb.cpp">
+			<Option virtualFolder="tests/" />
+		</Unit>
+		<Unit filename="../../../../../../programs/poet/data/test.src" />
 		<Extensions>
 			<envvars />
 			<code_completion />

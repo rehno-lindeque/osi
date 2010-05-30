@@ -49,11 +49,7 @@ namespace QSemanticDB
     if(domain == OSIX::SEMANTICID_EPSILON)
     {
       //infoStream << epsilonName << ".";
-      IdStringMap::iterator i = epsilonStrings.find(qualifiedCodomain);
-      if(i == epsilonStrings.end())
-        infoStream << "Anonymous";
-      else
-        infoStream << i->second;
+      DebugOutputAtom(qualifiedCodomain);
       infoStream << '(' << qualifiedCodomain << ')' << " = " << qualifiedCodomain;
     }
     else if(unqualifiedCodomain == OSIX::SEMANTICID_INVALID)
@@ -127,6 +123,15 @@ namespace QSemanticDB
       for(uint c = 0; c < indent; ++c) infoStream << "  ";
       infoStream << '}';
     }
+  }
+
+  void SemanticDBImplementation::DebugOutputAtom(SemanticId atom)
+  {
+      IdStringMap::iterator i = epsilonStrings.find(atom);
+      if(i == epsilonStrings.end())
+        infoStream << "Anonymous";
+      else
+        infoStream << i->second;
   }
 #endif
 }

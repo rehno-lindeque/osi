@@ -15,6 +15,7 @@
 %\usepackage{float}
 %\usepackage{wrapfig}
 %\usepackage{proof}
+\usepackage{algorithmic}
 
 %\usepackage{amssymb}
 %\usepackage{amsthm}
@@ -76,6 +77,9 @@ In order to perform queries with undetermined outcomes a scheduler is needed.
 This allows the interpreter to perform queries ahead of the evaluation steps that returns the string of symbols to a client program.
 
 
+
+
+\subsubsection{Operation}
 The scheduler works in the following manner:
 \begin{itemize}
 \item First, when the interpreter recieves its first symbol it is pushed on to the schedule.
@@ -88,7 +92,15 @@ If the first branch has no sub-branches and only one symbol remains, then this s
 However, if this symbol has no codomains (I.e. it is an atom) then the first branch will be removed entirely to be replaced by the next branch which now becomes the "first" branch.
 \item If the symbol is a query then its first concrete domain is pushed onto the schedule. The query is evaluated until the codomain is either found or the string ends. 
 Then the whole thing is either commited or rolled back.
+\item todo...
 \end{itemize}
+
+\subsubsection{Pseudo-code}
+\begin{algorithmic}
+proc Eval()
+  
+endproc
+\end{algorithmic}
 
 \subsubsection{Parallel evaluation}
 The design of the scheduler is intended to make parallel execution easier later on: Currently only the "first" root branch gets evaluated until it is completed.

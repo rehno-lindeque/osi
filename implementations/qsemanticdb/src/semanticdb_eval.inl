@@ -44,7 +44,14 @@ namespace QSemanticDB
         do
         {
           QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalIfQuery(" << scheduler.Get() << ')' << std::endl)
-          EvalIfQuery(scheduler.Get());
+          if (!EvalIfQuery(scheduler.Get()))
+          {
+            // break;
+            //todo: what should be done now?
+            // IS THIS CORRECT???
+            //scheduler.GotoNextBranch();
+            break;
+          }
         } while(!scheduler.Done()); // TODO: scheduler.Done() probably won't work properly with nested queries????
       }
       return;
@@ -120,11 +127,11 @@ namespace QSemanticDB
     evalId = scheduler.Pop(); //* /
   }*/
 
-  void SemanticDBImplementation::EvalIfQuery(SemanticId symbol)
+  bool SemanticDBImplementation::EvalIfQuery(SemanticId symbol)
   {
     IdPropertiesIterator iProperties = symbolProperties.find(symbol);
     if(iProperties == symbolProperties.end())
-      return; // Not a query if no properties are associated with the symbol
+      return false; // Not a query if no properties are associated with the symbol
 
     SymbolProperties &properties = iProperties->second;
 
@@ -138,7 +145,7 @@ namespace QSemanticDB
       //QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit..." << std::endl)
       //scheduler.Commit();
       //QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Commit")
-      return;
+      return false;
     }
 
     // Increment the scheduler's query depth
@@ -163,6 +170,14 @@ namespace QSemanticDB
       //if(result != OSIX::SEMANTICID_INVALID)
       if(result)
       {
+        // TODO: FIX THIS. ActiveQueueSize should not be 0
+        if (scheduler.activeQueue.size()==0)
+        {
+          QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("TODO: This is a bug, we should not be able to reach this point" << std::endl)
+          evalQueryStack.pop();
+          return 0;
+        }
+
         QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("ActiveQueueSize = " << scheduler.activeQueue.size() << std::endl)
         QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("ActiveQueryDepth = " << scheduler.activeQueue.back()->QueryDepth() << std::endl)
         QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("Commit..." << std::endl)
@@ -172,7 +187,7 @@ namespace QSemanticDB
           QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("ActiveQueryDepth = " << scheduler.activeQueue.back()->QueryDepth() << std::endl)
         QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Commit")
         evalQueryStack.pop();
-        return;
+        return true;
       }
 
       // Check whether an assertion error message should be triggered
@@ -196,6 +211,7 @@ namespace QSemanticDB
     scheduler.Rollback();
     evalQueryStack.pop();
     QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Rollback")
+    return true;
   }
 
   bool SemanticDBImplementation::EvalScheduleDefinitions(SemanticId evalId, bool onlyScheduleBranches)
@@ -431,6 +447,10 @@ namespace QSemanticDB
         // This branch was successful...
         result = true;
         scheduler.Commit();
+
+        // TODO: Is this correct?
+        if (scheduler.activeQueue.empty())
+          break;
         visitor = scheduler.GetVisitor();
 
         // Check whether all codomains have now been evaluated

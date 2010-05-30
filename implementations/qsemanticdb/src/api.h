@@ -156,5 +156,6 @@ namespace QSemanticDB
 #   include "apidbg.inl"
 # endif
 #endif
+#include "schedulerdebugvisualizer.inl"
 
 #endif

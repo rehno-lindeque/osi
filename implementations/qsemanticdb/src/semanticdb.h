@@ -83,6 +83,7 @@ namespace QSemanticDB
   {
 #ifdef _DEBUG
     friend class ::OSIX::SemanticDBDbg;
+    friend class SchedulerDebugVisualizer;
 #endif
   public:
     // Constructor
@@ -319,7 +320,8 @@ namespace QSemanticDB
     void EvalInternal(SemanticId symbol);
 
     // Evaluate a branch if it is a query
-    void EvalIfQuery(SemanticId symbol);
+    // Returns false if the symbol isn't a query
+    bool EvalIfQuery(SemanticId symbol);
 
     // Continue evaluation (set up for the next iteration)
     //void EvalContinue();
@@ -362,6 +364,7 @@ namespace QSemanticDB
     // Debugging functions
     void DebugOutputEnvironment();
     void DebugOutputSymbolEnvironment(SemanticId domain, SemanticId qualifiedCodomain, uint indent);
+    void DebugOutputAtom(SemanticId atom);
 #endif
 #ifdef QSEMANTICDB_DEBUG_VISUALIZE
   SchedulerDebugVisualizer schedulerDebugVisualizer;
