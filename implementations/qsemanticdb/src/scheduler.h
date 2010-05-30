@@ -41,11 +41,7 @@ namespace QSemanticDB
     void PushOuterBranch(SemanticId symbol);
 
     // Increment the query depth;
-    void BeginQuery()
-    {
-      ++queryDepth;
-      activeQueue.back()->QueryDepth(queryDepth);
-    }
+    void BeginQuery();
 
     // Commit a branch for external evaluation
     void Commit();

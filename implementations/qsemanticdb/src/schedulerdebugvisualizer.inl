@@ -204,6 +204,7 @@ namespace QSemanticDB
 
       // Edge from the parent graph to this graph
       if(!tree.Empty() && !branch.Empty())
+      {
         fileStream << "  ";
         PrintSymbol(fileStream, tree.Back());
         fileStream << " -> ";
@@ -211,6 +212,7 @@ namespace QSemanticDB
         PrintSymbol(fileStream, branch.Front());
         fileStream << " [lhead=SG" << (subgraphCounter-1) << "]";
         fileStream << ';' << std::endl;
+      }
 
       // Branches
       PrintBranches(iEvalStack, fileStream, iBranch);
@@ -250,6 +252,7 @@ namespace QSemanticDB
     {
       fileStream << "    <TR>";
       auto scheduleQueue = **iQueue;
+      fileStream << "<TD>" << scheduleQueue.QueryDepth() << "</TD>";
       for(int c = scheduleQueue.FrontIndex(); c < scheduleQueue.Size(); ++c)
       {
         fileStream << "<TD>";
@@ -258,7 +261,7 @@ namespace QSemanticDB
       }
       fileStream << "</TR>";
     }
-    fileStream  << std::endl << "    <TR><TD BGCOLOR=\"lightgrey\">ACTIVE QUEUES</TD></TR>";
+    fileStream  << std::endl << "    <TR><TD COLSPAN=\"2\" BGCOLOR=\"lightgrey\">ACTIVE QUEUES</TD></TR>";
     fileStream  << "</TABLE>" << std::endl
                 << " >];" << std::endl;
     fileStream  << " }" << std::endl;

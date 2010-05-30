@@ -149,8 +149,8 @@ namespace QSemanticDB
     }
 
     // Increment the scheduler's query depth
-    QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_BeginQuery")
     scheduler.BeginQuery();
+    QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_AfterBeginQuery")
 
     // Add the query to a stack
 #ifdef _DEBUG
@@ -174,7 +174,7 @@ namespace QSemanticDB
       //if(result != OSIX::SEMANTICID_INVALID)
       if(result)
       {
-        // TODO: FIX THIS. ActiveQueueSize should not be 0
+        /*// TODO: FIX THIS. ActiveQueueSize should not be 0
         if (scheduler.activeQueue.size()==0)
         {
           QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("TODO: This is a bug, we should not be able to reach this point" << std::endl)
@@ -193,7 +193,7 @@ namespace QSemanticDB
         QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("ActiveQueueSize = " << scheduler.activeQueue.size() << std::endl)
         if(scheduler.activeQueue.size() > 0)
           QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("ActiveQueryDepth = " << scheduler.activeQueue.back()->QueryDepth() << std::endl)
-        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Commit")
+        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalIfQuery_Commit")*/
 #ifdef _DEBUG
         evalQueryStack.pop_back();
 #else
@@ -450,6 +450,8 @@ namespace QSemanticDB
         scheduler.Rollback();
         visitor = scheduler.GetVisitor();
 
+        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULEVISITOR("EvalInternalUntil_AfterRollback", visitor)
+
         // Check whether all codomains have now been evaluated
         // todo: Is this condition entirely complete?
         if(visitor.queueStackIndex <= startingVisitor.queueStackIndex)
@@ -463,6 +465,8 @@ namespace QSemanticDB
         // This branch was successful...
         result = true;
         scheduler.Commit();
+
+        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULEVISITOR("EvalInternalUntil_AfterCommit", visitor)
 
         // TODO: Is this correct?
         if (scheduler.activeQueue.empty())
@@ -574,6 +578,13 @@ namespace QSemanticDB
         return EvalInternalUntil(queryDomain, querySymbol.argument);
     }
 
+    // The parent domain is now the epsilon domain and the speculative domain could not be found anywhere further down the hierarchy.
+    // Since all atoms exist in the epsilon domain, we need not look any further: The query succeeded if the top most instance of the
+    // speculative domain contained the query argument. Since it didn't, return false.
+    // NOTE: Notice that during the last iteration of the above loop parentDomain is epsilon.
+    OSI_ASSERT(parentDomain == OSIX::SEMANTICID_EPSILON);
+    return false;
+
     /* TODO: Put this back (old version of the above)
     // Resolve the speculative domain of the query to get a concrete domain
     domainRelation.domain = ResolveContext(domainRelation.domain);
@@ -618,7 +629,7 @@ namespace QSemanticDB
         return result;
     }*/
 
-    return OSIX::SEMANTICID_INVALID;
+    //return OSIX::SEMANTICID_INVALID;
   }
 
   bool SemanticDBImplementation::EvalMutationConjunct(SemanticId query)

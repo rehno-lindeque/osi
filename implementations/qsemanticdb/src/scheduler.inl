@@ -41,6 +41,12 @@ namespace QSemanticDB
     iBranch->PushBack(symbol);
   }
 
+  void Scheduler::BeginQuery()
+  {
+    ++queryDepth;
+    activeQueue.back()->QueryDepth(queryDepth);
+  }
+
   void Scheduler::Commit()
   {
     // Mark this branch and all parent branches as committed...

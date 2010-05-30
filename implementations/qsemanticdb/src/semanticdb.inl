@@ -475,6 +475,7 @@ namespace QSemanticDB
     // If the schedule is empty we are done
     if(schedule.Empty())
     {
+      QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("Eval_Finished")
       QSEMANTICDB_DEBUG_VERBOSE_PRINT("(Finished)" << std::endl)
       return OSIX::SEMANTICID_INVALID;
     }
@@ -500,6 +501,8 @@ namespace QSemanticDB
     //infoStream << schedule.Begin()->Size() << '-';
     schedule.PopFront();
     //infoStream << schedule.Begin()->Size();
+
+    QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("Eval_AfterPopFront")
 
     QSEMANTICDB_DEBUG_VERBOSE_PRINT('(' << evalId << ')' << std::endl)
     return evalId;
