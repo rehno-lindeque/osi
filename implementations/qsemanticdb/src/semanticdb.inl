@@ -495,6 +495,7 @@ namespace QSemanticDB
       // Invariant Condition: When the branch only has one symbol and no branches, then Front() (i.e. the next symbol to return to the evaluator) is the same as Back() (i.e. the next symbol to evaluate internally).
       //OSI_ASSERT(schedule.Front() == scheduler.Back());
       EvalInternal(evalId);
+      scheduler.Commit(); // Commit the first queue... (todo: This is a bit of a hack now to avoid the case where no query was evaluated, only the next symbol was retrieved. Then the result must still be commited)
     }
 
     // Remove the symbol to be returned from the schedule

@@ -53,6 +53,7 @@ namespace QSemanticDB
             break;
           }
         } while(!scheduler.Done()); // TODO: scheduler.Done() probably won't work properly with nested queries????
+
       }
       return;
     }

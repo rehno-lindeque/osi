@@ -266,7 +266,7 @@ namespace QSemanticDB
       }
       fileStream << "</TR>";
     }
-    fileStream  << std::endl << "    <TR><TD COLSPAN=\"2\" BGCOLOR=\"lightgrey\">ACTIVE QUEUES</TD></TR>";
+    fileStream  << std::endl << "    <TR><TD COLSPAN=\"2\" BGCOLOR=\"lightgrey\">ACTIVE QUEUE</TD></TR>";
     fileStream  << "</TABLE>" << std::endl
                 << " >];" << std::endl;
     fileStream  << " }" << std::endl;
