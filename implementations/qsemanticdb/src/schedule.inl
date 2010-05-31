@@ -99,12 +99,17 @@ namespace QSemanticDB
     return iSibling;
   }
 
-  int ScheduleQueue::FrontIndex() const
+  size_t ScheduleQueue::FrontIndex() const
   {
     return frontIndex;
   }
 
-  SemanticId ScheduleQueue::operator [] (int index) const
+  size_t ScheduleQueue::EndIndex() const
+  {
+    return queue->size();
+  }
+
+  SemanticId ScheduleQueue::operator [] (size_t index) const
   {
     return (*queue)[index];
   }

@@ -51,8 +51,9 @@ namespace QSemanticDB
     void QueryDepth(int depth);
     const TreeIterator& Sibling();
     TreeConstIterator Sibling() const;
-    int FrontIndex() const;
-    SemanticId operator [] (int index) const;
+    size_t FrontIndex() const;
+    size_t EndIndex() const;
+    SemanticId operator [] (size_t index) const;
     /*SymbolIterator Begin();
     SymbolConstIterator Begin() const;
     SymbolIterator End();

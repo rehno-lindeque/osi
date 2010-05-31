@@ -498,11 +498,9 @@ namespace QSemanticDB
     }
 
     // Remove the symbol to be returned from the schedule
-    //infoStream << schedule.Begin()->Size() << '-';
+    //QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("Eval_BeforePopFront")
     schedule.PopFront();
-    //infoStream << schedule.Begin()->Size();
-
-    QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("Eval_AfterPopFront")
+    //QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("Eval_AfterPopFront")
 
     QSEMANTICDB_DEBUG_VERBOSE_PRINT('(' << evalId << ')' << std::endl)
     return evalId;

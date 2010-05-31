@@ -144,7 +144,7 @@ namespace QSemanticDB
     PrintSymbol(fileStream, tree.Front());
 
     //PrintNodeShape(fileStream, iTree, tree.FrontIndex());
-    for(uint cSymbol = tree.FrontIndex()+1; cSymbol < tree.Size(); ++cSymbol)
+    for(size_t cSymbol = tree.FrontIndex()+1; cSymbol < tree.EndIndex(); ++cSymbol)
     {
       fileStream << " -> ";
       PrintSymbol(fileStream, tree[cSymbol]);
@@ -258,7 +258,7 @@ namespace QSemanticDB
       }
       auto scheduleQueue = **iQueue;
       fileStream << "<TD>" << scheduleQueue.QueryDepth() << "</TD>";
-      for(int c = scheduleQueue.FrontIndex(); c < scheduleQueue.Size(); ++c)
+      for(size_t c = scheduleQueue.FrontIndex(); c < scheduleQueue.Size(); ++c)
       {
         fileStream << "<TD>";
         InternPrintSymbol(fileStream, scheduleQueue[c]);
