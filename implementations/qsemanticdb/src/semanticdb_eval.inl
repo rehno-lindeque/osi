@@ -30,17 +30,17 @@ namespace QSemanticDB
     QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalInternal(" << evalId << ")...")
     if(i == symbolProperties.end() || (i->second.query == QueryNone && i->second.concrete))
     {
-      QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalSymbol(" << evalId << ")" << std::endl)
+      QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalInternal_Before_EvalSymbol(" << evalId << ")" << std::endl)
       EvalSymbol(evalId);
-      QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalSymbol")
+      QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalInternal_After_EvalSymbol")
 
       // Add parent codomain edges of this id to the evaluation stack
-      QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalScheduleDefinitions(" << evalId << ")" << std::endl)
+      QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalInternal_Before_EvalScheduleDefinitions(" << evalId << ")" << std::endl)
       if(EvalScheduleDefinitions(evalId, false))
       {
         if(scheduler.OuterBranches() > 0)
           scheduler.GotoFirstBranch();
-        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalScheduleDefinitions")
+        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULE("EvalInternal_After_EvalScheduleDefinitions")
         do
         {
           QSEMANTICDB_DEBUG_VERBOSE_PRINT("EvalIfQuery(" << scheduler.Get() << ')' << std::endl)
@@ -53,7 +53,6 @@ namespace QSemanticDB
             break;
           }
         } while(!scheduler.Done()); // TODO: scheduler.Done() probably won't work properly with nested queries????
-
       }
       return;
     }
@@ -381,18 +380,23 @@ namespace QSemanticDB
       // otherwise, simply step to the next symbol
       if(!visitor.EndOfQueue())
       {
+        QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("EvalInternalNext_!EndOfQueue" << std::endl)
         ++visitor.symbolIndex;
-        evalId = visitor.Get();
-      }
-      else if(!visitor.EndOfBranch())
-      {
-        ++visitor.queueStackIndex;
-        visitor.symbolIndex = visitor.GetTree()->FrontIndex();
         evalId = visitor.Get();
       }
       else
       {
-        evalId = OSIX::SEMANTICID_INVALID;
+        ++visitor.queueStackIndex;
+        if(!visitor.EndOfBranch())
+        {
+          QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("EvalInternalNext_!EndOfBranch" << std::endl)
+          visitor.symbolIndex = visitor.GetTree()->FrontIndex();
+          evalId = visitor.Get();
+        }
+        else
+        {
+          evalId = OSIX::SEMANTICID_INVALID;
+        }
       }
     }
     else
@@ -448,10 +452,12 @@ namespace QSemanticDB
       // I.e. there are no more symbols in the queue and no more branches to follow either.
       if(evalId == OSIX::SEMANTICID_INVALID)
       {
+        QSEMANTICDB_DEBUG_EVALOUTPUT_PRINT("EvalInternalUntil_Before_Rollback" << std::endl)
+
         scheduler.Rollback();
         visitor = scheduler.GetVisitor();
 
-        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULEVISITOR("EvalInternalUntil_AfterRollback", visitor)
+        QSEMANTICDB_DEBUG_VISUALIZE_SCHEDULEVISITOR("EvalInternalUntil_After_Rollback", visitor)
 
         // Check whether all codomains have now been evaluated
         // todo: Is this condition entirely complete?
