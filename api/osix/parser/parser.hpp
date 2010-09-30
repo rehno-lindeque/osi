@@ -117,7 +117,7 @@ namespace OSIX
     OSI_DYNAMIC_METHOD void OSI_API_CALL precedence(const OSchar* token1Name, const OSchar* token2Name);
     OSI_DYNAMIC_METHOD void OSI_API_CALL precedence(OSid token1, OSid token2);
 
-    /* miscelaneous */
+    /* miscellaneous */
     OSI_DYNAMIC_METHOD const OSchar* OSI_API_CALL getTokenName(OSid token);
     OSI_DYNAMIC_METHOD OSbool OSI_API_CALL isIdentifier(OSid token);
     OSI_DYNAMIC_METHOD OSbool OSI_API_CALL isNumeric(OSid token);
@@ -128,6 +128,7 @@ namespace OSIX
     OSI_DYNAMIC_METHOD void* OSI_API_CALL debugInit();
   };
 
+  /* initialization */
   Parser* OSI_API_CALL parserInit();
 }
 

@@ -116,7 +116,7 @@ OSid OSI_API_C_CALL getParseTokens(OSobject parseResult);
 void OSI_API_C_CALL tokenNamePrecedence(const OSchar* token1Name, const OSchar* token2Name);
 void OSI_API_C_CALL tokenPrecedence(OSid token1, OSid token2);
 
-/* miscelaneous */
+/* miscellaneous */
 const OSchar* OSI_API_C_CALL getTokenName(OSid token);
 void OSI_API_C_CALL delObject(OSobject object);
 //todo: bool isIdentifier(OSid token);
@@ -125,6 +125,7 @@ void OSI_API_C_CALL delObject(OSobject object);
 /* debug */
 void* OSI_API_C_CALL debugInit();
 
+/* intialization */
 void OSI_API_C_CALL parserInit();
 
 #ifdef __cplusplus
