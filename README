@@ -1,0 +1,47 @@
+Open Standard Interfaces
+------------------------
+
+Copyright (C) 2010, Rehno Lindeque. All rights reserved.
+
+-------------------------------------------------------------------------------
+DISCLAIMER: 
+  This document is very rough as I had to jot done some notes for people to
+  read in a hurry. Please contact me for any further information at 
+  rehno.lindeque (and then add @gmail.com at the end ;)). 
+  Assuming the spam filters don't catch you by accident I will be happy to 
+  discuss!
+-------------------------------------------------------------------------------
+
+The OSI is a set of high-level open specifications for well-defined domains
+in computer engineering that have not been covered by more low-level specs.
+In other words, OSI is a set of specs on the "software side" of things that
+allow anyone to write an implementation. They are intended to provide a
+language and implementation agnostic API.
+
+The OSI currently includes various api's: Some to do with 3d graphics and
+rendering, parsing, lexing, streams and even a semantic database API.
+All implementations are currently included with OSI, but should really be
+moved to separate repositories with separate licenses.
+
+It is my hope that OSI will become a set of open API's maintained by an open
+community of enthusiasts in a wiki-like fashion. I believe such a set of API's
+will be advantageous for the open source community as well as commercial
+implementators.
+
+Currently the OSI is in a "incubation" phase where there is still a great deal
+of work to be done before the specifications or their implementations can be
+used in practice. There is currently no consesus and no community, just a
+couple of my own unrefined ideas and experiments.
+
+For now the OSI and all related code is licensed under the GPL ver 3 (See the
+LICENSE file). In future I intend to relicense most of the code to a more
+permissive license such as the BSD or MIT licenses in order to allow commercial
+implementations of the specs.
+
+If you would like to contribute please contact me. Right now I can't accept 
+code under the GPL since the license should change in future. Most likely
+I'll ask for a formal letter stating that you're willing to change license to
+either BSD or MIT. I haven't decided which yet.
+
+Regards,
+Rehno Lindeque
