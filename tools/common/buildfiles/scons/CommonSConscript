@@ -2,9 +2,9 @@
 #
 #     COMMONSCONSCRIPT
 #
-#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2009-2011 Rehno Lindeque. All rights reserved.
 #
-#     Version 0.02 (2009-04-05)
+#     Version 0.03 (2011-01-12)
 #
 #     (The versioning on this file is usefull because it may be copied often.
 #     Try and keep build scripts as up to date as possible. I.e. Always use
@@ -39,7 +39,7 @@ abs_build_dir = os.path.abspath(os.path.join(user_build_dir, env['PLATFORM'] + '
 abs_src_dir = os.path.abspath(user_src_dir)
 scriptdir = os.getcwd() 
 
-BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
+VariantDir(abs_build_dir, abs_src_dir, duplicate=0)
 
 #########################################################
 # Construct a list of input source directories
