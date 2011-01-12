@@ -2,7 +2,7 @@
 #
 #     BASE
 #
-#     Copyright (c) 2007 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2007-2011 Rehno Lindeque. All rights reserved.
 #
 ##############################################################################
 
@@ -41,7 +41,7 @@ if verbose:
   print 'Main Build Dir: %s' % abs_build_dir
   print 'Main Source Dir: %s' % abs_src_dir
 
-BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
+VariantDir(abs_build_dir, abs_src_dir, duplicate=0)
 
 #########################################################
 

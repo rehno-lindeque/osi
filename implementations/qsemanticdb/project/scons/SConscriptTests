@@ -2,7 +2,7 @@
 #
 #     SCONSCRIPTTESTS
 #
-#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2009-2011 Rehno Lindeque. All rights reserved.
 #
 ##############################################################################
 
@@ -29,9 +29,9 @@ Import('lib_dirs')
 
 abs_build_dir = os.path.abspath(os.path.join(user_build_dir, env['PLATFORM'] + '-' + env['CXX']))
 abs_src_dir = os.path.abspath(user_src_dir)
-scriptdir = os.getcwd() 
+scriptdir = os.getcwd()
 
-BuildDir(abs_build_dir, abs_src_dir, duplicate=0)
+VariantDir(abs_build_dir, abs_src_dir, duplicate=0)
 
 ##############################################################################
 # Unit test builder

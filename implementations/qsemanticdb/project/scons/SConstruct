@@ -2,7 +2,7 @@
 #
 #     SCONSTRUCT
 #
-#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2009-2011 Rehno Lindeque. All rights reserved.
 #
 ##############################################################################
 
@@ -33,4 +33,4 @@ execfile('CommonSConstruct', globals())
 
 #########################################################
 # Execute the unit tests build script
-SConscript('./SConscriptTests', build_dir=user_test_dir, duplicate=0)
+SConscript('./SConscriptTests', variant_dir=user_test_dir, duplicate=0)
