@@ -6,9 +6,6 @@
 #
 ##############################################################################
 
-# TODO: Many files listed here are not being ignored. This needs to be 
-#       investigated and fixed.
-
 # Ignore any build directories
 build/
 
@@ -22,6 +19,7 @@ bin/
 *.a
 *.o
 *.pyc
+.hi
 
 # Ignore temporary files
 *~
@@ -33,4 +31,3 @@ bin/
 
 # Ignore unnecessary build system files
 .sconsign.dblite
-
