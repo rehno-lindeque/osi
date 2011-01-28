@@ -2,9 +2,9 @@
 #
 #     COMMONSCONSTRUCT
 #
-#     Copyright (c) 2009 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2009-2011 Rehno Lindeque. All rights reserved.
 #
-#     Version 0.05 (2009-12-16)
+#     Version 0.06 (2011-01-12)
 #
 #     (The versioning on this file is usefull because it may be copied often.
 #     Try and keep build scripts as up to date as possible. I.e. Always use
@@ -116,7 +116,7 @@ for dir in user_scons_dirs:
 # Execute target script
 Export('main_target')
 
-SConscript('SConstargetscript', build_dir=user_build_dir, duplicate=0)
+SConscript('SConstargetscript', variant_dir=user_build_dir, duplicate=0)
 
 
 #########################################################

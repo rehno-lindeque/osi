@@ -133,7 +133,9 @@ namespace QParser
     {
       auto& item = state.items[c];
       const ProductionRule& rule = GetRule(item.ruleIndex);
-      
+
+      // TODO: Change to
+      //    Check whether this item has already been annotated
       // Check whether this item has already been resolved
       if(item.inputPositionRule != uint(-1))
         continue; 
@@ -154,7 +156,8 @@ namespace QParser
       {
         // Get the item again (because calling push_back may invalidate our previous reference!)
         auto& item = state.items[c];
-        
+
+        // (ALTERNATIVE DESCRIPTION: if an un-annotated item, annotate it. Otherwise add another annotated item....)
         // Resolve the originating item's input position rule
         // (Note: the first time we'll merely set the input position rule, but there-after
         // the item must be duplicated for every possible input rule corresponding to the nonterminal)

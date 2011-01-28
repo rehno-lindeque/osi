@@ -58,6 +58,7 @@ namespace QParser
     void DebugOutputParseResult(OSobject& parseResult) const;
 #endif*/
 
+    // Message streams
     INLINE void SetErrorStream(FILE* stream);
     INLINE void SetWarningStream(FILE* stream);
     INLINE void SetInfoStream(FILE* stream);
