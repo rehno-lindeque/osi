@@ -1,0 +1,3 @@
+[submodule "implementations/glge"]
+	path = implementations/glge
+	url = ./implementations/glge/
