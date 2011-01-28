@@ -1,7 +1,7 @@
 Open Standard Interfaces
 ------------------------
 
-Copyright (C) 2010, Rehno Lindeque. All rights reserved.
+Copyright (C) 2011, Rehno Lindeque. All rights reserved.
 
 -------------------------------------------------------------------------------
 DISCLAIMER: 
@@ -45,3 +45,8 @@ either BSD or MIT. I haven't decided which yet.
 
 Regards,
 Rehno Lindeque
+
+
+Example of adding an additional project as a submodule in the implementations:
+
+git add -- https://rehno-lindeque@github.com/rehno-lindeque/osi-glge.git implementations/glge
