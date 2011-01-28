@@ -2,7 +2,7 @@
 #
 #     .GITIGNORE
 #
-#     Copyright (c) 2008 Rehno Lindeque. All rights reserved.
+#     Copyright (c) 2011 Rehno Lindeque. All rights reserved.
 #
 ##############################################################################
 
@@ -19,9 +19,9 @@ lib/
 bin/
 
 # Ignore build files
-*.a               # static library files
-*.o               # object files
-*.pyc             # compiled python bytecode
+*.a
+*.o
+*.pyc
 
 # Ignore temporary files
 *~
