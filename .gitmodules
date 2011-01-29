@@ -34,3 +34,6 @@
 [submodule "implementations/qsemanticdb"]
 	path = implementations/qsemanticdb
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qsemanticdb.git
+[submodule "implementations/qstream"]
+	path = implementations/qstream
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qstream.git
