@@ -25,3 +25,6 @@
 [submodule "implementations/nativege"]
 	path = implementations/nativege
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-nativege.git
+[submodule "implementations/qrayre"]
+	path = implementations/qrayre
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qrayre.git
