@@ -16,3 +16,6 @@
 [submodule "implementations/qparser"]
 	path = implementations/qparser
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qparser.git
+[submodule "implementations/linglkernel"]
+	path = implementations/linglkernel
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-linglkernel.git
