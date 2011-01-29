@@ -28,3 +28,6 @@
 [submodule "implementations/qrayre"]
 	path = implementations/qrayre
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qrayre.git
+[submodule "implementations/qlex"]
+	path = implementations/qlex
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qlex.git
