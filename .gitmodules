@@ -22,3 +22,6 @@
 [submodule "implementations/winglkernel"]
 	path = implementations/winglkernel
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-winglkernel.git
+[submodule "implementations/nativege"]
+	path = implementations/nativege
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-nativege.git
