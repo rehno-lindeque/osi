@@ -19,3 +19,6 @@
 [submodule "implementations/linglkernel"]
 	path = implementations/linglkernel
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-linglkernel.git
+[submodule "implementations/winglkernel"]
+	path = implementations/winglkernel
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-winglkernel.git
