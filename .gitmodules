@@ -31,3 +31,6 @@
 [submodule "implementations/qlex"]
 	path = implementations/qlex
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qlex.git
+[submodule "implementations/qsemanticdb"]
+	path = implementations/qsemanticdb
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qsemanticdb.git
