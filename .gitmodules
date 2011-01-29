@@ -13,3 +13,6 @@
 [submodule "implementations/glrasre"]
 	path = implementations/glrasre
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-glrasre.git
+[submodule "implementations/qparser"]
+	path = implementations/qparser
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-qparser.git
