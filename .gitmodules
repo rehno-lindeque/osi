@@ -7,3 +7,6 @@
 [submodule "implementations/wingui"]
 	path = implementations/wingui
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-wingui.git
+[submodule "implementations/glrayre"]
+	path = implementations/glrayre
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-glrayre.git
