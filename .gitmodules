@@ -1,3 +1,9 @@
 [submodule "implementations/glge"]
 	path = implementations/glge
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-glge.git
+[submodule "implementations/glgui"]
+	path = implementations/glgui
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-glgui.git
+[submodule "implementations/wingui"]
+	path = implementations/wingui
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-wingui.git
