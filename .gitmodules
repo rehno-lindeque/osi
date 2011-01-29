@@ -10,3 +10,6 @@
 [submodule "implementations/glrayre"]
 	path = implementations/glrayre
 	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-glrayre.git
+[submodule "implementations/glrasre"]
+	path = implementations/glrasre
+	url = https://rehno-lindeque@github.com/rehno-lindeque/osi-glrasre.git
