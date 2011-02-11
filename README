@@ -49,4 +49,4 @@ Rehno Lindeque
 
 Example of adding an additional project as a submodule in the implementations:
 
-git add -- https://rehno-lindeque@github.com/rehno-lindeque/osi-glge.git implementations/glge
+git submodule add -- https://rehno-lindeque@github.com/rehno-lindeque/osi-glge.git implementations/glge
