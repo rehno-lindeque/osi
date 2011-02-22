@@ -4,9 +4,9 @@
 //
 //    OS.HPP
 //
-//    Ver 0.1 (2007-02-02)
+//    Ver 0.2.1 (2011-02-22)
 //
-//    Copyright © 2006-2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2006-2011, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*
@@ -26,10 +26,10 @@
 #endif
 
 /* dynamic (api) method declaration */
-#if defined(OSI_C_STATIC_BUILD) || defined(OSI_C_DYNAMIC_BUILD)
+#if defined(OSI_C_STATIC_BUILD) || defined(OSI_C_SHARED_BUILD)
   //#define OSI_DYNAMIC_METHOD OSI_INLINE_METHOD
   #define OSI_DYNAMIC_METHOD
-#elif defined(OSI_CPP_DYNAMIC_BUILD)
+#elif defined(OSI_CPP_SHARED_BUILD)
   #define OSI_DYNAMIC_METHOD virtual
 #else
   #ifndef OSI_CPP_STATIC_BUILD

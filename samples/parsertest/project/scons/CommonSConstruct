@@ -35,12 +35,12 @@ definitions = user_definitions
 
 if ARGUMENTS.get('targetlang', 0) == 'c':
   if ARGUMENTS.get('build', 0) == 'dynamic':
-    definitions.append('OSI_C_DYNAMIC_BUILD')
+    definitions.append('OSI_C_SHARED_BUILD')
   else:
     definitions.append('OSI_C_STATIC_BUILD')
 else:
   if ARGUMENTS.get('build', 0) == 'dynamic':
-    definitions.append('OSI_CPP_DYNAMIC_BUILD')
+    definitions.append('OSI_CPP_SHARED_BUILD')
   else:
     definitions.append('OSI_CPP_STATIC_BUILD')
 

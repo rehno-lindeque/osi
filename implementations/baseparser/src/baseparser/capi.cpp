@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 /*                              IMPLEMENTATION                              */
-#if defined(OSI_C_STATIC_BUILD) || defined(OSI_C_DYNAMIC_BUILD)
+#if defined(OSI_C_STATIC_BUILD) || defined(OSI_C_SHARED_BUILD)
 
 #include <osix/parser/parser.hpp>
 #include <osix/parser/parser.h>

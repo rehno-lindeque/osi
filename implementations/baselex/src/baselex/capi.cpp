@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 /*                              IMPLEMENTATION                              */
-#if defined(OSI_C_STATIC_BUILD) || defined(OSI_C_DYNAMIC_BUILD)
+#if defined(OSI_C_STATIC_BUILD) || defined(OSI_C_SHARED_BUILD)
 
 #include <osix/lex/lex.hpp>
 #include <osix/lex/lex.h>

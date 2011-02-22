@@ -4,9 +4,9 @@
 //
 //    OS.H
 //
-//    Ver 0.2 (2006-09-02)
+//    Ver 0.2.1 (2011-02-22)
 //
-//    Copyright © 2006-2007, Rehno Lindeque. All rights reserved.
+//    Copyright © 2006-2011, Rehno Lindeque. All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 /*
@@ -14,7 +14,7 @@
       Open Standard Interface header
 */
 /*                                 CONSTANTS                                */
-#define OS_VERSION 0.2
+#define OS_VERSION "0.2.1"
 
 /*                                   TYPES                                  */
 typedef int                 OSint;

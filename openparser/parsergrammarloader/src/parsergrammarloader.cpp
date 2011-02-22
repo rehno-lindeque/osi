@@ -13,7 +13,7 @@
 */
 
 /*                                 INCLUDES                                 */
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
 # include "parsergrammarloader.hpp"
   using namespace OSIX;
 #else
@@ -37,7 +37,7 @@ OSid* ids = 0;
 OSid* idsPos = 0;
 OSuint idsLength = 0;
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
 OSIX::Parser *parser = 0;
 #endif
 
@@ -198,7 +198,7 @@ inline bool parseStringTokenDeclPart(const OSchar* name)
     if(str1[0] == '\0')
       return false; // error: expected string with at least 1 character (empty string is not a valid token)
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
     storeId(str1[1] == '\0'? parser->charToken(name, str1[0]) : parser->stringToken(name, str1), name);
 #else    
     storeId(str1[1] == '\0'? charToken(name, str1[0]) : stringToken(name, str1), name);
@@ -226,7 +226,7 @@ inline bool parseStringTokenDeclPart(const OSchar* name)
   {
     if(str1[0] == '\0')
       return false; // error: expected string with at least 1 character (empty string is not a valid token)
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
     storeId(str1[1] == '\0'? parser->charToken(name, str1[0]) : parser->stringToken(name, str1), name);
 #else
     storeId(str1[1] == '\0'? charToken(name, str1[0]) : stringToken(name, str1), name);
@@ -235,7 +235,7 @@ inline bool parseStringTokenDeclPart(const OSchar* name)
   }
 
   // PRE-CONDITION: nUnderscores == 1 || nUnderscores == 2 (otherwise it's a token and should be caught by the earlier lookahead)
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   PARSER_BOUNDED_LINETYPE boundedLineType = (nUnderscores == 1)? SINGLE_LINE : MULTI_LINE;
 #else
   enum OSIX_PARSER_BOUNDED_LINETYPE boundedLineType = (nUnderscores == 1)? SINGLE_LINE : MULTI_LINE;
@@ -256,7 +256,7 @@ inline bool parseStringTokenDeclPart(const OSchar* name)
     || (boundedLineType != SINGLE_LINE && (str1[0] == '\0' || str2[0] == '\0')))
     return false; // error: expected string with at least 1 character (empty string is not a valid token)*/
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   storeId(parser->boundedToken(name, str1, str2, boundedLineType), name);
 #else
   storeId(boundedToken(name, str1, str2, boundedLineType), name);
@@ -294,7 +294,7 @@ bool parseRaw()
     return false; // error: expected '{'
   ++bufferPos;
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginRaw();
 #else
   beginRaw();
@@ -303,7 +303,7 @@ bool parseRaw()
     // Parse raw tokens
     do { parseWhiteComments(); } while(parseTerminalTokenDecl());
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endRaw();
 #else
   endRaw();
@@ -328,7 +328,7 @@ bool parseNil()
     return false; // error: expected '{'
   ++bufferPos;
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginNil();
 #else
   beginNil();
@@ -337,7 +337,7 @@ bool parseNil()
     // Parse nil tokens
     do { parseWhiteComments(); } while(parseTerminalTokenDecl());
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endNil();
 #else
   endNil();
@@ -362,7 +362,7 @@ inline bool parseLexSymbols()
     return false; // error: expected '{'
   ++bufferPos;
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginLexSymbols();
 #else
   beginLexSymbols();
@@ -371,7 +371,7 @@ inline bool parseLexSymbols()
     // Parse lex symbol tokens
     do { parseWhiteComments(); } while(parseTerminalTokenDecl());
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endLexSymbols();
 #else
   endLexSymbols();
@@ -398,7 +398,7 @@ inline bool parseLexWords()
 
   parseWhiteComments();
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginLexWords();
 #else
   beginLexWords();
@@ -407,7 +407,7 @@ inline bool parseLexWords()
     // Parse lex word tokens
     do { parseWhiteComments(); } while(parseTerminalTokenDecl());
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endLexWords();
 #else
   endLexWords();
@@ -434,7 +434,7 @@ bool parseLex()
 
   parseWhiteComments();
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginLex();
 #else
   beginLex();
@@ -445,7 +445,7 @@ bool parseLex()
     parseWhiteComments();
     parseLexWords();
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endLex();
 #else
   endLex();
@@ -480,7 +480,7 @@ inline bool parseProductionToken()
         || *bufferPos == '{'
         || *bufferPos == '}') // todo: what else?)
       {
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
         parser->productionLiteralToken(NUMERIC_LITERAL);
 #else
         productionLiteralToken(NUMERIC_LITERAL);
@@ -496,7 +496,7 @@ inline bool parseProductionToken()
   if(!parseIdentifier(identifierStr))
     return false;
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   if(isIdentifierRef) parser->productionIdentifierRef(identifierStr);
   //todo:? else if(isIdentifierDecl) { *idsPos = parser->productionIdentifierDecl(identifierStr); ++idsPos; }
   else if(isIdentifierDecl) { parser->productionIdentifierDecl(identifierStr); }
@@ -529,7 +529,7 @@ inline bool parseProduction()
       parseWhiteComments();
 
       static OSid prevId = -1;
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
       OSid id = parser->beginProduction(identifierStr);
 #else
       OSid id = parser->beginProduction(identifierStr);
@@ -544,14 +544,14 @@ inline bool parseProduction()
 
         do { parseWhiteComments(); } while (!BUFFEREMPTY && parseProductionToken());
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
         if(BUFFEREMPTY || *bufferPos != '}') { parser->endProduction(); return false; } // error: expected '}'
 #else
         if(BUFFEREMPTY || *bufferPos != '}') { endProduction(); return false; } // error: expected '}'
 #endif
         ++bufferPos;
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
       parser->endProduction();
 #else
       endProduction();
@@ -559,7 +559,7 @@ inline bool parseProduction()
     }
     else
     {
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
       parser->declareProduction(identifierStr);
 #else
       declareProduction(identifierStr);
@@ -585,7 +585,7 @@ bool parseProductions()
 
   parseWhiteComments();
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginLanguage();
 #else
   beginLanguage();
@@ -594,7 +594,7 @@ bool parseProductions()
     // Parse productions
     do { parseWhiteComments(); } while(!BUFFEREMPTY && parseProduction());
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endLanguage();
 #else
   endLanguage();
@@ -638,14 +638,14 @@ inline bool parsePrecedenceDirective()
   switch(operatorChar)
   {
     case '<':
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
       parser->precedence(identifierStr1, identifierStr2);
 #else
       tokenNamePrecedence(identifierStr1, identifierStr2);
 #endif
       break;
     case '>':
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
       parser->precedence(identifierStr2, identifierStr1);
 #else
       tokenNamePrecedence(identifierStr2, identifierStr1);
@@ -678,7 +678,7 @@ bool parsePrecedence()
   return true;
 }
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
 namespace Parser {
 namespace GrammarLoader {
 void constructGrammar(OSIX::Parser &parser, const OSchar* buffer, OSuint bufferSize, OSid* ids, OSuint idsBufferSize)
@@ -719,7 +719,7 @@ void parserConstructGrammar(const OSchar* buffer, OSuint bufferSize, OSid* ids, 
 
   parseWhiteComments();
 
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->beginGrammar();
 #else
   beginGrammar();
@@ -731,7 +731,7 @@ void parserConstructGrammar(const OSchar* buffer, OSuint bufferSize, OSid* ids, 
     parseProductions(); parseWhiteComments();
     parsePrecedence();
   }
-#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_DYNAMIC_BUILD)
+#if defined(OSI_CPP_STATIC_BUILD) || defined(OSI_CPP_SHARED_BUILD)
   parser->endGrammar();
 #else
   endGrammar();
