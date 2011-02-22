@@ -19,7 +19,7 @@ bin/
 *.a
 *.o
 *.pyc
-.hi
+*.hi
 
 # Ignore temporary files
 *~
